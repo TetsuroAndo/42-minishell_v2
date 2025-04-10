@@ -1,6 +1,7 @@
 #ifndef MS_READLINE_H
 # define MS_READLINE_H
 
+# include "core.h"
 # include <readline/history.h>
 # include <readline/readline.h>
 

@@ -57,13 +57,8 @@ typedef struct s_shell
 /*
 ** シェルの初期化と終了処理
 */
-int shell_init(t_shell *shell, char **env, int module_flags);
+t_shell *shell_init(char **env);
 void shell_cleanup(t_shell *shell);
 void shell_exit(t_shell *shell, int status);
-
-/*
-** シェルループ
-*/
-void shell_loop(t_shell *shell);
 
 #endif

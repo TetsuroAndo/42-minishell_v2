@@ -1,30 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_token.c                                       :+:      :+:    :+:   */
+/*   xitoa.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/14 15:20:49 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 19:42:22 by teando           ###   ########.fr       */
+/*   Created: 2025/04/10 19:52:07 by teando            #+#    #+#             */
+/*   Updated: 2025/04/10 19:52:52 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
 
-/**
- * @brief トークンの解放
- *
- * @param token 解放するトークンへのポインタ
- */
-void free_token(void *token)
+char *xitoa(int n)
 {
-    t_lexical_token *t;
+    char *ans;
 
-    if (!token)
-        return;
-    t = (t_lexical_token *)token;
-    if (t->value)
-        free(t->value);
-    free(t);
+    ans = ft_itoa(n);
+    if (!ans)
+        system_exit(NULL, 1);
+    return (ans);
 }
