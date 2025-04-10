@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:56:24 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/10 20:05:49 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/10 20:52:19 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,5 +75,5 @@ void	free_ast(t_ast **ast)
 		clear_args((*ast)->args);
 	// ノード自体の解放
 	xfree((void **)ast);
-    *ast = NULL;
+	*ast = NULL;
 }
