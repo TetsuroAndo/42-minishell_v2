@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:10 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 20:39:57 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/10 20:46:03 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ void	shell_cleanup(t_shell *shell)
 		close(shell->stderr_backup);
 		shell->stderr_backup = -1;
 	}
-	xfree(&shell);
 }
 
 /**
@@ -80,5 +79,6 @@ void	shell_cleanup(t_shell *shell)
 void	shell_exit(t_shell *shell, int status)
 {
 	shell_cleanup(shell);
+	xfree(&shell);
 	exit(status);
 }
