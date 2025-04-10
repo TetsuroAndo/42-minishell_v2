@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:45:12 by teando            #+#    #+#             */
-/*   Updated: 2025/03/15 11:49:34 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/10 23:17:23 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,18 @@
 
 volatile sig_atomic_t g_signal_status = 0;
 
+static int rl_noob(void)
+{
+	return (0);
+}
+
 static void sigint_handler(int signum)
 {
     if (signum == SIGINT)
     {
         g_signal_status = SIGINT;
-        // rl_done = 1;
+        rl_done = 1;
         rl_replace_line("", 0);
-        write(STDOUT_FILENO, "\n", 1);
         rl_on_new_line();
         rl_redisplay();
     }
@@ -37,7 +41,7 @@ static void sigquit_handler(int signum)
     if (signum == SIGQUIT)
     {
         g_signal_status = SIGQUIT;
-        // rl_done = 1;
+        rl_done = 1;
     }
 }
 
@@ -51,7 +55,7 @@ int init_signals(void)
     struct sigaction sa_int;
     struct sigaction sa_quit;
 
-    // rl_event_hook = (rl_hook_func_t *)rl_noob;
+    rl_event_hook = (rl_hook_func_t *)rl_noob;
     sa_int.sa_handler = sigint_handler;
     sa_int.sa_flags = SA_RESTART;
     sigemptyset(&sa_int.sa_mask);
