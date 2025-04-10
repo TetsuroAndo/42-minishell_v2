@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:43:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 20:24:29 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/10 20:52:35 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 void line_init(t_shell *shell)
 {
     if (!shell)
-        exit(1);
+        system_exit(NULL, 1);
     xfree((void **)&shell->source_line);
     ft_lstclear(&shell->token_list, free_token);
     if (shell->ast)
@@ -29,8 +29,10 @@ void line_init(t_shell *shell)
         shell->ast = NULL;
     }
     xfree((void **)&shell->env_spc['?']);
-    if (WIFSIGNALED(shell->status) || WIFEXITED(shell->status))
+    if (WIFSIGNALED(shell->status))
         shell->status = g_signal_status + 128;
+    else if (WIFEXITED(shell->status))
+        shell->status = WEXITSTATUS(shell->status);
     shell->env_spc['?'] = xitoa(shell->status);
     g_signal_status = 0;
     shell->status = 0;
