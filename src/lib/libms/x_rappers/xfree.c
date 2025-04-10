@@ -1,24 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   xclose.c                                           :+:      :+:    :+:   */
+/*   xfree.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/25 14:15:46 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 19:26:51 by tomsato          ###   ########.fr       */
+/*   Created: 2025/04/10 19:14:53 by tomsato           #+#    #+#             */
+/*   Updated: 2025/04/10 19:24:08 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	xclose(int *fd)
-{
-	int	ret;
+#include <stdlib.h>
 
-	if (!fd || *fd < 3)
-		return (0);
-	ret = close(*fd);
-	if (ret == -1)
-		perror("close");
-	*fd = -1;
-	return (ret);
+void	xfree(void **ptr)
+{
+	if (ptr != NULL && *ptr != NULL)
+	{
+		free(*ptr);
+		*ptr = NULL;
+	}
 }

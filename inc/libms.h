@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   libms.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
 /*   Updated: 2025/04/10 20:55:06 by teando           ###   ########.fr       */
@@ -11,9 +11,9 @@
 /* ************************************************************************** */
 
 #ifndef LIBMS_H
-#define LIBMS_H
+# define LIBMS_H
 
-#include "core.h"
+# include "core.h"
 
 // ms_free
 void	xfree(void **ptr);
