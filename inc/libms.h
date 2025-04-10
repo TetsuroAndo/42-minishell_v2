@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 20:04:03 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/10 20:55:06 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ void    skip_spaces(const char *line, size_t *pos);
 
 // ms_rappers
 int		xclose(int *fd);
-char	*xdup(char *str, t_shell shell);
-char	*xdup2(char *str, t_shell shell);
+char	*xdup(char *str, t_shell *shell);
+char	*xdup2(char *str, t_shell *shell);
 void	*xmalloc(size_t size, t_shell *shell);
 t_list	*xlstnew(char *data, t_shell *shell);
-char	*xitoa(int n);
+char    *xitoa(int n, t_shell *shell);
 
 #endif
