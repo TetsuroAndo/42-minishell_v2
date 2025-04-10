@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   xmalloc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 19:42:33 by teando            #+#    #+#             */
-/*   Updated: 2025/03/15 13:48:57 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/10 19:28:36 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,15 @@
  * @param shell エラー処理用のシェルメイン情報構造体
  * @return void* 確保したメモリへのポインタ
  */
-void *xmalloc(size_t size, t_shell *shell)
+void	*xmalloc(size_t size, t_shell *shell)
 {
-    char *memory;
+	char	*memory;
 
-    memory = malloc(size);
-    if (!memory)
-    {
-        shell_exit(shell, E_ALLOCATE);
-    }
-    ft_bzero(memory, size);
-    return ((void *)memory);
+	memory = malloc(size);
+	if (!memory)
+	{
+		shell_exit(shell, E_ALLOCATE);
+	}
+	ft_bzero(memory, size);
+	return ((void *)memory);
 }

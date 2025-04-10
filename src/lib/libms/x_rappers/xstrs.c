@@ -12,14 +12,14 @@
  * @param shell エラー処理用のシェルメイン情報構造体
  * @return t_list* 新しいリストノードへのポインタ
  */
-t_list *xlstnew(char *data, t_shell *shell)
+t_list	*xlstnew(char *data, t_shell *shell)
 {
-    t_list *list;
+	t_list	*list;
 
-    list = ft_lstnew((void *)data);
-    if (!list)
-        shell_exit(shell, E_ALLOCATE);
-    return (list);
+	list = ft_lstnew((void *)data);
+	if (!list)
+		shell_exit(shell, E_ALLOCATE);
+	return (list);
 }
 
 // t_list	*xlst_from_strs(char **strs, t_shell *shell)
