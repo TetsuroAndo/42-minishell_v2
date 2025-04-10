@@ -11,9 +11,12 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/errno.h>
 #include <unistd.h>
 #include <limits.h>
 #include <fcntl.h>
+
+#define DEFAULT_DEBUG 1
 
 extern volatile sig_atomic_t g_signal_status;
 

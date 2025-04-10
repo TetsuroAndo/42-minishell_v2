@@ -3,35 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   xdup.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:18:09 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 20:42:29 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/11 00:58:32 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "core.h"
+#include "libms.h"
 
-char	*xdup(char *str, t_shell *shell)
+int	xdup(int oldfd, t_shell *shell)
 {
-	char	*dup;
+	int	newfd;
 
-	dup = (char *)xmalloc(sizeof(char) * (ft_strlen(str) + 1), shell);
-	if (!dup)
-		return (NULL);
-	ft_memcpy(dup, str, ft_strlen(str));
-	dup[ft_strlen(str)] = '\0';
-	return (dup);
+	newfd = dup(oldfd);
+	if (newfd == -1)
+	{
+		perror("dup");
+		shell_exit(shell, errno);
+	}
+	return (newfd);
 }
 
-char	*xdup2(char *str, t_shell *shell)
+int	xdup2(int oldfd, int newfd, t_shell *shell)
 {
-	char	*dup;
-
-	dup = (char *)xmalloc(sizeof(char) * (ft_strlen(str) + 1), shell);
-	if (!dup)
-		return (NULL);
-	ft_memcpy(dup, str, ft_strlen(str));
-	dup[ft_strlen(str)] = '\0';
-	return (dup);
+	if (dup2(oldfd, newfd) == -1)
+	{
+		perror("dup2");
+		shell_exit(shell, errno);
+	}
+	xclose(&oldfd);
+	return (newfd);
 }

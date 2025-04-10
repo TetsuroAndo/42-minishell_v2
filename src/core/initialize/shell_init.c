@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:25:22 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 21:39:42 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/11 01:05:58 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_shell *shell_init(char **env)
 	if (!shell)
 		shell_exit(NULL, 1);
 	shell->exit_flag = 0;
-	shell->env_map = ft_list_from_strs(env);
+	shell->env_map = xlst_from_strs(env, shell);
 	if (!shell->env_map)
 		shell_exit(shell, 1);
 	if (getcwd(shell->cwd, PATH_MAX) == NULL)
@@ -38,10 +38,11 @@ t_shell *shell_init(char **env)
 	if (!shell->env_spc['?'])
 		shell_exit(shell, 1);
 	shell->interactive = isatty(STDIN_FILENO);
-	shell->stdin_backup = dup(STDIN_FILENO);
-	shell->stdout_backup = dup(STDOUT_FILENO);
-	shell->stderr_backup = dup(STDERR_FILENO);
+	shell->stdin_backup = xdup(STDIN_FILENO, shell);
+	shell->stdout_backup = xdup(STDOUT_FILENO, shell);
+	shell->stderr_backup = xdup(STDERR_FILENO, shell);
 	if (shell->stdin_backup == -1 || shell->stdout_backup == -1 || shell->stderr_backup == -1)
 		shell_exit(shell, 1);
+	shell->debug = DEFAULT_DEBUG;
 	return (shell);
 }

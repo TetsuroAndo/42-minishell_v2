@@ -1,37 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   xstrs.c                                            :+:      :+:    :+:   */
+/*   xlst.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 00:21:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/11 00:42:58 by teando           ###   ########.fr       */
+/*   Created: 2025/04/11 00:18:22 by teando            #+#    #+#             */
+/*   Updated: 2025/04/11 00:19:10 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "core.h"
 
-char	**xsplit(char *str, char sep, t_shell *shell)
+t_list	*xlstnew(char *data, t_shell *shell)
 {
-	char	**split;
+	t_list	*list;
 
-	split = ft_split(str, sep);
-	if (!split)
+	list = ft_lstnew((void *)data);
+	if (!list)
 		shell_exit(shell, E_ALLOCATE);
-	return (split);
+	return (list);
 }
 
-char *xstrjoin_free(char const *s1, char const *s2, t_shell *shell)
+t_list	*xlst_from_strs(char **strs, t_shell *shell)
 {
-	char *str;
+	t_list	*list;
 
-	if (!s1 || !s2)
-		return (NULL);
-	str = ft_strjoin(s1, s2);
-	if (s1)
-		free((void *)s1);
-	if (!str)
+	list = ft_list_from_strs(strs);
+	if (!list)
 		shell_exit(shell, E_ALLOCATE);
-	return (str);
+	return (list);
+}
+
+char	**xlst_to_strs(t_list *lst, t_shell *shell)
+{
+	char	**strs;
+
+	strs = ft_list_to_strs(lst);
+	if (!strs)
+		shell_exit(shell, E_ALLOCATE);
+	return (strs);
 }

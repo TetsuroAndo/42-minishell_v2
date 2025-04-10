@@ -6,7 +6,7 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/10 22:24:02 by teando           ###   ########.fr        #
+#    Updated: 2025/04/11 01:13:26 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ LIBMS_DIR	:= $(ROOT_DIR)/src/lib/libms
 LIBFT		:= $(LIBFT_DIR)/libft.a
 
 # インクルードフラグ
-IDFLAGS		:= -I$(INC_DIR) -I$(LIBFT_DIR) -I./inc
+IDFLAGS		:= -I$(INC_DIR) -I$(LIBFT_DIR)
 
 # 環境依存
 UNAME_S := $(shell uname -s)
@@ -56,7 +56,7 @@ all: $(NAME)
 $(NAME): $(OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(LFLAGS) $(IDFLAGS) -o $(NAME)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(LIBFT_DIR)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(IDFLAGS) -c $< -o $@
 
@@ -77,9 +77,8 @@ re: fclean all
 # == Submodule Targets ==
 # =======================
 
-$(LIBFT_DIR)/.init-stamp :
+$(LIBFT_DIR):
 	git submodule update --init --recursive
-	touch $@
 
 sub:
 	git submodule update --remote

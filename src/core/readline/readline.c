@@ -90,7 +90,7 @@ char *launch_readline(const char *prompt)
         free(line);
         line = ft_strjoin_free(tmp, cont_line);
         if (!line)
-            return (free(tmp), NULL);
+            return (NULL);
     }
     return (line);
 }
