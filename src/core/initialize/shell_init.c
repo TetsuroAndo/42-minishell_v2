@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_init.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:25:22 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 21:28:05 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/10 21:39:42 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,24 +24,24 @@ t_shell *shell_init(char **env)
 
 	shell = ft_calloc(sizeof(t_shell), 1);
 	if (!shell)
-		system_exit(NULL, 1);
+		shell_exit(NULL, 1);
 	shell->exit_flag = 0;
 	shell->env_map = ft_list_from_strs(env);
 	if (!shell->env_map)
-		system_exit(shell, 1);
+		shell_exit(shell, 1);
 	if (getcwd(shell->cwd, PATH_MAX) == NULL)
 	{
 		perror("pwd");
-		system_exit(shell, 1);
+		shell_exit(shell, 1);
 	}
 	shell->env_spc['?'] = xitoa(0, shell);
 	if (!shell->env_spc['?'])
-		system_exit(shell, 1);
+		shell_exit(shell, 1);
 	shell->interactive = isatty(STDIN_FILENO);
 	shell->stdin_backup = dup(STDIN_FILENO);
 	shell->stdout_backup = dup(STDOUT_FILENO);
 	shell->stderr_backup = dup(STDERR_FILENO);
 	if (shell->stdin_backup == -1 || shell->stdout_backup == -1 || shell->stderr_backup == -1)
-		system_exit(shell, 1);
+		shell_exit(shell, 1);
 	return (shell);
 }

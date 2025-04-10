@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   line_init.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:43:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 21:20:56 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/10 21:39:22 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,11 @@
 void line_init(t_shell *shell)
 {
     if (!shell)
-        system_exit(NULL, 1);
+        shell_exit(NULL, 1);
     xfree((void **)&shell->source_line);
     ft_lstclear(&shell->token_list, free_token);
     if (shell->ast)
-    {
-        free_ast(shell->ast);
-        shell->ast = NULL;
-    }
+        free_ast(&shell->ast);
     xfree((void **)&shell->env_spc['?']);
     if (WIFSIGNALED(shell->status))
         shell->status = g_signal_status + 128;
