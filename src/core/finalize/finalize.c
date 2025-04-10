@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:10 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 20:35:31 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/10 20:39:57 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ static void free_env_spc(char **env_spc)
 	{
 		if (env_spc[i])
 			xfree(&env_spc[i]);
+		i++;
 	}
 	return ;
 }
