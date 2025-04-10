@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:10 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 19:42:48 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/10 20:35:31 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,19 @@ static void	clear_data(void *data)
 	return ;
 }
 
+static void free_env_spc(char **env_spc)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < 128)
+	{
+		if (env_spc[i])
+			xfree(&env_spc[i]);
+	}
+	return ;
+}
+
 /**
  * @brief シェルのクリーンアップ処理
  *
@@ -35,15 +48,26 @@ void	shell_cleanup(t_shell *shell)
 {
 	if (!shell)
 		return ;
-	// analize
-	if (shell->source_line)
-		xfree(&shell->source_line);
-	if (shell->token_list)
+	line_init(shell);
+	ft_lstclear(&shell->env_map, clear_data);
+	free_env_spc(shell->env_spc);
+	xfree(&shell->cwd);
+	if (shell->stdin_backup != -1)
 	{
-		ft_lstclear(&shell->token_list, clear_data);
-		shell->token_list = NULL;
+		close(shell->stdin_backup);
+		shell->stdin_backup = -1;
 	}
-	if ()
+	if (shell->stdout_backup != -1)
+	{
+		close(shell->stdout_backup);
+		shell->stdout_backup = -1;
+	}
+	if (shell->stderr_backup != -1)
+	{
+		close(shell->stderr_backup);
+		shell->stderr_backup = -1;
+	}
+	xfree(&shell);
 }
 
 /**
