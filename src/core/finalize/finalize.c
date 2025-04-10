@@ -6,38 +6,34 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:10 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 20:46:03 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/10 22:11:51 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "core.h"
 #include "libms.h"
 
-// #include "mod_env.h"
-
 /**
- * @brief ft_lstclearに渡すdel関数
+ * @brief 環境変数特殊文字配列のメモリを解放する
  *
- * @param t_listのdata
+ * @param env_spc 環境変数特殊文字の配列
  */
-static void	clear_data(void *data)
-{
-	xfree(&data);
-	return ;
-}
-
-static void free_env_spc(char **env_spc)
+static void	free_env_spc(char **env_spc)
 {
 	size_t	i;
+	void	*temp;
 
 	i = 0;
 	while (i < 128)
 	{
 		if (env_spc[i])
-			xfree(&env_spc[i]);
+		{
+			temp = env_spc[i];
+			xfree(&temp);
+			env_spc[i] = NULL;
+		}
 		i++;
 	}
-	return ;
 }
 
 /**
@@ -50,24 +46,14 @@ void	shell_cleanup(t_shell *shell)
 	if (!shell)
 		return ;
 	line_init(shell);
-	ft_lstclear(&shell->env_map, clear_data);
+	ft_lstclear(&shell->env_map, free);
 	free_env_spc(shell->env_spc);
-	xfree(&shell->cwd);
 	if (shell->stdin_backup != -1)
-	{
-		close(shell->stdin_backup);
-		shell->stdin_backup = -1;
-	}
+		xclose(&shell->stdin_backup);
 	if (shell->stdout_backup != -1)
-	{
-		close(shell->stdout_backup);
-		shell->stdout_backup = -1;
-	}
+		xclose(&shell->stdout_backup);
 	if (shell->stderr_backup != -1)
-	{
-		close(shell->stderr_backup);
-		shell->stderr_backup = -1;
-	}
+		xclose(&shell->stderr_backup);
 }
 
 /**
