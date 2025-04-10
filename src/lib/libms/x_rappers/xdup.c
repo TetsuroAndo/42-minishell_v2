@@ -6,13 +6,13 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:18:09 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 19:31:33 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/10 20:42:29 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "core.h"
 
-char	*xdup(char *str, t_shell shell)
+char	*xdup(char *str, t_shell *shell)
 {
 	char	*dup;
 
@@ -24,7 +24,7 @@ char	*xdup(char *str, t_shell shell)
 	return (dup);
 }
 
-char	*xdup2(char *str, t_shell shell)
+char	*xdup2(char *str, t_shell *shell)
 {
 	char	*dup;
 
