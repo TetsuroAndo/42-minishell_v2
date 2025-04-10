@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_init.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:25:22 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 20:46:13 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/10 21:28:05 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ t_shell *shell_init(char **env)
 		perror("pwd");
 		system_exit(shell, 1);
 	}
-	shell->env_spc['?'] = xitoa(0);
+	shell->env_spc['?'] = xitoa(0, shell);
 	if (!shell->env_spc['?'])
 		system_exit(shell, 1);
 	shell->interactive = isatty(STDIN_FILENO);
