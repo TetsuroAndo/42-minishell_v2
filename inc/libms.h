@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 22:00:53 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/10 22:44:12 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define LIBMS_H
 
 # include "core.h"
+
+typedef struct s_shell t_shell;
 
 // ms_free
 void	xfree(void **ptr);
