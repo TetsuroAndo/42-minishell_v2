@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/11 01:13:07 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/11 17:09:16 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@ void    free_ast(t_ast **ast);
 void    free_token(void *token);
 
 // ms_string
+char    *ms_strndup(const char *s, size_t n, t_shell *shell);
+char    *ms_strdup(const char *s, t_shell *shell);
+char    *ms_substr(char const *s, unsigned int start, size_t len, t_shell *shell);
 void    skip_spaces(const char *line, size_t *pos);
 
 // ms_rappers
