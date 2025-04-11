@@ -69,7 +69,6 @@ redir
 */
 void	ast_redir(t_ast *node, t_shell *shell)
 {
-	t_ast			*node;
 	t_lexical_token	*token;
 
 	token = (t_lexical_token *)shell->token_list->data;
