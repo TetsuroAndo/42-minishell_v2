@@ -1,18 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   ms_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/11 16:42:23 by teando           ###   ########.fr       */
+/*   Created: 2025/04/11 03:13:25 by teando            #+#    #+#             */
+/*   Updated: 2025/04/11 03:14:52 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mod_sem.h"
+#include "libms.h"
 
-t_status	mod_syn(t_shell *shell)
+char *ms_substr(char const *s, unsigned int start, size_t len, t_shell *shell)
 {
-	return (E_NONE);
+    char *str;
+
+    if (!s)
+        return (NULL);
+    if (start >= ft_strlen(s))
+        return ("\0");
+    str = ft_substr(s, start, len);
+    if(!str)
+        shell_exit(shell, E_ALLOCATE);
+    return (str);
 }

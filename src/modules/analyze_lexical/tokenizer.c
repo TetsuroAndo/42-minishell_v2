@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:12 by teando            #+#    #+#             */
-/*   Updated: 2025/04/11 01:04:42 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/11 16:39:39 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
  * 4. validate_syntax関数を呼び出して、得られたトークンの構文を検証する
  * 5. すべての処理が成功した場合、E_NONEを返す
  */
-t_status	launch_lexer(t_shell *shell)
+t_status	mod_lex(t_shell *shell)
 {
 	shell->token_list = NULL;
 	shell->status = E_NONE;

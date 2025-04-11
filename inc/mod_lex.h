@@ -3,8 +3,9 @@
 
 #include "core.h"
 
-// Lexical analysis functions
-t_status launch_lexer(t_shell *shell);
+t_status mod_lex(t_shell *shell);
+
+// Tokenization functions
 int tokenize_line(t_shell *shell);
 t_lexical_token *create_token(t_token_type type, char *value, t_shell *shell);
 int add_token(t_shell *shell, t_lexical_token *new_token);

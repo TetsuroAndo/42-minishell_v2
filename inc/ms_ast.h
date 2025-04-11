@@ -27,8 +27,8 @@ typedef struct s_args
 {
     char path[PATH_MAX];
     char **cargv;
-    t_list *argv;
-    t_list *redr;
+    t_list *argv;   // 引数リスト
+    t_list *redr;   // リダイレクトリスト
     int fds[2];
     pid_t pid;
 } t_args;
