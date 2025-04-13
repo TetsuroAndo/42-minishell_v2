@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   debug_put_lex.c                                    :+:      :+:    :+:   */
+/*   debug_putlex.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 22:56:54 by teando            #+#    #+#             */
-/*   Updated: 2025/04/11 01:16:31 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/11 18:08:24 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void	debug_print_token_list(t_list *list)
 {
 	t_lexical_token	*tok;
 
+	printf("Token list:\n");
 	while (list)
 	{
 		tok = (t_lexical_token *)list->data;

@@ -1,16 +1,17 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   free_ast.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:56:24 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/10 20:52:19 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/11 21:03:58 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
-#include "core.h"
+#include "libms.h"
+#include "ms_ast.h"
 
 /**
  * @brief リスト内のデータを解放する関数
@@ -47,11 +48,13 @@ static void	clear_args(t_args *args)
 	if (args->argv)
 		ft_lstclear(&args->argv, clear_list_item);
 	if (args->redr)
-		ft_lstclear(&args->redr, clear_list_item);
+		ft_lstclear(&args->redr, free_token);
 	if (args->fds[0] > 2)
-		close(args->fds[0]);
+		xclose(args->fds[0]);
 	if (args->fds[1] > 2)
-		close(args->fds[1]);
+		xclose(args->fds[1]);
+	if (args->pid != -1)
+		waitpid(args->pid, NULL, 0);
 	xfree((void **)&args);
 }
 
