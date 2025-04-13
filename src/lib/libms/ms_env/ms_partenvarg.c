@@ -6,12 +6,11 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 00:28:32 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 01:25:18 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/14 01:53:47 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
-#include <ft_string.h>
 
 t_status	ms_partenvarg(char *key, const char *arg)
 {

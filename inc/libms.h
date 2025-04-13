@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 01:48:34 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/14 01:53:35 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 # define LIBMS_H
 
 # include "core.h"
+# include "libft.h"
 
 typedef struct s_shell	t_shell;
 typedef struct s_ast	t_ast;
+typedef enum e_status	t_status;
 
 /*
 ** ============================================================================

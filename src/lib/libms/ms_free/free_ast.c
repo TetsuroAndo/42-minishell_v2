@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   free_ast.c                                         :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:56:24 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/11 21:03:58 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/14 01:54:15 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "libms.h"
 #include "ms_ast.h"
@@ -50,9 +50,9 @@ static void	clear_args(t_args *args)
 	if (args->redr)
 		ft_lstclear(&args->redr, free_token);
 	if (args->fds[0] > 2)
-		xclose(args->fds[0]);
+		xclose(&args->fds[0]);
 	if (args->fds[1] > 2)
-		xclose(args->fds[1]);
+		xclose(&args->fds[1]);
 	if (args->pid != -1)
 		waitpid(args->pid, NULL, 0);
 	xfree((void **)&args);
