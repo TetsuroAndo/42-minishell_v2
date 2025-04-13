@@ -1,28 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_strdup.c                                        :+:      :+:    :+:   */
+/*   ms_envcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 03:13:23 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 00:45:03 by teando           ###   ########.fr       */
+/*   Created: 2025/04/13 22:21:37 by teando            #+#    #+#             */
+/*   Updated: 2025/04/14 00:32:25 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
 
-char *ms_strndup(const char *s, size_t n, t_shell *shell)
+int	ms_envcmp(void *data, void *key)
 {
-    char *str;
+	char	ref[PATH_MAX];
 
-    str = ft_strndup(s, n);
-    if (!str)
-        shell_exit(shell, E_ALLOCATE);
-    return (str);
-}
-
-char *ms_strdup(const char *s, t_shell *shell)
-{
-    return (ms_strndup(s, ft_strlen(s), shell));
+	ft_strlcpy(ref, (char *)key, PATH_MAX);
+    ft_strlcat(ref, "=", PATH_MAX);
+	return (ft_strncmp((char *)data, ref, ft_strlen(ref)));
 }

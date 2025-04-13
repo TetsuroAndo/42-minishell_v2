@@ -1,28 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_strdup.c                                        :+:      :+:    :+:   */
+/*   ms_getenv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 03:13:23 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 00:45:03 by teando           ###   ########.fr       */
+/*   Created: 2025/04/11 21:24:42 by teando            #+#    #+#             */
+/*   Updated: 2025/04/13 23:18:19 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
 
-char *ms_strndup(const char *s, size_t n, t_shell *shell)
+char *ms_getenv(const char *key, t_shell *shell)
 {
-    char *str;
-
-    str = ft_strndup(s, n);
-    if (!str)
-        shell_exit(shell, E_ALLOCATE);
-    return (str);
-}
-
-char *ms_strdup(const char *s, t_shell *shell)
-{
-    return (ms_strndup(s, ft_strlen(s), shell));
+    t_list *lst;
+    
+    if(ft_strlen(key) == 1 && shell->env_spc[(unsigned char)*key])
+        return (shell->env_spc[(unsigned char)*key]);
+    lst = ft_list_find(shell->env_map, (void *)key, ms_envcmp);
+    if (!lst)
+        return (ft_strdup(""));
+    return (ms_substr_r(lst->data, '=', shell));
 }

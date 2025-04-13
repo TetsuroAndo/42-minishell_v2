@@ -1,28 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_strdup.c                                        :+:      :+:    :+:   */
+/*   ms_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 03:13:23 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 00:45:03 by teando           ###   ########.fr       */
+/*   Created: 2025/04/13 22:18:48 by teando            #+#    #+#             */
+/*   Updated: 2025/04/14 01:08:19 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
 
-char *ms_strndup(const char *s, size_t n, t_shell *shell)
+t_status	ms_unset(const char *key, t_shell *shell)
 {
-    char *str;
-
-    str = ft_strndup(s, n);
-    if (!str)
-        shell_exit(shell, E_ALLOCATE);
-    return (str);
-}
-
-char *ms_strdup(const char *s, t_shell *shell)
-{
-    return (ms_strndup(s, ft_strlen(s), shell));
+    ft_list_remove_if(&shell->env_map, (void *)key, ms_envcmp, free);
+    return (E_NONE);
 }

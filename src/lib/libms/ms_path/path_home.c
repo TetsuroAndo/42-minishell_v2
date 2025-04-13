@@ -1,28 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_strdup.c                                        :+:      :+:    :+:   */
+/*   path_home.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 03:13:23 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 00:45:03 by teando           ###   ########.fr       */
+/*   Created: 2025/04/13 22:18:44 by teando            #+#    #+#             */
+/*   Updated: 2025/04/14 01:37:14 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
 
-char *ms_strndup(const char *s, size_t n, t_shell *shell)
+int	path_home(char path[], const char *src, int mode, t_shell *shell)
 {
-    char *str;
+    char *home;
 
-    str = ft_strndup(s, n);
-    if (!str)
-        shell_exit(shell, E_ALLOCATE);
-    return (str);
+    home = ms_getenv("HOME", shell);
+    ft_strlcpy(path, home, PATH_MAX);
+    ft_strlcat(path, src + 1, PATH_MAX);
+    free(home);
+    return (access(path, mode));
 }
 
-char *ms_strdup(const char *s, t_shell *shell)
-{
-    return (ms_strndup(s, ft_strlen(s), shell));
-}

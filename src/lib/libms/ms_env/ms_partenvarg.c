@@ -1,28 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_strdup.c                                        :+:      :+:    :+:   */
+/*   ms_partenvarg.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 03:13:23 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 00:45:03 by teando           ###   ########.fr       */
+/*   Created: 2025/04/14 00:28:32 by teando            #+#    #+#             */
+/*   Updated: 2025/04/14 01:25:18 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
+#include <ft_string.h>
 
-char *ms_strndup(const char *s, size_t n, t_shell *shell)
+t_status	ms_partenvarg(char *key, const char *arg)
 {
-    char *str;
+    size_t keylen;
 
-    str = ft_strndup(s, n);
-    if (!str)
-        shell_exit(shell, E_ALLOCATE);
-    return (str);
-}
-
-char *ms_strdup(const char *s, t_shell *shell)
-{
-    return (ms_strndup(s, ft_strlen(s), shell));
+	keylen = ft_strcspn(arg, "=");
+    if (keylen >= PATH_MAX)
+        return (E_ENV_KEY);
+	ft_strlcpy(key, arg, keylen + 1);
+    if (!ms_isactivekey(key))
+        return (E_ENV_KEY);
+    return (E_NONE);
 }
