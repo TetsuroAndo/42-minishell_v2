@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
@@ -6,14 +6,14 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 19:02:10 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/14 20:53:23 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "mod_syn.h"
 
-t_ast	*ast_list(t_list **tok_lst, t_shell *shell);
-void	free_ast(t_ast **ast);
+t_ast					*ast_list(t_list **tok_lst, t_shell *shell);
+void					free_ast(t_ast **ast);
 
 t_args	*args_new(t_shell *shell)
 {
@@ -43,7 +43,7 @@ t_ast	*ast_new(t_ntype type, t_ast *left, t_ast *right, t_shell *shell)
 
 static t_lexical_token	*curr_token(t_list *token_list)
 {
-	if (!token_list)
+	if (!token_list || !token_list->data)
 		return (NULL);
 	return ((t_lexical_token *)token_list->data);
 }
@@ -53,8 +53,9 @@ void	*ms_listshift(t_list **list)
 {
 	t_list	*tmp;
 
-	if (!list || !*list)
+	if (!list || !*list || !(*list)->next)
 		return (NULL);
+	printf("[DEBUG] list shift: %s\n", curr_token(*list)->value);
 	tmp = *list;
 	*list = (*list)->next;
 	return (tmp);
@@ -137,8 +138,8 @@ t_ast	*ast_simple_cmd(t_list **tok_lst, t_shell *shell)
 	t_ast			*node;
 	t_lexical_token	*tok;
 
-	// node = ast_new(NT_SIMPLE_CMD, NULL, NULL, shell);
-	// node->args = args_new(shell);
+	node = ast_new(NT_CMD, NULL, NULL, shell);
+	node->args = args_new(shell);
 	tok = curr_token(*tok_lst);
 	while (tok && tok->type == TT_WORD)
 	{
@@ -146,6 +147,7 @@ t_ast	*ast_simple_cmd(t_list **tok_lst, t_shell *shell)
 				shell));
 		tok = curr_token(*tok_lst);
 	}
+	debug_print_ast(node);
 	return (node);
 }
 
@@ -250,7 +252,7 @@ t_ast	*ast_and_or(t_list **tok_lst, t_shell *shell)
 		ms_listshift(tok_lst);
 		right = ast_pipeline(tok_lst, shell);
 		if (!right)
-			return (free_ast(&left), NULL);
+			return (NULL); // return (free_ast(&left), NULL);
 		left = ast_new(op_type, left, right, shell);
 		tok = curr_token(*tok_lst);
 	}
@@ -276,7 +278,7 @@ t_ast	*ast_list(t_list **tok_lst, t_shell *shell)
 		ms_listshift(tok_lst);
 		right = ast_and_or(tok_lst, shell);
 		if (!right)
-			return (free_ast(&node), NULL);
+			return (NULL); // return (free_ast(&node), NULL);
 		node = ast_new(NT_EOF, node, right, shell);
 		tok = curr_token(*tok_lst);
 	}
@@ -289,22 +291,24 @@ t_ast	*ast_list(t_list **tok_lst, t_shell *shell)
 */
 t_status	mod_syn(t_shell *shell)
 {
-	t_ast	*ast;
-	t_list	*tok_head;
+	t_ast			*ast;
+	t_list			*tok_head;
+	t_lexical_token	*tok;
 
 	tok_head = shell->token_list;
 	shell->ast = NULL;
 	ast = ast_list(&tok_head, shell);
 	if (!ast)
 		return (E_SYNTAX);
-	if (tok_head != NULL)
+	tok = curr_token(tok_head);
+	if (tok->type != TT_EOF)
 	{
 		ft_dprintf(STDERR_FILENO,
 			"minishell: syntax error near unexpected token\n");
 		return (free_ast(&ast), E_SYNTAX);
 	}
 	shell->ast = ast;
-	// if (shell->debug & DEBUG_SYN)
-	// 	debug_print_ast(ast);
+	if (shell->debug & DEBUG_SYN)
+		debug_print_ast(ast);
 	return (E_NONE);
 }

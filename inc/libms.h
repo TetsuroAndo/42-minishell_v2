@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   libms.h                                            :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 01:53:35 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/14 20:44:06 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #ifndef LIBMS_H
 # define LIBMS_H
@@ -30,7 +30,8 @@ int						ms_envcmp(void *data, void *key);
 char					*ms_getenv(const char *key, t_shell *shell);
 t_status				ms_partenvarg(char *key, const char *arg);
 t_status				ms_setenv(const char *arg, t_shell *shell);
-t_status				ms_setenv_item(const char *key, const char *value, t_shell *shell);
+t_status				ms_setenv_item(const char *key, const char *value,
+							t_shell *shell);
 t_status				ms_unset(const char *key, t_shell *shell);
 
 /*
@@ -56,8 +57,10 @@ int						xdup2(int oldfd, int newfd, t_shell *shell);
 ** ms_path - パス解決関連の関数
 ** ============================================================================
 */
-int						path_home(char path[], const char *src, int mode, t_shell *shell);
-int						path_relative(char path[], const char *src, int mode, t_shell *shell);
+int						path_home(char path[], const char *src, int mode,
+							t_shell *shell);
+int						path_relative(char path[], const char *src, int mode,
+							t_shell *shell);
 char					*path_resolve(const char *cmd, t_shell *shell);
 
 /*
@@ -79,10 +82,12 @@ char					*ms_strndup(const char *s, size_t n, t_shell *shell);
 char					*ms_strdup(const char *s, t_shell *shell);
 char					*ms_substr(char const *s, unsigned int start,
 							size_t len, t_shell *shell);
-char					*ms_substr_r(char const *s, char delimiter, t_shell *shell);
-char					*ms_substr_l(char const *s, char delimiter, t_shell *shell);
+char					*ms_substr_r(char const *s, char delimiter,
+							t_shell *shell);
+char					*ms_substr_l(char const *s, char delimiter,
+							t_shell *shell);
 char					*xitoa(int n, t_shell *shell);
-t_list					*xlstnew(char *data, t_shell *shell);
+t_list					*xlstnew(void *data, t_shell *shell);
 t_list					*xlst_from_strs(char **strs, t_shell *shell);
 char					**xlst_to_strs(t_list *lst, t_shell *shell);
 char					**xsplit(char *str, char sep, t_shell *shell);
