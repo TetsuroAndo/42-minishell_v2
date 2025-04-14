@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 17:16:15 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/14 18:09:21 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "mod_syn.h"
 
@@ -80,11 +80,11 @@ static const char	*redir_token_to_symbol(t_token_type token_type)
 リダイレクト（一個）
 redir
 */
-void	ast_redir(t_list *tok_lst, t_ast *node, t_shell *shell)
+void	ast_redir(t_list **tok_lst, t_ast *node, t_shell *shell)
 {
 	t_lexical_token	*tok;
 
-	tok = curr_token(tok_lst);
+	tok = curr_token(*tok_lst);
 	if ((tok->value == NULL))
 	{
 		ft_dprintf(STDERR_FILENO,
@@ -104,11 +104,11 @@ void	ast_redir(t_list *tok_lst, t_ast *node, t_shell *shell)
 複数のリダイレクトをしまう
 redir redirections*
 */
-t_ast	*ast_redirections(t_list *tok_lst, t_ast *node, t_shell *shell)
+t_ast	*ast_redirections(t_list **tok_lst, t_ast *node, t_shell *shell)
 {
 	t_lexical_token	*tok;
 
-	tok = curr_token(tok_lst);
+	tok = curr_token(*tok_lst);
 	if ((!shell || !tok_lst) || !shell->token_list->data)
 		return (NULL);
 	if (tok->type != NT_REDIRECT)
@@ -119,7 +119,7 @@ t_ast	*ast_redirections(t_list *tok_lst, t_ast *node, t_shell *shell)
 		node->args = args_new(shell);
 	}
 	ast_redir(node, tok_lst, shell);
-	tok = curr_token(tok_lst);
+	tok = curr_token(*tok_lst);
 	if ((tok->type & 0xFF00) == TM_REDIR)
 		ast_redirections(tok_lst, node, shell);
 	return (node);
@@ -130,17 +130,17 @@ t_ast	*ast_redirections(t_list *tok_lst, t_ast *node, t_shell *shell)
 **  simple_cmd ::= WORD (WORD)*
 **  cmd ::= simple_cmd redirections?
 */
-t_ast	*ast_simple_cmd(t_list *tok_lst, t_shell *shell)
+t_ast	*ast_simple_cmd(t_list **tok_lst, t_shell *shell)
 {
 	t_ast			*node;
 	t_lexical_token	*tok;
 
-	tok = curr_token(tok_lst);
+	tok = curr_token(*tok_lst);
 	while (tok->type == TT_WORD)
 	{
 		ft_lstadd_back(&node->args->argv, xlstnew(ms_listshift(&tok_lst),
 				shell));
-		tok = curr_token(tok_lst);
+		tok = curr_token(*tok_lst);
 	}
 	return (node);
 }
@@ -149,7 +149,7 @@ t_ast	*ast_simple_cmd(t_list *tok_lst, t_shell *shell)
 コマンドとリダイレクト
 simple_cmd redirections?
 */
-t_ast	*ast_cmd(t_list *tok_lst, t_shell *shell)
+t_ast	*ast_cmd(t_list **tok_lst, t_shell *shell)
 {
 	t_ast	*node;
 
@@ -162,28 +162,29 @@ t_ast	*ast_cmd(t_list *tok_lst, t_shell *shell)
 ** ========== Primary (cmd or '(' list ')') ==========
 **  primary ::= cmd | '(' list ')'
 */
-t_ast	*ast_primary(t_list *tok_lst, t_shell *shell)
+t_ast	*ast_primary(t_list **tok_lst, t_shell *shell)
 {
 	t_ast			*node;
 	t_lexical_token	*tok;
 
-	if (!shell || !shell->token_list || !tok_lst->data)
+	if (!shell || !shell->token_list || !*tok_lst)
 		return (NULL);
-	if ((tok->type != TT_WORD) || (tok->type != TT_LPAREN))
+	tok = curr_token(*tok_lst);
+	if (tok->type != TT_WORD && tok->type != TT_LPAREN)
 		return (NULL);
 	if (tok->type == TT_WORD)
 		return (ast_cmd(tok_lst, shell));
 	if (tok->type == TT_LPAREN)
 	{
 		node = ast_list(tok_lst, shell);
-		tok = curr_token(tok_lst);
+		tok = curr_token(*tok_lst);
 		if (tok->type != TT_RPAREN)
 		{
 			ft_dprintf(STDERR_FILENO,
 				"minishell: syntax error near unexpected token `('\n");
 			shell_exit(shell, E_SYNTAX);
 		}
-		tok_lst = tok_lst->next;
+		ms_listshift(&tok_lst);
 		node->ntype = NT_SUBSHELL;
 	}
 	return (node);
@@ -194,14 +195,14 @@ t_ast	*ast_primary(t_list *tok_lst, t_shell *shell)
 ** ========== Pipeline ==========
 **  pipeline ::= primary ( '|' primary )*
 */
-t_ast	*ast_pipeline(t_list *tok_lst, t_shell *shell)
+t_ast	*ast_pipeline(t_list **tok_lst, t_shell *shell)
 {
 	t_ast			*node;
 	t_lexical_token	*tok;
 
 	node = ast_primary(tok_lst, shell);
-	tok = curr_token(tok_lst);
-	while (curr_token == TT_PIPE)
+	tok = curr_token(*tok_lst);
+	while (curr_token(*tok_lst) == TT_PIPE)
 	{
 		if (node == NULL)
 		{
@@ -209,7 +210,7 @@ t_ast	*ast_pipeline(t_list *tok_lst, t_shell *shell)
 				"minishell: syntax error near unexpected token `|'\n");
 			shell_exit(shell, E_SYNTAX);
 		}
-		tok_lst = tok_lst->next;
+		ms_listshift(&tok_lst);
 		node = ast_new(NT_PIPE, node, ast_primary(tok_lst, shell), shell);
 		if (node->right == NULL)
 		{
@@ -225,7 +226,7 @@ t_ast	*ast_pipeline(t_list *tok_lst, t_shell *shell)
 ** ========== And/Or ==========
 **  and_or ::= pipeline ( ( '&&' | '||' ) pipeline )*
 */
-t_ast	*ast_and_or(t_list *tok_lst, t_shell *shell)
+t_ast	*ast_and_or(t_list **tok_lst, t_shell *shell)
 {
 	t_ast			*op_type;
 	t_lexical_token	*tok;
@@ -235,7 +236,7 @@ t_ast	*ast_and_or(t_list *tok_lst, t_shell *shell)
 	left = ast_pipeline(tok_lst, shell);
 	if (!left)
 		return (NULL);
-	tok = curr_token(tok_lst);
+	tok = curr_token(*tok_lst);
 	while (tok && (tok->type & TM_OP))
 	{
 		if (tok->type == TT_AND_AND)
@@ -247,7 +248,7 @@ t_ast	*ast_and_or(t_list *tok_lst, t_shell *shell)
 		if (!right)
 			return (free_ast(&left), NULL);
 		left = ast_new(op_type, left, right, shell);
-		tok = curr_token(tok_lst);
+		tok = curr_token(*tok_lst);
 	}
 	return (left);
 }
