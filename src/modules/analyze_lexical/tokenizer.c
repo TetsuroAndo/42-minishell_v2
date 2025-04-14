@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:12 by teando            #+#    #+#             */
-/*   Updated: 2025/04/11 16:39:39 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/14 14:42:27 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ t_status	mod_lex(t_shell *shell)
 			shell->status = E_SYNTAX;
 		return (shell->status);
 	}
-	if (shell->debug)
+	if (shell->debug & DEBUG_LEX)
 		debug_print_token_list(shell->token_list);
 	return (shell->status);
 }

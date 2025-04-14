@@ -6,7 +6,7 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/11 01:13:26 by teando           ###   ########.fr        #
+#    Updated: 2025/04/14 14:39:04 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,10 @@ NAME		:= minishell
 CC			:= cc
 CFLAGS		:= 
 RM			:= rm -rf
+
+# Define
+DEFINE		:= -D
+DEF_DEBUG	:= $(DEFINE)DEBUG_ALL
 
 # ディレクトリ設定
 ROOT_DIR	:= .
@@ -54,7 +58,7 @@ OBJ		:= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(LFLAGS) $(IDFLAGS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(LFLAGS) $(IDFLAGS) -o $(NAME) $(DEF_DEBUG)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(LIBFT_DIR)
 	@mkdir -p $(dir $@)

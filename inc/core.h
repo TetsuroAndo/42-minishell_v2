@@ -4,6 +4,7 @@
 # include "libft.h"
 # include "libms.h"
 # include "ms_ast.h"
+# include "ms_debug.h"
 # include "ms_readline.h"
 # include "ms_signal.h"
 # include "ms_token.h"
@@ -16,7 +17,7 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-# define DEFAULT_DEBUG 1
+# define DEFAULT_DEBUG DEBUG_ALL
 
 extern volatile sig_atomic_t	g_signal_status;
 

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:58:14 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 16:59:37 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/14 06:48:44 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
  * @param shell シェル情報構造体
  * @return t_status 常にE_NONE（成功）を返す
  */
-t_status	__pwd(t_shell *shell)
+t_status	pwd(t_shell *shell)
 {
 	printf("%s\n", shell->cwd);
 	return (E_NONE);
