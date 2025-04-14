@@ -15,7 +15,6 @@
 int ms_isactivekey(const char *key)
 {
     size_t i;
-    t_list *lst;
 
     if (!key || !*key)
         return (0);
