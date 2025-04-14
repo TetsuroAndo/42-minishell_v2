@@ -6,11 +6,14 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 18:09:21 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/14 19:02:10 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_syn.h"
+
+t_ast	*ast_list(t_list **tok_lst, t_shell *shell);
+void	free_ast(t_ast **ast);
 
 t_args	*args_new(t_shell *shell)
 {
@@ -85,7 +88,7 @@ void	ast_redir(t_list **tok_lst, t_ast *node, t_shell *shell)
 	t_lexical_token	*tok;
 
 	tok = curr_token(*tok_lst);
-	if ((tok->value == NULL))
+	if (tok->value == NULL)
 	{
 		ft_dprintf(STDERR_FILENO,
 			"minishell: syntax error near unexpected token `%s'\n",
@@ -93,11 +96,10 @@ void	ast_redir(t_list **tok_lst, t_ast *node, t_shell *shell)
 		shell_exit(shell, E_SYNTAX);
 	}
 	if (!node->args->redr)
-		node->args->redr = xlstnew(ms_listshift(&tok_lst), shell);
+		node->args->redr = xlstnew(ms_listshift(tok_lst), shell);
 	else
-		ft_lstadd_back(&node->args->redr, xlstnew(ms_listshift(&tok_lst),
+		ft_lstadd_back(&node->args->redr, xlstnew(ms_listshift(tok_lst),
 				shell));
-	return (node);
 }
 
 /*
@@ -111,14 +113,14 @@ t_ast	*ast_redirections(t_list **tok_lst, t_ast *node, t_shell *shell)
 	tok = curr_token(*tok_lst);
 	if ((!shell || !tok_lst) || !shell->token_list->data)
 		return (NULL);
-	if (tok->type != NT_REDIRECT)
+	if ((tok->type & 0xFF00) != TM_REDIR)
 		return (NULL);
 	if (!node)
 	{
 		node = ast_new(NT_REDIRECT, NULL, NULL, shell);
 		node->args = args_new(shell);
 	}
-	ast_redir(node, tok_lst, shell);
+	ast_redir(tok_lst, node, shell);
 	tok = curr_token(*tok_lst);
 	if ((tok->type & 0xFF00) == TM_REDIR)
 		ast_redirections(tok_lst, node, shell);
@@ -135,10 +137,12 @@ t_ast	*ast_simple_cmd(t_list **tok_lst, t_shell *shell)
 	t_ast			*node;
 	t_lexical_token	*tok;
 
+	// node = ast_new(NT_SIMPLE_CMD, NULL, NULL, shell);
+	// node->args = args_new(shell);
 	tok = curr_token(*tok_lst);
-	while (tok->type == TT_WORD)
+	while (tok && tok->type == TT_WORD)
 	{
-		ft_lstadd_back(&node->args->argv, xlstnew(ms_listshift(&tok_lst),
+		ft_lstadd_back(&node->args->argv, xlstnew(ms_listshift(tok_lst),
 				shell));
 		tok = curr_token(*tok_lst);
 	}
@@ -184,7 +188,7 @@ t_ast	*ast_primary(t_list **tok_lst, t_shell *shell)
 				"minishell: syntax error near unexpected token `('\n");
 			shell_exit(shell, E_SYNTAX);
 		}
-		ms_listshift(&tok_lst);
+		ms_listshift(tok_lst);
 		node->ntype = NT_SUBSHELL;
 	}
 	return (node);
@@ -202,7 +206,7 @@ t_ast	*ast_pipeline(t_list **tok_lst, t_shell *shell)
 
 	node = ast_primary(tok_lst, shell);
 	tok = curr_token(*tok_lst);
-	while (curr_token(*tok_lst) == TT_PIPE)
+	while (curr_token(*tok_lst) && curr_token(*tok_lst)->type == TT_PIPE)
 	{
 		if (node == NULL)
 		{
@@ -210,7 +214,7 @@ t_ast	*ast_pipeline(t_list **tok_lst, t_shell *shell)
 				"minishell: syntax error near unexpected token `|'\n");
 			shell_exit(shell, E_SYNTAX);
 		}
-		ms_listshift(&tok_lst);
+		ms_listshift(tok_lst);
 		node = ast_new(NT_PIPE, node, ast_primary(tok_lst, shell), shell);
 		if (node->right == NULL)
 		{
@@ -228,7 +232,7 @@ t_ast	*ast_pipeline(t_list **tok_lst, t_shell *shell)
 */
 t_ast	*ast_and_or(t_list **tok_lst, t_shell *shell)
 {
-	t_ast			*op_type;
+	t_ntype			op_type;
 	t_lexical_token	*tok;
 	t_ast			*left;
 	t_ast			*right;
@@ -243,7 +247,7 @@ t_ast	*ast_and_or(t_list **tok_lst, t_shell *shell)
 			op_type = NT_AND;
 		else if (tok->type == TT_OR_OR)
 			op_type = NT_OR;
-		ms_listshift(&tok_lst);
+		ms_listshift(tok_lst);
 		right = ast_pipeline(tok_lst, shell);
 		if (!right)
 			return (free_ast(&left), NULL);
@@ -269,7 +273,7 @@ t_ast	*ast_list(t_list **tok_lst, t_shell *shell)
 	tok = curr_token(*tok_lst);
 	while (tok && tok->type == TT_SEMICOLON)
 	{
-		ms_listshift(&tok_lst);
+		ms_listshift(tok_lst);
 		right = ast_and_or(tok_lst, shell);
 		if (!right)
 			return (free_ast(&node), NULL);
@@ -300,5 +304,7 @@ t_status	mod_syn(t_shell *shell)
 		return (free_ast(&ast), E_SYNTAX);
 	}
 	shell->ast = ast;
+	// if (shell->debug & DEBUG_SYN)
+	// 	debug_print_ast(ast);
 	return (E_NONE);
 }

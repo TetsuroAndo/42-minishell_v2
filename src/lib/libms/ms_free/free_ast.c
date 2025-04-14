@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:56:24 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/14 01:54:15 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/14 18:48:27 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 static void	clear_list_item(void *data)
 {
 	if (data)
-		xfree(&data);
+		free(data);
 }
 
 /**

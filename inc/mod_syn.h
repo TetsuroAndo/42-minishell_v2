@@ -5,4 +5,8 @@
 
 typedef struct s_ast	t_ast;
 
+t_status	mod_syn(t_shell *shell);
+
+void	debug_print_ast(t_ast *ast);
+
 #endif

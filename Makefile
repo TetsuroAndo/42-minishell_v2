@@ -6,7 +6,7 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/14 14:39:04 by teando           ###   ########.fr        #
+#    Updated: 2025/04/14 18:56:49 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,10 +14,7 @@ NAME		:= minishell
 CC			:= cc
 CFLAGS		:= 
 RM			:= rm -rf
-
-# Define
-DEFINE		:= -D
-DEF_DEBUG	:= $(DEFINE)DEBUG_ALL
+DEFINE		:= -D DEBUG_ALL
 
 # ディレクトリ設定
 ROOT_DIR	:= .
@@ -52,13 +49,14 @@ SRC	:= \
 SRC		+= $(shell find $(SRC_DIR)/core -name '*.c')
 SRC		+= $(shell find $(SRC_DIR)/lib/libms -name '*.c')
 SRC		+= $(shell find $(SRC_DIR)/modules/analyze_lexical -name '*.c')
+SRC		+= $(shell find $(SRC_DIR)/modules/analyze_syntax -name '*.c')
 OBJ		:= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 
 # ビルドルール
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(LFLAGS) $(IDFLAGS) -o $(NAME) $(DEF_DEBUG)
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(LFLAGS) $(IDFLAGS) $(DEFINE) -o $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(LIBFT_DIR)
 	@mkdir -p $(dir $@)
@@ -66,6 +64,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(LIBFT_DIR)
 
 $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
+
+debug: CFLAGS += -g -fsanitize=address -O1 -fno-omit-frame-pointer
+debug: re
 
 clean:
 	$(RM) $(OBJ_DIR)

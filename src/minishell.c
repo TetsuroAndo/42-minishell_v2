@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:12:00 by teando            #+#    #+#             */
-/*   Updated: 2025/04/11 16:47:23 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/14 18:43:37 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ static void	shell_loop(t_shell *shell, const char *prompt)
 			continue ;
 		}
 		status = mod_lex(shell);
+		if (status != E_NONE)
+			shell_exit(shell, status);
+		status = mod_syn(shell);
 		if (status != E_NONE)
 			shell_exit(shell, status);
 	}
