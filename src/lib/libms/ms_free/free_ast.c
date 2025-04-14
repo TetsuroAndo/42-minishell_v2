@@ -3,26 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   free_ast.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:56:24 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/14 18:48:27 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/14 23:40:43 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
 #include "ms_ast.h"
-
-/**
- * @brief リスト内のデータを解放する関数
- *
- * @param data 解放するデータポインタ
- */
-static void	clear_list_item(void *data)
-{
-	if (data)
-		free(data);
-}
 
 /**
  * @brief t_args構造体の内容を解放する関数
@@ -46,7 +35,7 @@ static void	clear_args(t_args *args)
 		xfree((void **)&args->cargv);
 	}
 	if (args->argv)
-		ft_lstclear(&args->argv, clear_list_item);
+		ft_lstclear(&args->argv, free_token);
 	if (args->redr)
 		ft_lstclear(&args->redr, free_token);
 	if (args->fds[0] > 2)

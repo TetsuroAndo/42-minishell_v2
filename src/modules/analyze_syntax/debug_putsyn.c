@@ -61,7 +61,7 @@ static void	print_args(t_args *args, int indent)
 		i = 0;
 		while (arg_list)
 		{
-			printf("%*s  [%d]: %s\n", indent, "", i++, (char *)arg_list->data);
+			printf("%*s  [%d]: %s\n", indent, "", i++, ((t_lexical_token *)arg_list->data)->value);
 			arg_list = arg_list->next;
 		}
 	}

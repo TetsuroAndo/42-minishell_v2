@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 22:38:25 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/15 02:06:43 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,11 @@ t_ast	*ast_new(t_ntype type, t_ast *left, t_ast *right, t_shell *shell)
 	return (node);
 }
 
-static t_lexical_token	*curr_token(t_list *token_list)
+static t_lexical_token	*curr_token(t_list **token_list)
 {
-	if (!token_list || !token_list->data)
+	if (!token_list || !(*token_list) || !(*token_list)->data)
 		return (NULL);
-	return ((t_lexical_token *)token_list->data);
+	return ((t_lexical_token *)(*token_list)->data);
 }
 
 // あとでこれはlibft行き
@@ -53,12 +53,32 @@ void	*ms_listshift(t_list **list)
 {
 	t_list	*tmp;
 
-	if (!list || !*list || !(*list)->next)
+	if (!list || !*list)
 		return (NULL);
-	printf("[DEBUG] list shift: %s\n", curr_token(*list)->value);
+	// printf("[DEBUG] list shift: %s,%s\n", curr_token(*list)->value);
 	tmp = *list;
 	*list = (*list)->next;
 	return (tmp);
+}
+
+static t_lexical_token	*alloc_l_tok(t_list **tok_lst, t_shell *shell)
+{
+	t_lexical_token	*tok;
+	t_lexical_token	*return_value;
+
+	tok = curr_token(tok_lst);
+	if (!tok)
+		return (NULL);
+	return_value = (t_lexical_token *)xmalloc(sizeof(t_lexical_token), shell);
+	ft_memcpy(return_value, tok, sizeof(t_lexical_token));
+	if (tok->value)
+	{
+		return_value->value = ft_strdup(tok->value);
+		if (!return_value->value)
+			return (NULL);
+	}
+	ms_listshift(tok_lst);
+	return (return_value);
 }
 
 /*
@@ -88,18 +108,20 @@ void	ast_redir(t_list **tok_lst, t_ast *node, t_shell *shell)
 {
 	t_lexical_token	*tok;
 
-	tok = curr_token(*tok_lst);
+	tok = curr_token(tok_lst);
+	if (!tok)
+		return ;
 	if (tok->value == NULL)
 	{
 		ft_dprintf(STDERR_FILENO,
 			"minishell: syntax error near unexpected token `%s'\n",
 			redir_token_to_symbol(tok->type));
-		shell_exit(shell, E_SYNTAX);
+		return ;
 	}
 	if (!node->args->redr)
-		node->args->redr = xlstnew(ms_listshift(tok_lst), shell);
+		node->args->redr = xlstnew(alloc_l_tok(tok_lst, shell), shell);
 	else
-		ft_lstadd_back(&node->args->redr, xlstnew(ms_listshift(tok_lst),
+		ft_lstadd_back(&node->args->redr, xlstnew(alloc_l_tok(tok_lst, shell),
 				shell));
 }
 
@@ -111,8 +133,10 @@ t_ast	*ast_redirections(t_list **tok_lst, t_ast *node, t_shell *shell)
 {
 	t_lexical_token	*tok;
 
-	tok = curr_token(*tok_lst);
-	if ((!shell || !tok_lst) || !shell->token_list->data)
+	if ((!shell || !tok_lst) || !*tok_lst)
+		return (NULL);
+	tok = curr_token(tok_lst);
+	if (!tok)
 		return (NULL);
 	if ((tok->type & 0xFF00) != TM_REDIR)
 		return (NULL);
@@ -122,9 +146,10 @@ t_ast	*ast_redirections(t_list **tok_lst, t_ast *node, t_shell *shell)
 		node->args = args_new(shell);
 	}
 	ast_redir(tok_lst, node, shell);
-	tok = curr_token(*tok_lst);
-	if ((tok->type & 0xFF00) == TM_REDIR)
-		ast_redirections(tok_lst, node, shell);
+	tok = curr_token(tok_lst);
+	if (tok && (tok->type & 0xFF00) == TM_REDIR)
+		return (ast_redirections(tok_lst, node, shell));
+	// debug_print_ast(node);
 	return (node);
 }
 
@@ -140,14 +165,13 @@ t_ast	*ast_simple_cmd(t_list **tok_lst, t_shell *shell)
 
 	node = ast_new(NT_CMD, NULL, NULL, shell);
 	node->args = args_new(shell);
-	tok = curr_token(*tok_lst);
+	tok = curr_token(tok_lst);
 	while (tok && tok->type == TT_WORD)
 	{
-		ft_lstadd_back(&node->args->argv, xlstnew(ms_listshift(tok_lst),
+		ft_lstadd_back(&node->args->argv, xlstnew(alloc_l_tok(tok_lst, shell),
 				shell));
-		tok = curr_token(*tok_lst);
+		tok = curr_token(tok_lst);
 	}
-	debug_print_ast(node);
 	return (node);
 }
 
@@ -158,9 +182,20 @@ simple_cmd redirections?
 t_ast	*ast_cmd(t_list **tok_lst, t_shell *shell)
 {
 	t_ast	*node;
+	t_ast	*cmd_node;
+	t_ast	*redir_node;
 
-	node = ast_new(NT_CMD, ast_simple_cmd(tok_lst, shell),
-			ast_redirections(tok_lst, NULL, shell), shell);
+	cmd_node = ast_simple_cmd(tok_lst, shell);
+	redir_node = ast_redirections(tok_lst, NULL, shell);
+	if (redir_node)
+	{
+		node = ast_new(NT_CMD, cmd_node, redir_node, shell);
+	}
+	else
+	{
+		node = cmd_node;
+	}
+	// debug_print_ast(node);
 	return (node);
 }
 
@@ -173,22 +208,25 @@ t_ast	*ast_primary(t_list **tok_lst, t_shell *shell)
 	t_ast			*node;
 	t_lexical_token	*tok;
 
-	if (!shell || !shell->token_list || !*tok_lst)
+	if (!shell || !*tok_lst)
 		return (NULL);
-	tok = curr_token(*tok_lst);
+	tok = curr_token(tok_lst);
+	if (!tok)
+		return (NULL);
 	if (tok->type != TT_WORD && tok->type != TT_LPAREN)
 		return (NULL);
 	if (tok->type == TT_WORD)
 		return (ast_cmd(tok_lst, shell));
 	if (tok->type == TT_LPAREN)
 	{
+		ms_listshift(tok_lst);
 		node = ast_list(tok_lst, shell);
-		tok = curr_token(*tok_lst);
+		tok = curr_token(tok_lst);
 		if (tok->type != TT_RPAREN)
 		{
 			ft_dprintf(STDERR_FILENO,
-				"minishell: syntax error near unexpected token `('\n");
-			shell_exit(shell, E_SYNTAX);
+				"minishell: syntax error near unexpected token`('\n");
+			return (NULL);
 		}
 		ms_listshift(tok_lst);
 		node->ntype = NT_SUBSHELL;
@@ -207,14 +245,14 @@ t_ast	*ast_pipeline(t_list **tok_lst, t_shell *shell)
 	t_lexical_token	*tok;
 
 	node = ast_primary(tok_lst, shell);
-	tok = curr_token(*tok_lst);
-	while (curr_token(*tok_lst) && curr_token(*tok_lst)->type == TT_PIPE)
+	tok = curr_token(tok_lst);
+	while (tok && tok->type == TT_PIPE)
 	{
 		if (node == NULL)
 		{
 			ft_dprintf(STDERR_FILENO,
 				"minishell: syntax error near unexpected token `|'\n");
-			shell_exit(shell, E_SYNTAX);
+			return (NULL);
 		}
 		ms_listshift(tok_lst);
 		node = ast_new(NT_PIPE, node, ast_primary(tok_lst, shell), shell);
@@ -222,8 +260,9 @@ t_ast	*ast_pipeline(t_list **tok_lst, t_shell *shell)
 		{
 			ft_dprintf(STDERR_FILENO,
 				"minishell: syntax error near unexpected token `|'\n");
-			shell_exit(shell, E_SYNTAX);
+			return (NULL);
 		}
+		tok = curr_token(tok_lst);
 	}
 	return (node);
 }
@@ -232,6 +271,7 @@ t_ast	*ast_pipeline(t_list **tok_lst, t_shell *shell)
 ** ========== And/Or ==========
 **  and_or ::= pipeline ( ( '&&' | '||' ) pipeline )*
 */
+// filepath:
 t_ast	*ast_and_or(t_list **tok_lst, t_shell *shell)
 {
 	t_ntype			op_type;
@@ -242,19 +282,23 @@ t_ast	*ast_and_or(t_list **tok_lst, t_shell *shell)
 	left = ast_pipeline(tok_lst, shell);
 	if (!left)
 		return (NULL);
-	tok = curr_token(*tok_lst);
-	while (tok && (tok->type & TM_OP))
+	if (shell->debug & DEBUG_SYN)
+	tok = curr_token(tok_lst);
+	while (tok && (tok->type == TT_AND_AND || tok->type == TT_OR_OR))
 	{
+		if (shell->debug & DEBUG_SYN)
 		if (tok->type == TT_AND_AND)
 			op_type = NT_AND;
 		else if (tok->type == TT_OR_OR)
 			op_type = NT_OR;
 		ms_listshift(tok_lst);
+		if (shell->debug & DEBUG_SYN)
 		right = ast_pipeline(tok_lst, shell);
 		if (!right)
 			return (NULL); // return (free_ast(&left), NULL);
+		if (shell->debug & DEBUG_SYN)
 		left = ast_new(op_type, left, right, shell);
-		tok = curr_token(*tok_lst);
+		tok = curr_token(tok_lst);
 	}
 	return (left);
 }
@@ -271,8 +315,8 @@ t_ast	*ast_list(t_list **tok_lst, t_shell *shell)
 
 	node = ast_and_or(tok_lst, shell);
 	if (!node)
-		return (ast_and_or(tok_lst, shell));
-	tok = curr_token(*tok_lst);
+		return (NULL);
+	tok = curr_token(tok_lst);
 	while (tok && tok->type == TT_SEMICOLON)
 	{
 		ms_listshift(tok_lst);
@@ -280,7 +324,7 @@ t_ast	*ast_list(t_list **tok_lst, t_shell *shell)
 		if (!right)
 			return (NULL); // return (free_ast(&node), NULL);
 		node = ast_new(NT_EOF, node, right, shell);
-		tok = curr_token(*tok_lst);
+		tok = curr_token(tok_lst);
 	}
 	return (node);
 }
@@ -292,24 +336,26 @@ t_ast	*ast_list(t_list **tok_lst, t_shell *shell)
 t_status	mod_syn(t_shell *shell)
 {
 	t_ast			*ast;
-	t_list			*tok_head;
+	t_list			**tok_head;
 	t_lexical_token	*tok;
 
-	tok_head = shell->token_list;
-	shell->token_list_head = shell->token_list; //ここでリストの先頭をshell構造体にしまう。
+	shell->token_list_syn = &shell->token_list;
+	tok_head = shell->token_list_syn;
+	shell->token_list_head = tok_head;
 	shell->ast = NULL;
-	ast = ast_list(&tok_head, shell);
+	ast = ast_list(tok_head, shell);
 	if (!ast)
 		return (E_SYNTAX);
 	tok = curr_token(tok_head);
-	if (tok->type != TT_EOF)
+	if (tok && tok->type != TT_EOF)
 	{
 		ft_dprintf(STDERR_FILENO,
 			"minishell: syntax error near unexpected token\n");
-		return (free_ast(&ast), E_SYNTAX);
+		free_ast(&ast);
+		return (E_SYNTAX);
 	}
 	shell->ast = ast;
-	if (shell->debug & DEBUG_SYN)
-		debug_print_ast(ast);
+	/* ★ ここでグローバルの token_list をクリアし、以降の line_init() で二重解放しないようにする */
+	shell->token_list = NULL;
 	return (E_NONE);
 }

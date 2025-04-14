@@ -8,7 +8,7 @@
 # define TM_TYPE 0xFF00
 # define TM_REDIR 0x1200
 # define TM_CMD 0x1100
-# define TM_OP 0x2000
+# define TM_OP 0x2000 //EOFもこれでマスクできるのに注意されたし
 # define TM_PIPE 0x3000
 # define TM_PAREN 0x5000
 
