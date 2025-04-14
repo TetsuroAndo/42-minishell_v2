@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   finalize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:10 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 22:11:51 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/14 17:16:15 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "core.h"
 #include "libms.h"
@@ -45,7 +45,6 @@ void	shell_cleanup(t_shell *shell)
 {
 	if (!shell)
 		return ;
-	line_init(shell);
 	ft_lstclear(&shell->env_map, free);
 	free_env_spc(shell->env_spc);
 	if (shell->stdin_backup != -1)
@@ -64,6 +63,8 @@ void	shell_cleanup(t_shell *shell)
  */
 void	shell_exit(t_shell *shell, int status)
 {
+	line_init(shell);
+	/*statusによっては終了までする必要ないときがある気がする*/
 	shell_cleanup(shell);
 	xfree(&shell);
 	exit(status);

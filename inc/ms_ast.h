@@ -14,11 +14,13 @@
 
 typedef enum e_ntype
 {
+	NT_SIMPLE_CMD,
 	NT_CMD,
 	NT_PIPE,
 	NT_EOF,
 	NT_AND,
 	NT_OR,
+    NT_SUBSHELL,
 	NT_REDIRECT
 }					t_ntype;
 
