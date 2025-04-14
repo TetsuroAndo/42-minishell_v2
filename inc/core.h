@@ -48,6 +48,8 @@ typedef struct s_shell
 	// 解析
 	char *source_line;  // 入力行
 	t_list *token_list; // トークンリスト
+	t_list **token_list_syn;
+	t_list **token_list_head;// トークンリストの先頭
 	t_ast *ast;         // 構文木
 	// status
 	t_status status; // 終了ステータス

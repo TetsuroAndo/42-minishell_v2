@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   line_init.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:43:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 20:27:20 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/15 01:31:35 by tomsato          ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "core.h"
 
@@ -22,7 +22,8 @@ void	line_init(t_shell *shell)
 	if (!shell)
 		shell_exit(NULL, 1);
 	xfree((void **)&shell->source_line);
-	ft_lstclear(&shell->token_list, free_token);
+	if (shell->token_list_head && *shell->token_list_head)
+		ft_lstclear(shell->token_list_head, free_token);
 	if (shell->ast)
 		free_ast(&shell->ast);
 	xfree((void **)&shell->env_spc['?']);
