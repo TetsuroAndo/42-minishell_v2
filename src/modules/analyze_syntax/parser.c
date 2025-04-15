@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 13:42:21 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/15 13:56:14 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "mod_syn.h"
 
@@ -343,11 +343,11 @@ t_status	mod_syn(t_shell *shell)
 	{
 		ft_dprintf(STDERR_FILENO,
 			"minishell: syntax error near unexpected token\n");
-		return (free_ast(&ast),E_SYNTAX);
+		return (free_ast(&ast), E_SYNTAX);
 	}
 	shell->ast = ast;
-	
-	debug_print_ast(ast);
+	if (shell->debug & DEBUG_SYN)
+		debug_print_ast(ast);
 	/* ★ ここでグローバルの token_list をクリアし、以降の line_init() で二重解放しないようにする */
 	shell->token_list = NULL;
 	return (E_NONE);

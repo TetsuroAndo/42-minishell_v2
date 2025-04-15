@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:09 by teando            #+#    #+#             */
-/*   Updated: 2025/04/11 01:17:03 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/15 13:56:28 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
  * @param len 識別した演算子の長さを格納する変数へのポインタ
  * @return 識別した演算子のトークンタイプ、識別できない場合はTT_ERROR
  */
-t_token_type get_two_char_op(const char *s, size_t *len)
+t_token_type	get_two_char_op(const char *s, size_t *len)
 {
 	if (!s || !s[0] || !s[1])
 		return (TT_ERROR);
@@ -52,17 +52,18 @@ t_token_type get_two_char_op(const char *s, size_t *len)
  * @param c 識別する文字
  * @return 識別した演算子のトークンタイプ、識別できない場合はTT_ERROR
  */
-t_token_type get_one_char_op(char c)
+t_token_type	get_one_char_op(char c)
 {
-	static const t_token_type op_map[128] = {
+	static const t_token_type	op_map[128] = {
 		['|'] = TT_PIPE,
 		['>'] = TT_REDIR_OUT,
 		['<'] = TT_REDIR_IN,
 		['('] = TT_LPAREN,
 		[')'] = TT_RPAREN,
-		[';'] = TT_SEMICOLON};
+		[';'] = TT_SEMICOLON
+	};
 
-	if (c >= 0 && c < 128 && op_map[(int)c] != 0)
+	if (c >= 0 && op_map[(int)c] != 0)
 		return (op_map[(int)c]);
 	return (TT_ERROR);
 }
@@ -78,11 +79,11 @@ t_token_type get_one_char_op(char c)
  * @param shell ステータスを保持する構造体
  * @return 引用符の中の文字列。エラー時はNULL
  */
-static char *read_quoted_word(const char *line, size_t *pos, t_shell *shell)
+static char	*read_quoted_word(const char *line, size_t *pos, t_shell *shell)
 {
-	char quote;
-	size_t start;
-	char *content;
+	char	quote;
+	size_t	start;
+	char	*content;
 
 	quote = line[*pos];
 	start = *pos + 1;
@@ -111,18 +112,19 @@ static char *read_quoted_word(const char *line, size_t *pos, t_shell *shell)
  * @param shell ステータスを保持する構造体
  * @return 読み取った単語。エラー時はNULL
  */
-char *read_word(const char *line, size_t *pos, t_shell *shell)
+char	*read_word(const char *line, size_t *pos, t_shell *shell)
 {
-	size_t start;
-	char *res;
+	size_t	start;
+	char	*res;
 
 	if (line[*pos] == '\'' || line[*pos] == '"')
 		return (read_quoted_word(line, pos, shell));
 	start = *pos;
 	while (line[*pos])
 	{
-		if (ft_isspace(line[*pos]) || get_two_char_op(&line[*pos], NULL) != TT_ERROR || get_one_char_op(line[*pos]) != TT_ERROR)
-			break;
+		if (ft_isspace(line[*pos]) || get_two_char_op(&line[*pos],
+				NULL) != TT_ERROR || get_one_char_op(line[*pos]) != TT_ERROR)
+			break ;
 		(*pos)++;
 	}
 	res = ft_substr(line, start, (*pos - start));
