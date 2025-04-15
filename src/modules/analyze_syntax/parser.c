@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 17:20:42 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/15 17:26:37 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -334,26 +334,24 @@ const char	*tt_to_symbol(t_lexical_token token)
 {
 	if (token.type == TT_WORD)
 		return (token.value); // 単語の場合は値自体を返す
-	if (token.type == TT_PIPE)
-		return (" '|`");
 	if (token.type == TT_REDIR_IN)
-		return (" '<`");
+		return (" `<'");
 	if (token.type == TT_APPEND)
-		return (" '>>`");
+		return (" `>>'");
 	if (token.type == TT_REDIR_OUT)
-		return (" '>`");
+		return (" `>'");
 	if (token.type == TT_HEREDOC)
-		return (" '<<`");
+		return (" `<<'");
 	if (token.type == TT_LPAREN)
-		return (" '(`");
+		return (" `('");
 	if (token.type == TT_RPAREN)
-		return (" ')`");
+		return (" `)'");
 	if (token.type == TT_AND_AND)
-		return (" '&&`");
+		return (" `&&'");
 	if (token.type == TT_OR_OR)
-		return (" '||`");
+		return (" `||'");
 	if (token.type == TT_SEMICOLON)
-		return (" ';`");
+		return (" `;'");
 	return ("");
 }
 /*
