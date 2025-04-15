@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 13:56:14 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/15 14:03:44 by tomsato          ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "mod_syn.h"
 
@@ -330,7 +330,9 @@ t_status	mod_syn(t_shell *shell)
 	t_ast			*ast;
 	t_list			**tok_head;
 	t_lexical_token	*tok;
+	t_list	*original_list;
 
+	original_list = shell->token_list;
 	shell->token_list_syn = &shell->token_list;
 	shell->token_list_head = &shell->token_list;
 	tok_head = shell->token_list_syn;
@@ -348,7 +350,10 @@ t_status	mod_syn(t_shell *shell)
 	shell->ast = ast;
 	if (shell->debug & DEBUG_SYN)
 		debug_print_ast(ast);
-	/* ★ ここでグローバルの token_list をクリアし、以降の line_init() で二重解放しないようにする */
-	shell->token_list = NULL;
+	if (original_list)
+	{
+		ft_lstclear(&original_list, free_token);
+		shell->token_list = NULL;
+	}
 	return (E_NONE);
 }
