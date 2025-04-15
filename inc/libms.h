@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 20:44:06 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/15 19:55:51 by teando           ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -77,7 +77,8 @@ int						xpipe(int pipfds[], t_shell *shell);
 ** ms_string - 文字列操作関連の関数
 ** ============================================================================
 */
-void					skip_spaces(const char *line, size_t *pos);
+int ms_lstiter(t_list *lst, int (*f)(void *, int, t_shell *), t_shell *shell);
+void skip_spaces(const char *line, size_t *pos);
 char					*ms_strndup(const char *s, size_t n, t_shell *shell);
 char					*ms_strdup(const char *s, t_shell *shell);
 char					*ms_substr(char const *s, unsigned int start,

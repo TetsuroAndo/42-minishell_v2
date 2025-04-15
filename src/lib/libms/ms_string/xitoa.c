@@ -12,12 +12,12 @@
 
 #include "libms.h"
 
-char *xitoa(int n, t_shell *shell)
+char	*xitoa(int n, t_shell *shell)
 {
-    char *ans;
+	char	*ans;
 
-    ans = ft_itoa(n);
-    if (!ans)
-        shell_exit(shell, E_ALLOCATE);
-    return (ans);
+	ans = ft_itoa(n);
+	if (!ans)
+		shell_exit(shell, E_ALLOCATE);
+	return (ans);
 }

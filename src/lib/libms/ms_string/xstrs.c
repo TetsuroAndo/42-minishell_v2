@@ -22,9 +22,9 @@ char	**xsplit(char *str, char sep, t_shell *shell)
 	return (split);
 }
 
-char *xstrjoin_free(char const *s1, char const *s2, t_shell *shell)
+char	*xstrjoin_free(char const *s1, char const *s2, t_shell *shell)
 {
-	char *str;
+	char	*str;
 
 	if (!s1 || !s2)
 		return (NULL);

@@ -12,17 +12,17 @@
 
 #include "libms.h"
 
-char *ms_strndup(const char *s, size_t n, t_shell *shell)
+char	*ms_strndup(const char *s, size_t n, t_shell *shell)
 {
-    char *str;
+	char	*str;
 
-    str = ft_strndup(s, n);
-    if (!str)
-        shell_exit(shell, E_ALLOCATE);
-    return (str);
+	str = ft_strndup(s, n);
+	if (!str)
+		shell_exit(shell, E_ALLOCATE);
+	return (str);
 }
 
-char *ms_strdup(const char *s, t_shell *shell)
+char	*ms_strdup(const char *s, t_shell *shell)
 {
-    return (ms_strndup(s, ft_strlen(s), shell));
+	return (ms_strndup(s, ft_strlen(s), shell));
 }

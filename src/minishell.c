@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:12:00 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 16:21:30 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/15 19:55:51 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "minishell.h"
 
@@ -31,7 +31,7 @@ static void	shell_loop(t_shell *shell, const char *prompt)
 		}
 		status = mod_lex(shell);
 		if (status != E_NONE)
-			shell_exit(shell, status);
+			printf("lexial error\n");
 		status = mod_syn(shell);
 		if (status != E_NONE)
 			printf("syntax error\n");
