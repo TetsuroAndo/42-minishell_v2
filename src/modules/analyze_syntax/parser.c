@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 14:12:01 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/15 14:52:03 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -346,6 +346,6 @@ t_status	mod_syn(t_shell *shell)
 	}
 	shell->ast = ast;
 	if (shell->debug & DEBUG_SYN)
-		debug_print_ast(ast);
+		debug_print_ast(ast, shell);
 	return (E_NONE);
 }
