@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 17:26:37 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/15 17:43:48 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ static t_lexical_token	*alloc_l_tok(t_list **tok_lst, t_shell *shell)
 	ft_memcpy(return_value, tok, sizeof(t_lexical_token));
 	if (tok->value)
 	{
-		return_value->value = ft_strdup(tok->value);
+		return_value->value = ms_strdup(tok->value, shell);
 		if (!return_value->value)
 			return (NULL);
 	}
