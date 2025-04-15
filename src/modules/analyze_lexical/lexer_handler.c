@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   lexer_handler.c                                    :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:09 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 13:56:28 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/15 18:14:07 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "mod_lex.h"
 
@@ -86,7 +86,7 @@ static char	*read_quoted_word(const char *line, size_t *pos, t_shell *shell)
 	char	*content;
 
 	quote = line[*pos];
-	start = *pos + 1;
+	start = *pos;
 	(*pos)++;
 	while (line[*pos] && line[*pos] != quote)
 		(*pos)++;
@@ -95,7 +95,7 @@ static char	*read_quoted_word(const char *line, size_t *pos, t_shell *shell)
 		shell->status = E_SYNTAX;
 		return (NULL);
 	}
-	content = ft_substr(line, start, (*pos - start));
+	content = ms_substr(line, start, (*pos - start + 1), shell);
 	(*pos)++;
 	return (content);
 }
@@ -127,6 +127,6 @@ char	*read_word(const char *line, size_t *pos, t_shell *shell)
 			break ;
 		(*pos)++;
 	}
-	res = ft_substr(line, start, (*pos - start));
+	res = ms_substr(line, start, (*pos - start), shell);
 	return (res);
 }

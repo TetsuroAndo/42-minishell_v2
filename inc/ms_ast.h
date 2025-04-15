@@ -12,6 +12,9 @@
 # define TM_PIPE 0x3000
 # define TM_PAREN 0x5000
 
+# define SINGLE_QUOTE 0x010
+# define DOUBLE_QUOTE 0x020
+
 typedef enum e_ntype
 {
 	NT_SIMPLE_CMD,
@@ -21,7 +24,7 @@ typedef enum e_ntype
 	NT_EOF,
 	NT_AND,
 	NT_OR,
-    NT_SUBSHELL,
+	NT_SUBSHELL,
 	NT_REDIRECT
 }					t_ntype;
 
