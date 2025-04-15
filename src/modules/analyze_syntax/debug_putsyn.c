@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 05:04:33 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 14:56:20 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/15 15:03:16 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,9 @@ static void	print_cmd_args(t_args *args)
 
 static void	print_tree_node(t_ast *ast, const char *prefix, int is_left)
 {
+	char *indent;
+	char *path_str;
+	
 	if (!ast)
 		return ;
 	printf("%s", prefix);
@@ -67,9 +70,15 @@ static void	print_tree_node(t_ast *ast, const char *prefix, int is_left)
 	if (ast->ntype == NT_CMD && ast->args)
 	{
 		if (is_left)
-			printf("%s│          └─ Args: ", prefix);
+			indent = "│          ";
 		else
-			printf("%s└─ Args: ", prefix);
+			indent = "           ";
+		// if (ast->args->path[0] != '\0')
+		// 	path_str = ast->args->path;
+		// else
+		// 	path_str = "(no path)";
+		// printf("\n%s%s├─ Path: %s", prefix, indent, path_str);
+		printf("\n%s%s└─ Args: ", prefix, indent);
 		print_cmd_args(ast->args);
 		printf("\n");
 	}
