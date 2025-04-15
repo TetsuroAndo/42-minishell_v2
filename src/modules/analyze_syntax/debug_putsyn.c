@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 05:04:33 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 15:03:16 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/15 15:24:18 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,17 +109,17 @@ static void	print_ast_tree(t_ast *ast, const char *prefix, int is_left, t_shell 
 
 void	debug_print_ast(t_ast *ast, t_shell *shell)
 {
-	printf("\n=== Abstract Syntax Tree ===\n\n");
-	if (!ast)
+	if (!ast || (ast->left == NULL && ast->right == NULL))
 	{
 		printf("(Empty AST)\n");
 		return ;
 	}
+	printf("\n=== Abstract Syntax Tree ===\n");
 	printf("[%s]\n", get_node_type_str(ast->ntype));
 	if (ast->left)
 		print_ast_tree(ast->left, "", 1, shell);
 	if (ast->right)
 		print_ast_tree(ast->right, "", 0, shell);
-	printf("\n===========================\n");
+	printf("===========================\n");
 }
 		
