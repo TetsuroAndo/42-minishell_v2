@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 16:56:10 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/15 17:50:26 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ static t_lexical_token	*alloc_l_tok(t_list **tok_lst, t_shell *shell)
 	ft_memcpy(return_value, tok, sizeof(t_lexical_token));
 	if (tok->value)
 	{
-		return_value->value = ft_strdup(tok->value);
+		return_value->value = ms_strdup(tok->value, shell);
 		if (!return_value->value)
 			return (NULL);
 	}
@@ -330,6 +330,30 @@ t_ast	*ast_list(t_list **tok_lst, t_shell *shell)
 	return (node);
 }
 
+const char	*tt_to_symbol(t_lexical_token token)
+{
+	if (token.type == TT_WORD)
+		return (token.value); // 単語の場合は値自体を返す
+	if (token.type == TT_REDIR_IN)
+		return (" `<'");
+	if (token.type == TT_APPEND)
+		return (" `>>'");
+	if (token.type == TT_REDIR_OUT)
+		return (" `>'");
+	if (token.type == TT_HEREDOC)
+		return (" `<<'");
+	if (token.type == TT_LPAREN)
+		return (" `('");
+	if (token.type == TT_RPAREN)
+		return (" `)'");
+	if (token.type == TT_AND_AND)
+		return (" `&&'");
+	if (token.type == TT_OR_OR)
+		return (" `||'");
+	if (token.type == TT_SEMICOLON)
+		return (" `;'");
+	return ("");
+}
 /*
 ** ========== Entry Point ==========
 **  mod_syn ::= list
@@ -344,15 +368,13 @@ t_status	mod_syn(t_shell *shell)
 	tok_head = &shell->token_list_syn;
 	shell->ast = NULL;
 	ast = ast_list(tok_head, shell);
-	if (!ast)
-		return (E_SYNTAX);
 	tok = curr_token(tok_head);
-	if (tok && tok->type != TT_EOF)
+	if (!ast || (tok && tok->type != TT_EOF))
 	{
-		if (tok->value)
-			ft_dprintf(STDERR_FILENO,
-				"minishell: syntax error near unexpected token `%s'\n",
-				tok->value);
+		if (tok->type == TT_EOF)
+			return (E_NONE);
+		ft_dprintf(STDERR_FILENO,
+			"minishell: syntax error near unexpected token%s\n", tt_to_symbol(*tok));
 		return (free_ast(&ast), E_SYNTAX);
 	}
 	shell->ast = ast;
