@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 14:52:03 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/15 16:56:10 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -312,6 +312,15 @@ t_ast	*ast_list(t_list **tok_lst, t_shell *shell)
 	while (tok && tok->type == TT_SEMICOLON)
 	{
 		ms_listshift(tok_lst);
+		tok = curr_token(tok_lst);
+		if (tok && tok->type == TT_SEMICOLON)
+		{
+			ft_dprintf(STDERR_FILENO,
+				"minishell: syntax error near unexpected token `;;'\n");
+			return (free_ast(&node), NULL);
+		}
+		if (!tok || tok->type == TT_EOF)
+			break;
 		right = ast_and_or(tok_lst, shell);
 		if (!right)
 			return (free_ast(&node), NULL);
@@ -340,8 +349,10 @@ t_status	mod_syn(t_shell *shell)
 	tok = curr_token(tok_head);
 	if (tok && tok->type != TT_EOF)
 	{
-		ft_dprintf(STDERR_FILENO,
-			"minishell: syntax error near unexpected token\n");
+		if (tok->value)
+			ft_dprintf(STDERR_FILENO,
+				"minishell: syntax error near unexpected token `%s'\n",
+				tok->value);
 		return (free_ast(&ast), E_SYNTAX);
 	}
 	shell->ast = ast;
