@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 14:03:44 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/15 14:12:01 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,12 +330,9 @@ t_status	mod_syn(t_shell *shell)
 	t_ast			*ast;
 	t_list			**tok_head;
 	t_lexical_token	*tok;
-	t_list	*original_list;
 
-	original_list = shell->token_list;
-	shell->token_list_syn = &shell->token_list;
-	shell->token_list_head = &shell->token_list;
-	tok_head = shell->token_list_syn;
+	shell->token_list_syn = shell->token_list;
+	tok_head = &shell->token_list_syn;
 	shell->ast = NULL;
 	ast = ast_list(tok_head, shell);
 	if (!ast)
@@ -350,10 +347,5 @@ t_status	mod_syn(t_shell *shell)
 	shell->ast = ast;
 	if (shell->debug & DEBUG_SYN)
 		debug_print_ast(ast);
-	if (original_list)
-	{
-		ft_lstclear(&original_list, free_token);
-		shell->token_list = NULL;
-	}
 	return (E_NONE);
 }

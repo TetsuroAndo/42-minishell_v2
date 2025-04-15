@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:43:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 01:31:35 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/15 14:09:32 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ void	line_init(t_shell *shell)
 	if (!shell)
 		shell_exit(NULL, 1);
 	xfree((void **)&shell->source_line);
-	if (shell->token_list_head && *shell->token_list_head)
-		ft_lstclear(shell->token_list_head, free_token);
+	if (shell->token_list)
+		ft_lstclear(&shell->token_list, free_token);
 	if (shell->ast)
 		free_ast(&shell->ast);
 	xfree((void **)&shell->env_spc['?']);
