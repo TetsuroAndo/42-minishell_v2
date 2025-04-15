@@ -17,6 +17,7 @@ typedef enum e_ntype
 	NT_SIMPLE_CMD,
 	NT_CMD,
 	NT_PIPE,
+	NT_LIST,
 	NT_EOF,
 	NT_AND,
 	NT_OR,

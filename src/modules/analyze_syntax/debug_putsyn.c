@@ -32,6 +32,9 @@ static void	print_ast_node_type(t_ntype type)
 	case NT_REDIRECT:
 		type_str = "REDIRECT";
 		break ;
+	case NT_LIST:
+		type_str = "LIST";
+		break ;
 	default:
 		type_str = "UNKNOWN";
 		break ;

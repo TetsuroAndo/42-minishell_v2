@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 02:06:43 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/15 13:42:21 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ void	*ms_listshift(t_list **list)
 
 	if (!list || !*list)
 		return (NULL);
-	// printf("[DEBUG] list shift: %s,%s\n", curr_token(*list)->value);
 	tmp = *list;
 	*list = (*list)->next;
 	return (tmp);
@@ -149,7 +148,6 @@ t_ast	*ast_redirections(t_list **tok_lst, t_ast *node, t_shell *shell)
 	tok = curr_token(tok_lst);
 	if (tok && (tok->type & 0xFF00) == TM_REDIR)
 		return (ast_redirections(tok_lst, node, shell));
-	// debug_print_ast(node);
 	return (node);
 }
 
@@ -195,7 +193,6 @@ t_ast	*ast_cmd(t_list **tok_lst, t_shell *shell)
 	{
 		node = cmd_node;
 	}
-	// debug_print_ast(node);
 	return (node);
 }
 
@@ -220,16 +217,15 @@ t_ast	*ast_primary(t_list **tok_lst, t_shell *shell)
 	if (tok->type == TT_LPAREN)
 	{
 		ms_listshift(tok_lst);
-		node = ast_list(tok_lst, shell);
+		node = ast_new(NT_SUBSHELL, ast_list(tok_lst, shell), NULL, shell);
 		tok = curr_token(tok_lst);
 		if (tok->type != TT_RPAREN)
 		{
 			ft_dprintf(STDERR_FILENO,
 				"minishell: syntax error near unexpected token`('\n");
-			return (NULL);
+			return (free_ast(&node), NULL);
 		}
 		ms_listshift(tok_lst);
-		node->ntype = NT_SUBSHELL;
 	}
 	return (node);
 }
@@ -260,7 +256,7 @@ t_ast	*ast_pipeline(t_list **tok_lst, t_shell *shell)
 		{
 			ft_dprintf(STDERR_FILENO,
 				"minishell: syntax error near unexpected token `|'\n");
-			return (NULL);
+			return (free_ast(&node), NULL);
 		}
 		tok = curr_token(tok_lst);
 	}
@@ -282,21 +278,17 @@ t_ast	*ast_and_or(t_list **tok_lst, t_shell *shell)
 	left = ast_pipeline(tok_lst, shell);
 	if (!left)
 		return (NULL);
-	if (shell->debug & DEBUG_SYN)
 	tok = curr_token(tok_lst);
 	while (tok && (tok->type == TT_AND_AND || tok->type == TT_OR_OR))
 	{
-		if (shell->debug & DEBUG_SYN)
 		if (tok->type == TT_AND_AND)
 			op_type = NT_AND;
 		else if (tok->type == TT_OR_OR)
 			op_type = NT_OR;
 		ms_listshift(tok_lst);
-		if (shell->debug & DEBUG_SYN)
 		right = ast_pipeline(tok_lst, shell);
 		if (!right)
-			return (NULL); // return (free_ast(&left), NULL);
-		if (shell->debug & DEBUG_SYN)
+			return (free_ast(&left), NULL);
 		left = ast_new(op_type, left, right, shell);
 		tok = curr_token(tok_lst);
 	}
@@ -322,8 +314,8 @@ t_ast	*ast_list(t_list **tok_lst, t_shell *shell)
 		ms_listshift(tok_lst);
 		right = ast_and_or(tok_lst, shell);
 		if (!right)
-			return (NULL); // return (free_ast(&node), NULL);
-		node = ast_new(NT_EOF, node, right, shell);
+			return (free_ast(&node), NULL);
+		node = ast_new(NT_LIST, node, right, shell);
 		tok = curr_token(tok_lst);
 	}
 	return (node);
@@ -340,8 +332,8 @@ t_status	mod_syn(t_shell *shell)
 	t_lexical_token	*tok;
 
 	shell->token_list_syn = &shell->token_list;
+	shell->token_list_head = &shell->token_list;
 	tok_head = shell->token_list_syn;
-	shell->token_list_head = tok_head;
 	shell->ast = NULL;
 	ast = ast_list(tok_head, shell);
 	if (!ast)
@@ -351,10 +343,11 @@ t_status	mod_syn(t_shell *shell)
 	{
 		ft_dprintf(STDERR_FILENO,
 			"minishell: syntax error near unexpected token\n");
-		free_ast(&ast);
-		return (E_SYNTAX);
+		return (free_ast(&ast),E_SYNTAX);
 	}
 	shell->ast = ast;
+	
+	debug_print_ast(ast);
 	/* ★ ここでグローバルの token_list をクリアし、以降の line_init() で二重解放しないようにする */
 	shell->token_list = NULL;
 	return (E_NONE);
