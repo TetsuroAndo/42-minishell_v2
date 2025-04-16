@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   debug_putsyn.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 05:04:33 by teando            #+#    #+#             */
-/*   Updated: 2025/04/16 17:24:36 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/16 19:26:18 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,8 @@
 
 static char	*get_node_type_str(t_ntype type)
 {
-	static const char	*type_names[] = {
-		"SIMPLE_CMD",
-		"CMD",
-		"PIPE",
-		"LIST",
-		"EOF",
-		"AND",
-		"OR",
-		"SUBSHELL",
-		"REDIRECT"
-	};
+	static const char	*type_names[] = {"SIMPLE_CMD", "CMD", "PIPE", "LIST",
+			"EOF", "AND", "OR", "SUBSHELL", "REDIRECT"};
 
 	if (type < 0 || type >= sizeof(type_names) / sizeof(type_names[0]))
 		return ("UNKNOWN");
@@ -38,20 +29,39 @@ static void	print_cmd_args(t_args *args, int index)
 	t_lexical_token	*token;
 	int				first;
 
-	if (!args || !args->argv)
+	if (!args)
 		return ;
 	printf("[");
 	if (index == 0)
 		arg_list = args->argv;
 	else
 		arg_list = args->redr;
+	if (!arg_list)
+	{
+		printf("]");
+		return ;
+	}
 	first = 1;
 	while (arg_list)
 	{
 		token = arg_list->data;
 		if (!first)
 			printf(", ");
-		printf("%s", token->value);
+		if (index == 0)
+			printf("%s", token->value);
+		else
+		{
+			if (token->type == TT_REDIR_IN)
+				printf("< %s", token->value);
+			else if (token->type == TT_REDIR_OUT)
+				printf("> %s", token->value);
+			else if (token->type == TT_APPEND)
+				printf(">> %s", token->value);
+			else if (token->type == TT_HEREDOC)
+				printf("<< %s", token->value);
+			else
+				printf("Unknown Redirect: %s", token->value);
+		}
 		first = 0;
 		arg_list = arg_list->next;
 	}
@@ -78,17 +88,23 @@ static void	print_tree_node(t_ast *ast, const char *prefix, int is_left,
 		else
 			indent = "           ";
 		printf("\n%s%s", prefix, indent);
-		if (ast->args->redr)
-			printf("├─ Command: ");
-		else
-			printf("└─ Args: ");
-		print_cmd_args(ast->args, 0);
-		if (ast->args->redr)
+		if (ast->args->argv || ast->args->redr)
 		{
-			printf("\n%s%s└─ Redirs: ", prefix, indent);
-			print_cmd_args(ast->args, 1);
+			if (ast->args->argv)
+			{
+				printf("├─ Command: ");
+				print_cmd_args(ast->args, 0);
+				printf("\n%s%s", prefix, indent);
+			}
+			if (ast->args->redr)
+			{
+				printf("└─ Redirs: ");
+				print_cmd_args(ast->args, 1);
+				printf("\n");
+			}
 		}
-		printf("\n");
+		else
+			printf("└─ No args or redirs\n");
 	}
 	else
 		printf("\n");
