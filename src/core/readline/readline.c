@@ -93,8 +93,7 @@ char	*launch_readline(const char *prompt)
 		cont_line = read_command_line("> ");
 		if (!cont_line)
 			return (free(line), NULL);
-		tmp = ft_strjoin(line, "\n");
-		free(line);
+		tmp = ft_strjoin_free(line, "\n");
 		line = ft_strjoin_free2(tmp, cont_line);
 		if (!line)
 			return (NULL);
