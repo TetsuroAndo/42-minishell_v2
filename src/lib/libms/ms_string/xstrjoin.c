@@ -1,25 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   xstrs.c                                            :+:      :+:    :+:   */
+/*   xstrjoin.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 00:21:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/11 00:42:58 by teando           ###   ########.fr       */
+/*   Created: 2025/04/16 10:38:37 by teando            #+#    #+#             */
+/*   Updated: 2025/04/16 10:44:49 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "core.h"
+#include "libms.h"
 
-char	**xsplit(char *str, char sep, t_shell *shell)
+char    *xstrjoin(char const *s1, char const *s2, t_shell *shell)
 {
-	char	**split;
+	char	*str;
 
-	split = ft_split(str, sep);
-	if (!split)
+	if (!s1 || !s2)
+		return (NULL);
+	str = ft_strjoin(s1, s2);
+	if (!str)
 		shell_exit(shell, E_ALLOCATE);
-	return (split);
+	return (str);
 }
 
 char	*xstrjoin_free(char const *s1, char const *s2, t_shell *shell)
@@ -28,10 +30,22 @@ char	*xstrjoin_free(char const *s1, char const *s2, t_shell *shell)
 
 	if (!s1 || !s2)
 		return (NULL);
-	str = ft_strjoin(s1, s2);
+	str = xstrjoin(s1, s2, shell);
 	if (s1)
 		free((void *)s1);
-	if (!str)
-		shell_exit(shell, E_ALLOCATE);
+	return (str);
+}
+
+char	*xstrjoin_free2(char const *s1, char const *s2, t_shell *shell)
+{
+	char	*str;
+
+	if (!s1 || !s2)
+		return (NULL);
+	str = xstrjoin(s1, s2, shell);
+	if (s1)
+		free((void *)s1);
+	if (s2)
+		free((void *)s2);
 	return (str);
 }

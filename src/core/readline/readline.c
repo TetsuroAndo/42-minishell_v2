@@ -9,6 +9,8 @@ extern volatile sig_atomic_t	g_signal_status;
  * - シングルクォートとダブルクォートの状態を個別に追跡
  * - ネストされたクォート（例：'text "more text" text'）を処理
  * - 対となるクォート内のクォートは文字列として扱う
+ * - バックスラッシュでエスケープされたクォートは無視
+ * - コメント記号(#)以降のテキストは無視
  *
  * @param line チェックする入力文字列
  * @return int クォートが正しく閉じられている場合は1、そうでない場合は0
@@ -17,22 +19,27 @@ static int	is_quotes_balanced(const char *line)
 {
 	int		single_open;
 	int		double_open;
-	size_t	i;
+	size_t	pos;
 
 	single_open = 0;
 	double_open = 0;
-	i = 0;
-	while (line[i])
+	pos = 0;
+	while (line[pos])
 	{
-		if (line[i] == '\'' && !double_open)
+		if (line[pos] == '#' && !single_open && !double_open)
+			break ;
+		if (line[pos] == '\\' && line[pos + 1])
+		{
+			pos += 2;
+			continue ;
+		}
+		if (line[pos] == '\'' && !double_open)
 			single_open = !single_open;
-		else if (line[i] == '"' && !single_open)
+		else if (line[pos] == '"' && !single_open)
 			double_open = !double_open;
-		i++;
+		pos++;
 	}
-	if (!single_open && !double_open)
-		return (1);
-	return (0);
+	return (!single_open && !double_open);
 }
 
 /**
@@ -86,8 +93,7 @@ char	*launch_readline(const char *prompt)
 		cont_line = read_command_line("> ");
 		if (!cont_line)
 			return (free(line), NULL);
-		tmp = ft_strjoin(line, "\n");
-		free(line);
+		tmp = ft_strjoin_free(line, "\n");
 		line = ft_strjoin_free2(tmp, cont_line);
 		if (!line)
 			return (NULL);
