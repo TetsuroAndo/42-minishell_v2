@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   debug_putsyn.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 05:04:33 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 15:24:18 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/16 10:19:52 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static char	*get_node_type_str(t_ntype type)
 	return ((char *)type_names[type]);
 }
 
-static void	print_cmd_args(t_args *args)
+static void	print_cmd_args(t_args *args, int index)
 {
 	t_list			*arg_list;
 	t_lexical_token	*token;
@@ -40,7 +40,10 @@ static void	print_cmd_args(t_args *args)
 	if (!args || !args->argv)
 		return ;
 	printf("[");
-	arg_list = args->argv;
+	if (index == 0)
+		arg_list = args->argv;
+	else
+		arg_list = args->redr;
 	first = 1;
 	while (arg_list)
 	{
@@ -58,7 +61,7 @@ static void	print_tree_node(t_ast *ast, const char *prefix, int is_left)
 {
 	char *indent;
 	char *path_str;
-	
+
 	if (!ast)
 		return ;
 	printf("%s", prefix);
@@ -79,7 +82,9 @@ static void	print_tree_node(t_ast *ast, const char *prefix, int is_left)
 		// 	path_str = "(no path)";
 		// printf("\n%s%s├─ Path: %s", prefix, indent, path_str);
 		printf("\n%s%s└─ Args: ", prefix, indent);
-		print_cmd_args(ast->args);
+		print_cmd_args(ast->args, 0);
+		printf("\n%s%s└─ redr: ", prefix, indent);
+		print_cmd_args(ast->args, 1);
 		printf("\n");
 	}
 	else
@@ -122,4 +127,3 @@ void	debug_print_ast(t_ast *ast, t_shell *shell)
 		print_ast_tree(ast->right, "", 0, shell);
 	printf("===========================\n");
 }
-		
