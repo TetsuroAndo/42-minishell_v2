@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 17:50:26 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/16 09:51:14 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,9 +210,9 @@ t_ast	*ast_primary(t_list **tok_lst, t_shell *shell)
 	tok = curr_token(tok_lst);
 	if (!tok)
 		return (NULL);
-	if (tok->type != TT_WORD && tok->type != TT_LPAREN)
+	if (((tok->type & 0xFF00) != TM_REDIR && tok->type != TT_WORD )&& tok->type != TT_LPAREN)
 		return (NULL);
-	if (tok->type == TT_WORD)
+	if ((tok->type & 0xFF00) == TM_REDIR || tok->type == TT_WORD )
 		return (ast_cmd(tok_lst, shell));
 	if (tok->type == TT_LPAREN)
 	{
