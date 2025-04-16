@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/16 18:53:20 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 08:39:14 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,18 @@ typedef enum e_status	t_status;
 ** ms_env - 環境変数関連の関数
 ** ============================================================================
 */
+
+// key
 int						ms_isactivekey(const char *key);
+t_status				ms_partenvarg(char *key, const char *arg);
+
+// value
+int						ms_isactivevalue(const char *value);
+char					*ms_escapevalue(const char *value, t_shell *shell);
+
 int						ms_envcmp(void *data, void *key);
 char					*ms_getenv(const char *key, t_shell *shell);
-t_status				ms_partenvarg(char *key, const char *arg);
-t_status				ms_setenv(const char *arg, t_shell *shell);
+t_status				ms_setenv(char *arg, t_shell *shell);
 t_status				ms_setenv_item(const char *key, const char *value,
 							t_shell *shell);
 t_status				ms_unset(const char *key, t_shell *shell);
@@ -93,6 +100,7 @@ t_list					*xlst_from_strs(char **strs, t_shell *shell);
 char					**xlst_to_strs(t_list *lst, t_shell *shell);
 char					**xsplit(char *str, char sep, t_shell *shell);
 char					*xstrjoin(char const *s1, char const *s2, t_shell *shell);
+char					*xstrjoin3(char const *s1, char const *s2, char const *s3, t_shell *shell);
 char					*xstrjoin_free(char const *s1, char const *s2,
 							t_shell *shell);
 char					*xstrjoin_free2(char const *s1, char const *s2, t_shell *shell);

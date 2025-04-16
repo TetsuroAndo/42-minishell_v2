@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/16 21:13:29 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/17 08:32:48 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,6 @@
 //   → PATH 解決
 //     → minishell: %s: command not found
 // → 展開可能文字 * $
-
-int	ft_isbackslush(int c)
-{
-	return (c == '\\');
-}
 
 /*
 ** ワイルドカード（*）を検出し、展開結果をバッファに追加する
@@ -54,7 +49,7 @@ char	*handle_wildcard(char *in, t_shell *shell)
 	while (*in)
 	{
 		i = 0;
-		while (in[i] && (!ft_isbackslush(in[i]) && in[i] != '*'))
+		while (in[i] && (!ft_isbackslash(in[i]) && in[i] != '*'))
 			i++;
 		buf = xstrjoin_free2(buf, ms_substr(in, 0, i, shell), shell);
 		in += i;
@@ -66,11 +61,6 @@ char	*handle_wildcard(char *in, t_shell *shell)
 	return (buf);
 }
 
-int	ft_isalnum_underscore(char c)
-{
-	return (ft_isalnum(c) || c == '_');
-}
-
 int	extract_varname(char **buf, char *in, t_shell *shell)
 {
 	size_t	key_len;
@@ -78,7 +68,7 @@ int	extract_varname(char **buf, char *in, t_shell *shell)
 	char	*env_val;
 
 	key_len = 0;
-	while (ft_isalnum_underscore(in[key_len]))
+	while (ft_isalnum_under(in[key_len]))
 		key_len++;
 	if (key_len == 0)
 	{
@@ -106,13 +96,13 @@ char	*handle_env(char *in, t_shell *shell)
 	while (*in)
 	{
 		i = 0;
-		while (in[i] && (!ft_isbackslush(in[i]) && in[i] != '$'))
+		while (in[i] && (!ft_isbackslash(in[i]) && in[i] != '$'))
 			i++;
 		buf = xstrjoin_free2(buf, ms_substr(in, 0, i, shell), shell);
 		in += i;
 		if (in[i] == '$')
 			in += extract_varname(&buf, in, shell);
-		else if (ft_isbackslush(*in) && in[1] != '*')
+		else if (ft_isbackslash(*in) && in[1] != '*')
 		{
 			buf = xstrjoin_free2(buf, ms_substr(in + 1, 0, 1, shell), shell);
 			in += 2;
