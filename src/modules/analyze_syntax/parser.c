@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/16 10:53:06 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/16 15:21:36 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ int	ast_redir(t_list **tok_lst, t_ast *node, t_shell *shell)
 
 	tok = curr_token(tok_lst);
 	if (!tok)
-		return ;
+		return (1);
 	if (*tok->value == '\0')
 	{
 		ft_dprintf(STDERR_FILENO,
