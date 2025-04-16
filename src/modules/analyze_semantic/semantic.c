@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/16 20:35:06 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/16 21:13:29 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,42 @@ int	ft_isbackslush(int c)
 }
 
 /*
-**バックスラッシュと*記号を見つけて適切にバッファーにデータを詰めて返す
+** ワイルドカード（*）を検出し、展開結果をバッファに追加する
+** buf: 結果を格納するバッファへのポインタ
+** in: '*' を含む入力文字列
+** shell: シェル情報
+** 戻り値: inを何文字進めたか
+*/
+int	extract_wildcard(char **buf, char *in, t_shell *shell)
+{
+	const char *pwd = shell->cwd;
+	//
+	//パターンマッチングの関数を作る。
+	return 0;
+}
+
+/*
+** 入力文字列中のバックスラッシュとワイルドカード(*)を処理し、
+** 展開結果を新しいバッファとして返す
 */
 char	*handle_wildcard(char *in, t_shell *shell)
 {
 	char	*buf;
+	size_t	i;
 
+	buf = ms_strdup("", shell);
+	while (*in)
+	{
+		i = 0;
+		while (in[i] && (!ft_isbackslush(in[i]) && in[i] != '*'))
+			i++;
+		buf = xstrjoin_free2(buf, ms_substr(in, 0, i, shell), shell);
+		in += i;
+		if (in[i] == '*')
+			in += extract_wildcard(&buf, in, shell);
+		else if (*in)
+			in++;
+	}
 	return (buf);
 }
 
@@ -98,16 +128,31 @@ int	resolve_path(char *in, t_shell *shell)
 	return (0);
 }
 
-int	proc_argv(t_lexical_token *data, int count, t_shell *shell)
+int	proc_argv(t_list **list, t_lexical_token *data, int count, t_shell *shell)
 {
+	char *aft_env;
+	char *aft_wlc;
+	
 	// 文字リテラル
-	data->value = handle_wildcard(handle_env(data->value, shell), shell);
-	if (!data->value)
+	if (data->value)
+		aft_env = handle_env(data->value, shell);
+	if (aft_env)
+	{
+		if (!ft_strchr(aft_env ,' '))
+			;//ここに空白区切りであたらしく引数リストを構成する関数を置く
+		aft_wlc = handle_wildcard(data->value, shell);
+		if (aft_wlc && !ft_strchr(aft_wlc ,' '))
+			;//コマンドの方はワイルドカードのあとに引数をまた構成する
+	}
+	if (!aft_wlc)
 		return (1);
 	// CMD 解決
 	if (count == 0)
 		if (resolve_path(data->value, shell))
 			rteurn(1);
+	free(data->value);
+	free(aft_env);
+	data->value = aft_wlc;
 	return (0);
 }
 
@@ -116,14 +161,27 @@ int	valid_redir(t_lexical_token *data, t_shell *shell)
 	return (0);
 }
 
-int	proc_redr(t_lexical_token *data, int count, t_shell *shell)
+int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *shell)
 {
+	char *aft_env;
+	char *aft_wlc;
+
 	// 文字リテラル
-	data->value = handle_wildcard(handle_env(data->value, shell), shell);
-	if (!data->value)
+	if (data->value)
+		aft_env = handle_env(data->value, shell);
+		if (aft_env)
+		{
+			if (!ft_strchr(aft_env ,' '))
+				;//ここに空白区切りであたらしく引数リストを構成する関数を置く
+			aft_wlc = handle_wildcard(data->value, shell);
+		}
+	if (!aft_wlc)
 		return (1);
 	// リダイレクト
 	valid_redir(data, shell);
+	free(data->value);
+	free(aft_env);
+	data->value = aft_wlc;
 	return (0);
 }
 
