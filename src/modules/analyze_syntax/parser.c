@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/16 09:51:14 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/16 10:44:07 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,25 +103,27 @@ static const char	*redir_token_to_symbol(t_token_type token_type)
 リダイレクト（一個）
 redir
 */
-void	ast_redir(t_list **tok_lst, t_ast *node, t_shell *shell)
+int	ast_redir(t_list **tok_lst, t_ast *node, t_shell *shell)
 {
 	t_lexical_token	*tok;
 
 	tok = curr_token(tok_lst);
 	if (!tok)
 		return ;
-	if (tok->value == NULL)
+	if (*tok->value == '\0')
 	{
 		ft_dprintf(STDERR_FILENO,
 			"minishell: syntax error near unexpected token `%s'\n",
 			redir_token_to_symbol(tok->type));
-		return ;
+		ms_listshift(tok_lst);
+		return (1);
 	}
 	if (!node->args->redr)
 		node->args->redr = xlstnew(alloc_l_tok(tok_lst, shell), shell);
 	else
 		ft_lstadd_back(&node->args->redr, xlstnew(alloc_l_tok(tok_lst, shell),
 				shell));
+	return (0);
 }
 
 /*
@@ -132,22 +134,18 @@ t_ast	*ast_redirections(t_list **tok_lst, t_ast *node, t_shell *shell)
 {
 	t_lexical_token	*tok;
 
-	if ((!shell || !tok_lst) || !*tok_lst)
+	if (!shell || (!tok_lst || !*tok_lst))
 		return (NULL);
-	tok = curr_token(tok_lst);
-	if (!tok)
-		return (NULL);
-	if ((tok->type & 0xFF00) != TM_REDIR)
-		return (NULL);
-	if (!node)
+	while ((tok = curr_token(tok_lst)) && (tok->type & 0xFF00) == TM_REDIR)
 	{
-		node = ast_new(NT_REDIRECT, NULL, NULL, shell);
-		node->args = args_new(shell);
+		if (!node)
+		{
+			node = ast_new(NT_REDIRECT, NULL, NULL, shell);
+			node->args = args_new(shell);
+		}
+		if (ast_redir(tok_lst, node, shell))
+			return (NULL);
 	}
-	ast_redir(tok_lst, node, shell);
-	tok = curr_token(tok_lst);
-	if (tok && (tok->type & 0xFF00) == TM_REDIR)
-		return (ast_redirections(tok_lst, node, shell));
 	return (node);
 }
 
@@ -184,10 +182,10 @@ t_ast	*ast_cmd(t_list **tok_lst, t_shell *shell)
 	t_ast	*redir_node;
 
 	cmd_node = ast_simple_cmd(tok_lst, shell);
-	redir_node = ast_redirections(tok_lst, NULL, shell);
+	redir_node = ast_redirections(tok_lst, cmd_node, shell);
 	if (redir_node)
 	{
-		node = ast_new(NT_CMD, cmd_node, redir_node, shell);
+		return (redir_node);
 	}
 	else
 	{
@@ -210,9 +208,10 @@ t_ast	*ast_primary(t_list **tok_lst, t_shell *shell)
 	tok = curr_token(tok_lst);
 	if (!tok)
 		return (NULL);
-	if (((tok->type & 0xFF00) != TM_REDIR && tok->type != TT_WORD )&& tok->type != TT_LPAREN)
+	if (((tok->type & 0xFF00) != TM_REDIR && tok->type != TT_WORD)
+		&& tok->type != TT_LPAREN)
 		return (NULL);
-	if ((tok->type & 0xFF00) == TM_REDIR || tok->type == TT_WORD )
+	if ((tok->type & 0xFF00) == TM_REDIR || tok->type == TT_WORD)
 		return (ast_cmd(tok_lst, shell));
 	if (tok->type == TT_LPAREN)
 	{
@@ -320,7 +319,7 @@ t_ast	*ast_list(t_list **tok_lst, t_shell *shell)
 			return (free_ast(&node), NULL);
 		}
 		if (!tok || tok->type == TT_EOF)
-			break;
+			break ;
 		right = ast_and_or(tok_lst, shell);
 		if (!right)
 			return (free_ast(&node), NULL);
@@ -333,7 +332,7 @@ t_ast	*ast_list(t_list **tok_lst, t_shell *shell)
 const char	*tt_to_symbol(t_lexical_token token)
 {
 	if (token.type == TT_WORD)
-		return (token.value); // 単語の場合は値自体を返す
+		return (token.value);
 	if (token.type == TT_REDIR_IN)
 		return (" `<'");
 	if (token.type == TT_APPEND)
@@ -373,8 +372,10 @@ t_status	mod_syn(t_shell *shell)
 	{
 		if (tok->type == TT_EOF)
 			return (E_NONE);
-		ft_dprintf(STDERR_FILENO,
-			"minishell: syntax error near unexpected token%s\n", tt_to_symbol(*tok));
+		if ((tok->type & 0xFF00) != TM_REDIR)
+			ft_dprintf(STDERR_FILENO,
+				"minishell: syntax error near unexpected token%s\n",
+				tt_to_symbol(*tok));
 		return (free_ast(&ast), E_SYNTAX);
 	}
 	shell->ast = ast;
