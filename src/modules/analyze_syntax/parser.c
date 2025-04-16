@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/16 10:44:07 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/16 10:53:06 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,6 @@ int	ast_redir(t_list **tok_lst, t_ast *node, t_shell *shell)
 		ft_dprintf(STDERR_FILENO,
 			"minishell: syntax error near unexpected token `%s'\n",
 			redir_token_to_symbol(tok->type));
-		ms_listshift(tok_lst);
 		return (1);
 	}
 	if (!node->args->redr)
