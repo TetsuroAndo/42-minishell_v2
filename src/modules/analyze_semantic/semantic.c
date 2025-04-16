@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/16 19:10:32 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/16 20:35:06 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,23 +21,76 @@
 //     → minishell: %s: command not found
 // → 展開可能文字 * $
 
-int ft_isbackslush(int c)
+int	ft_isbackslush(int c)
 {
 	return (c == '\\');
 }
 
+/*
+**バックスラッシュと*記号を見つけて適切にバッファーにデータを詰めて返す
+*/
 char	*handle_wildcard(char *in, t_shell *shell)
 {
-	char *buf;
+	char	*buf;
 
-	return buf;
+	return (buf);
 }
 
+int	ft_isalnum_underscore(char c)
+{
+	return (ft_isalnum(c) || c == '_');
+}
+
+int	extract_varname(char **buf, char *in, t_shell *shell)
+{
+	size_t	key_len;
+	char	*key_str;
+	char	*env_val;
+
+	key_len = 0;
+	while (ft_isalnum_underscore(in[key_len]))
+		key_len++;
+	if (key_len == 0)
+	{
+		*buf = xstrjoin_free2(*buf, "$", shell);
+		return (1);
+	}
+	key_str = ms_substr(in, 0, key_len, shell);
+	env_val = ms_getenv(key_str, shell);
+	if (!env_val)
+		env_val = "";
+	*buf = xstrjoin_free2(*buf, env_val, shell);
+	xfree(&key_str);
+	return (key_len);
+}
+
+/*
+**バックスラッシュと$記号を見つけて適切にバッファーにデータを詰めて返す
+*/
 char	*handle_env(char *in, t_shell *shell)
 {
-	char *buf;
+	char	*buf;
+	size_t	i;
 
-	return buf;
+	buf = ms_strdup("", shell);
+	while (*in)
+	{
+		i = 0;
+		while (in[i] && (!ft_isbackslush(in[i]) && in[i] != '$'))
+			i++;
+		buf = xstrjoin_free2(buf, ms_substr(in, 0, i, shell), shell);
+		in += i;
+		if (in[i] == '$')
+			in += extract_varname(&buf, in, shell);
+		else if (ft_isbackslush(*in) && in[1] != '*')
+		{
+			buf = xstrjoin_free2(buf, ms_substr(in + 1, 0, 1, shell), shell);
+			in += 2;
+		}
+		else if (*in)
+			in++;
+	}
+	return (buf);
 }
 
 int	resolve_path(char *in, t_shell *shell)
@@ -45,16 +98,16 @@ int	resolve_path(char *in, t_shell *shell)
 	return (0);
 }
 
-int proc_argv(t_lexical_token *data, int count, t_shell *shell)
+int	proc_argv(t_lexical_token *data, int count, t_shell *shell)
 {
 	// 文字リテラル
-	data->value = handle_wildcard(handle_env(data->value,shell),shell);
+	data->value = handle_wildcard(handle_env(data->value, shell), shell);
 	if (!data->value)
 		return (1);
 	// CMD 解決
 	if (count == 0)
 		if (resolve_path(data->value, shell))
-			rteurn (1);
+			rteurn(1);
 	return (0);
 }
 
@@ -66,7 +119,7 @@ int	valid_redir(t_lexical_token *data, t_shell *shell)
 int	proc_redr(t_lexical_token *data, int count, t_shell *shell)
 {
 	// 文字リテラル
-	data->value = handle_wildcard(handle_env(data->value,shell),shell);
+	data->value = handle_wildcard(handle_env(data->value, shell), shell);
 	if (!data->value)
 		return (1);
 	// リダイレクト
