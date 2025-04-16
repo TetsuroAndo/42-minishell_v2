@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   lexer_handler.c                                    :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:09 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 19:55:50 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/16 09:50:50 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "mod_lex.h"
 
@@ -69,35 +69,29 @@ t_token_type	get_one_char_op(char c)
 }
 
 /**
- * @brief 引用符で囲まれた文字列を読み取る
- *
- * line[pos]から始まる引用符で囲まれた文字列を読み取り、その内容を返す。
+ * @brief 引用符で囲まれた文字列のposをシフトする。
  * 引用符の終わりが見つからない場合はエラーとなる。
  *
  * @param line 処理対象の文字列
  * @param pos 現在の位置を示すポインタ（処理後は引用符の次の位置に更新される）
  * @param shell ステータスを保持する構造体
- * @return 引用符の中の文字列。エラー時はNULL
+ * @return 引用符の終わりが見つかった場合は1、そうでない場合は0
  */
-static char	*read_quoted_word(const char *line, size_t *pos, t_shell *shell)
+static int	shift_quoted_word(const char *line, size_t *pos, t_shell *shell)
 {
 	char	quote;
-	size_t	start;
-	char	*content;
 
 	quote = line[*pos];
-	start = *pos;
 	(*pos)++;
 	while (line[*pos] && line[*pos] != quote)
 		(*pos)++;
 	if (!line[*pos])
 	{
 		shell->status = E_SYNTAX;
-		return (NULL);
+		return (1);
 	}
-	content = ms_substr(line, start, (*pos - start + 1), shell);
 	(*pos)++;
-	return (content);
+	return (0);
 }
 
 /**
@@ -105,7 +99,7 @@ static char	*read_quoted_word(const char *line, size_t *pos, t_shell *shell)
  *
  * line[pos]から始まる単語を読み取り、その内容を返す。
  * 単語の終わりは空白文字、演算子、または文字列の終わりで判断される。
- * 引用符で始まる場合は引用符で囲まれた文字列として処理される。
+ * 引用符で始まる場合や途中に引用符がある場合も、一つの単語として処理される。
  *
  * @param line 処理対象の文字列
  * @param pos 現在の位置を示すポインタ（処理後は単語の次の位置に更新される）
@@ -115,18 +109,25 @@ static char	*read_quoted_word(const char *line, size_t *pos, t_shell *shell)
 char	*read_word(const char *line, size_t *pos, t_shell *shell)
 {
 	size_t	start;
-	char	*res;
 
-	if (line[*pos] == '\'' || line[*pos] == '"')
-		return (read_quoted_word(line, pos, shell));
 	start = *pos;
 	while (line[*pos])
 	{
-		if (ft_isspace(line[*pos]) || get_two_char_op(&line[*pos],
+		if (line[*pos] == '\\' && line[*pos + 1]) // バックスラッシュによるエスケープ処理
+		{
+			(*pos) += 2;
+			continue;
+		}
+		if (line[*pos] == '\'' || line[*pos] == '"')
+		{
+			if (shift_quoted_word(line, pos, shell))
+				return (NULL);
+			continue;
+		}
+		if (line[*pos] == '#' || ft_isspace(line[*pos]) || get_two_char_op(&line[*pos],
 				NULL) != TT_ERROR || get_one_char_op(line[*pos]) != TT_ERROR)
-			break ;
+			break;
 		(*pos)++;
 	}
-	res = ms_substr(line, start, (*pos - start), shell);
-	return (res);
+	return (ms_substr(line, start, (*pos - start), shell));
 }

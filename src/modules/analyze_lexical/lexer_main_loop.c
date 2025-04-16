@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   lexer_main_loop.c                                  :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:15 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 19:55:47 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/16 09:17:22 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "mod_lex.h"
 
@@ -81,22 +81,25 @@ static int	parse_next_token(const char *line, size_t *pos, t_shell *shell)
 	char	*word;
 
 	skip_spaces(line, pos);
-	// 入力終端(=EOF)ならTT_EOFトークンを追加して終了
-	if (!line[*pos])
+	if (!line[*pos]) // 入力終端(=EOF)ならTT_EOFトークンを追加して終了
 	{
 		add_token(shell, create_token(TT_EOF, NULL, shell));
 		return (0);
 	}
-	// 2文字演算子をチェック
-	if (parse_two_char_operator(line, pos, shell))
+	if (line[*pos] == '#') // コメント記号(#)が見つかった場合、行の残りをスキップしてEOFトークンを追加
+	{
+		while (line[*pos])
+			(*pos)++;
+		add_token(shell, create_token(TT_EOF, NULL, shell));
+		return (0);
+	}
+	if (parse_two_char_operator(line, pos, shell)) // 2文字演算子をチェック
 		return (1);
-	// 1文字演算子をチェック
-	if (parse_one_char_operator(line, pos, shell))
+	if (parse_one_char_operator(line, pos, shell)) // 1文字演算子をチェック
 		return (1);
-	// いずれの演算子にも該当しない場合は通常単語扱い
-	word = read_word(line, pos, shell);
+	word = read_word(line, pos, shell); // いずれの演算子にも該当しない場合は通常単語扱い
 	if (!word && shell->status == E_SYNTAX)
-		return (-1); // 例: クォート不整合など
+		return (-1); // クォート不整合など
 	add_token(shell, create_token(TT_WORD, word, shell));
 	return (1);
 }
@@ -118,9 +121,8 @@ int	tokenize_line(t_shell *shell)
 		parse_status = parse_next_token(line, &index, shell);
 		if (parse_status == 0)
 			break ; // EOFトークン追加済み -> 正常終了
-		if (parse_status < 0)
+		if (parse_status < 0) // 構文エラー等
 		{
-			// 構文エラー等
 			if (shell->status == E_NONE)
 				shell->status = E_SYNTAX;
 			return (0);
