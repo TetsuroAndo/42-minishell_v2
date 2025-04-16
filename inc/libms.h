@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   libms.h                                            :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 19:55:51 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/16 18:53:20 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #ifndef LIBMS_H
 # define LIBMS_H
@@ -92,7 +92,9 @@ t_list					*xlstnew(void *data, t_shell *shell);
 t_list					*xlst_from_strs(char **strs, t_shell *shell);
 char					**xlst_to_strs(t_list *lst, t_shell *shell);
 char					**xsplit(char *str, char sep, t_shell *shell);
+char					*xstrjoin(char const *s1, char const *s2, t_shell *shell);
 char					*xstrjoin_free(char const *s1, char const *s2,
 							t_shell *shell);
+char					*xstrjoin_free2(char const *s1, char const *s2, t_shell *shell);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   debug_putsyn.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 05:04:33 by teando            #+#    #+#             */
-/*   Updated: 2025/04/16 16:30:04 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/16 17:24:36 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static void	print_cmd_args(t_args *args, int index)
 		token = arg_list->data;
 		if (!first)
 			printf(", ");
-		printf("\"%s\"", token->value);
+		printf("%s", token->value);
 		first = 0;
 		arg_list = arg_list->next;
 	}
@@ -73,7 +73,10 @@ static void	print_tree_node(t_ast *ast, const char *prefix, int is_left,
 	printf("[%s]", get_node_type_str(ast->ntype));
 	if (ast->ntype == NT_CMD && ast->args)
 	{
-		indent = has_right ? "│          " : "           ";
+		if (has_right)
+			indent = "│          ";
+		else
+			indent = "           ";
 		printf("\n%s%s", prefix, indent);
 		if (ast->args->redr)
 			printf("├─ Command: ");
@@ -112,10 +115,12 @@ static void	print_ast_tree(t_ast *ast, const char *prefix, int is_left,
 
 void	debug_print_ast(t_ast *ast, t_shell *shell)
 {
-	printf("\n=== Abstract Syntax Tree ===\n");
 	if (!ast)
 		printf("(Empty AST)\n");
 	else
+	{
+		printf("\n=== Abstract Syntax Tree ===\n");
 		print_ast_tree(ast, "", 1, shell);
-	printf("===========================\n\n");
+		printf("===========================\n\n");
+	}
 }
