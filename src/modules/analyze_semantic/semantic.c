@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 17:25:03 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 17:29:39 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ int	valid_redir(t_lexical_token *d, t_shell *sh)
 
 /**
  * @brief デリミタを準備する
- * 
+ *
  * @param delim_raw 生のデリミタ文字列
  * @param quoted クォートされているかの情報を格納する変数へのポインタ
  * @param sh シェル情報
@@ -145,7 +145,7 @@ static char	*prepare_delimiter(char *delim_raw, int *quoted, t_shell *sh)
 
 /**
  * @brief ヒアドキュメントの本文を読み込む
- * 
+ *
  * @param delim デリミタ文字列
  * @param quoted デリミタがクォートされているか
  * @param sh シェル情報
@@ -160,7 +160,7 @@ static char	*read_heredoc_body(char *delim, int quoted, t_shell *sh)
 	while (42)
 	{
 		line = readline("> ");
-		if (!line || (delim[0] == '\0' && line[0] == '\0') 
+		if (!line || (delim[0] == '\0' && line[0] == '\0')
 			|| ft_strcmp(line, delim) == 0)
 		{
 			free(line);
@@ -177,7 +177,7 @@ static char	*read_heredoc_body(char *delim, int quoted, t_shell *sh)
 
 /**
  * @brief ヒアドキュメントを処理する
- * 
+ *
  * @param tok 処理するトークン
  * @param sh シェル情報
  * @return int 成功時0、失敗時1
@@ -339,10 +339,10 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 	if (!aft_wlc || *aft_wlc == '\0' || ft_strchr(aft_wlc, ' '))
 		return (ft_dprintf(2, "minishell: %s: ambiguous redirect\n", aft_wlc),
 			free(aft_wlc), 1);
-	if (valid_redir(data, sh))
-		return (free(aft_wlc), 1);
 	free(data->value);
 	data->value = aft_wlc;
+	if (valid_redir(data, sh))
+		return (free(aft_wlc), 1);
 	return (0);
 }
 
