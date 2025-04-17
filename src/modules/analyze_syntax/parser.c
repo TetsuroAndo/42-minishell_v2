@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/16 15:21:36 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/17 13:49:40 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,11 +137,6 @@ t_ast	*ast_redirections(t_list **tok_lst, t_ast *node, t_shell *shell)
 		return (NULL);
 	while ((tok = curr_token(tok_lst)) && (tok->type & 0xFF00) == TM_REDIR)
 	{
-		if (!node)
-		{
-			node = ast_new(NT_REDIRECT, NULL, NULL, shell);
-			node->args = args_new(shell);
-		}
 		if (ast_redir(tok_lst, node, shell))
 			return (NULL);
 	}
@@ -153,13 +148,10 @@ t_ast	*ast_redirections(t_list **tok_lst, t_ast *node, t_shell *shell)
 **  simple_cmd ::= WORD (WORD)*
 **  cmd ::= simple_cmd redirections?
 */
-t_ast	*ast_simple_cmd(t_list **tok_lst, t_shell *shell)
+t_ast	*ast_simple_cmd(t_list **tok_lst, t_ast *node, t_shell *shell)
 {
-	t_ast			*node;
 	t_lexical_token	*tok;
 
-	node = ast_new(NT_CMD, NULL, NULL, shell);
-	node->args = args_new(shell);
 	tok = curr_token(tok_lst);
 	while (tok && tok->type == TT_WORD)
 	{
@@ -177,19 +169,13 @@ simple_cmd redirections?
 t_ast	*ast_cmd(t_list **tok_lst, t_shell *shell)
 {
 	t_ast	*node;
-	t_ast	*cmd_node;
-	t_ast	*redir_node;
+	t_lexical_token *tok;
 
-	cmd_node = ast_simple_cmd(tok_lst, shell);
-	redir_node = ast_redirections(tok_lst, cmd_node, shell);
-	if (redir_node)
-	{
-		return (redir_node);
-	}
-	else
-	{
-		node = cmd_node;
-	}
+	node = ast_new(NT_CMD, NULL, NULL, shell);
+	node->args = args_new(shell);
+	node = ast_redirections(tok_lst, node, shell);
+	node = ast_simple_cmd(tok_lst, node, shell);
+	node = ast_redirections(tok_lst, node, shell);
 	return (node);
 }
 
