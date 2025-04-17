@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 14:27:39 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 14:29:36 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,6 @@ int	resolve_path(char **in, t_shell *sh)
 	while (paths[i])
 	{
 		test = xstrjoin3(paths[i], "/", *in, sh);
-		ft_dprintf(2, "test: %s\n", test);
 		if (access(test, X_OK) == 0)
 		{
 			free(*in);
@@ -133,7 +132,8 @@ int	resolve_path(char **in, t_shell *sh)
 		free(test);
 		++i;
 	}
-	ft_dprintf(2, "minishell: %s: command not found\n", *in);
+	if (in)
+		ft_dprintf(2, "minishell: %s: command not found\n", *in);
 	return (ft_strs_clear(paths), 1);
 }
 
