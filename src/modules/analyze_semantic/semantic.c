@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 12:58:27 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 13:21:09 by teando           ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -154,8 +154,6 @@ int	valid_redir(t_lexical_token *d, t_shell *sh)
 		fd = open(d->value, O_WRONLY | O_CREAT, 0644);
 	else if (d->type == TT_APPEND)
 		fd = open(d->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else if (d->type == TT_HEREDOC)
-		fd = open(d->value, O_WRONLY | O_CREAT, 0644);
 	else
 		return (0);
 	if (fd == -1)
