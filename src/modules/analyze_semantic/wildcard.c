@@ -5,84 +5,185 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/15 15:45:55 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 15:48:03 by teando           ###   ########.fr       */
+/*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
+/*   Updated: 2025/04/17 13:00:41 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "core.h"
+#include "mod_sem.h"
 
 /*
-** ディレクトリ内のファイルをスキャンする関数
-** dir_path: スキャンするディレクトリのパス
-** pattern: マッチングパターン
-** shell: シェル構造体
-** returns: マッチしたファイル名のリスト
+** wc_match  ―  '*' だけを扱う最小限のワイルドカードマッチャ
+** 返り値 : 1 = 一致, 0 = 不一致
+**
+** 仕様
+** ───────────────────────────────────────────
+**  pat : パターン。'*' は「0 文字以上の任意列」を表す
+**  str : 対象文字列
+**
+**  ・'*' は何個でも、先頭/末尾/連続して出現してもよい
+**  ・大文字小文字は区別（シェルの pathname 展開と同じ）
+**  ・バックスラッシュによるエスケープは実装していない
 */
-t_list *scan_directory(const char *dir_path, const char *pattern, t_shell *shell)
+int	wc_match(const char *pat, const char *str)
 {
-    // 1. ディレクトリをオープン
-    // 2. ディレクトリ内のエントリを順に読み込む
-    // 3. 各エントリに対してパターンマッチングを実行
-    // 4. マッチしたエントリをリストに追加
-    // 5. ディレクトリをクローズして結果を返す
+	/* パターンの末尾に達したら、文字列も終端で一致 */
+	if (*pat == '\0')
+		return (*str == '\0');
+	if (*pat == '*') // '*' に遭遇したら、連続する '*' をまとめてスキップ
+	{
+		while (*pat == '*') // 複数の '*' をまとめてスキップ
+			++pat;
+		if (*pat == '\0') // pat が "*…\0" だけだった場合は残り全部にマッチ
+			return (1);
+		while (*str) // str の各位置で再帰的に照合していく
+		{
+			if (wc_match(pat, str)) // pat 以降と str 以降がマッチすれば成功
+				return (1);
+			++str; // 1 文字ずらして再試行
+		}
+		return (0); // どの位置でもマッチしなければ失敗
+	}
+	if (*str && *pat == *str)
+		return (wc_match(pat + 1, str + 1));
+	return (0);
 }
 
-/*
-** マッチ結果をソートする関数
-** matches: マッチしたファイル名のリスト
-** returns: ソートされたリスト
-*/
-t_list *sort_matches(t_list *matches)
+static int	append_entry(char **buf, char *entry, char *pat, t_shell *sh)
 {
-    // 1. リストをソート可能な配列に変換
-    // 2. アルファベット順にソート
-    // 3. ソートされた配列を新しいリストに変換して返す
+	char	*dup;
+
+	if (entry[0] == '.' && pat[0] != '.')
+		return (0);
+	dup = ms_strdup(entry, sh);
+	*buf = xstrjoin_free2(*buf, dup, sh);
+	*buf = xstrjoin_free(*buf, " ", sh);
+	return (1);
 }
 
-/*
-** パターンとファイル名がマッチするか確認する関数
-** pattern: パターン文字列（例: "*.c"）
-** filename: ファイル名
-** returns: マッチする場合は1、しない場合は0
-*/
-int match_pattern(const char *pattern, const char *filename)
+/**
+ * @brief ワイルドカード (*) 展開
+ *
+ * @param buf   追加先バッファへのポインタ
+ * @param in    '*' を含む入力位置
+ * @param sh    シェル情報
+ * @retval size_t 処理した文字数
+ */
+size_t	extract_wildcard(char **buf, char *in, t_shell *sh)
 {
-    // 1. パターンが空の場合はファイル名も空ならマッチ
-    // 2. '*'の場合は残りのパターンが残りのファイル名のどこかにマッチするか再帰的に確認
-    // 3. '?'の場合は1文字スキップして残りのパターンとファイル名をマッチング
-    // 4. 通常の文字の場合は文字が一致するか確認し、残りのパターンとファイル名をマッチング
-    // 5. エスケープ文字'\'の場合は次の文字を通常の文字として扱う
+	size_t			len;
+	DIR				*dp;
+	struct dirent	*ent;
+	char			*pat;
+	int				matched;
+
+	len = 0;
+	while (in[len] && !ft_isspace(in[len]))
+		++len;
+	pat = ms_substr(in, 0, len, sh);
+	dp = opendir(sh->cwd);
+	if (!dp)
+		return (0);
+	matched = 0;
+	ent = readdir(dp);
+	while (ent)
+	{
+		if (wc_match(pat, ent->d_name))
+			matched |= append_entry(buf, ent->d_name, pat, sh);
+		ent = readdir(dp);
+	}
+	if (!matched) // 1 つもマッチしなかったら そのままパターンを残す
+		*buf = xstrjoin_free(*buf, pat, sh);
+	free(pat);
+	return (closedir(dp), ft_strlen(*buf));
 }
 
-/*
-** AST内のワイルドカードを展開する関数
-** ast: 展開対象のAST
-** shell: シェル構造体
-** returns: 成功時はSUCCESS、失敗時はFAILURE
-*/
-t_status expand_wildcards_in_ast(t_ast *ast, t_shell *shell)
+/**
+ * @brief 空白文字を処理し、バッファに追加する
+ *
+ * @param buf バッファへのポインタ
+ * @param in 入力文字列
+ * @param sh シェル情報
+ * @return char* 処理後の入力位置
+ */
+static char	*process_whitespace(char **buf, char *in, t_shell *sh)
 {
-    // 1. ASTがNULLの場合は成功を返す
-    // 2. ASTのノードタイプに応じて処理を分岐
-    //    - NT_CMD: コマンド引数内のワイルドカードを展開
-    //    - NT_PIPE, NT_LIST, NT_AND, NT_OR: 左右の子ノードを再帰的に処理
-    // 3. コマンド引数のリスト（argv）を走査
-    // 4. 各引数がワイルドカードを含む場合は展開
-    // 5. 展開結果を元の引数リストに置き換え
+	if (ft_isspace(*in))
+	{
+		*buf = xstrjoin_free2(*buf, ms_substr(in, 0, 1, sh), sh);
+		return (in + 1);
+	}
+	return (in);
 }
 
-/*
-** ワイルドカードパターンを展開する関数
-** pattern: 展開するパターン（例: "*.c"）
-** shell: シェル構造体
-** returns: マッチしたファイル名のリスト、マッチしない場合はNULL
-*/
-t_list *expand_wildcard(const char *pattern, t_shell *shell)
+/**
+ * @brief 単語の境界を探し、ワイルドカードの有無を確認する
+ *
+ * @param in 入力文字列
+ * @param has_wc ワイルドカードの有無を格納する変数へのポインタ
+ * @param s セマンティック情報
+ * @return size_t 単語の長さ
+ */
+static size_t	find_word_boundary(char *in, int *has_wc, t_sem *s)
 {
-    // 1. パターンにワイルドカード文字が含まれているか確認
-    // 2. パターンからディレクトリパスとファイル名パターンを分離
-    // 3. ディレクトリをスキャンしてマッチするファイルを検索
-    // 4. マッチ結果をソート
-    // 5. マッチするファイルがない場合は元のパターンを返す
+	size_t	i;
+
+	i = 0;
+	s->quote_state = QS_NONE;
+	*has_wc = 0;
+	while (check_qs(in[i], s) && !ft_isspace(in[i]))
+	{
+		if (s->quote_state == QS_NONE && in[i] == '*')
+			*has_wc = 1;
+		++i;
+	}
+	return (i);
+}
+
+/**
+ * @brief 単語を処理し、必要に応じてワイルドカード展開を行う
+ *
+ * @param buf バッファへのポインタ
+ * @param in 入力文字列
+ * @param word_len 単語の長さ
+ * @param has_wc ワイルドカードの有無
+ * @param sh シェル情報
+ * @return char* 処理後の入力位置
+ */
+static char	*process_word(char **buf, char *in, size_t word_len, int has_wc,
+		t_shell *sh)
+{
+	size_t	bufl;
+
+	if (has_wc)
+	{
+		bufl = extract_wildcard(buf, in, sh);
+		if ((*buf)[bufl - 1] == ' ')
+			(*buf)[bufl - 1] = '\0';
+	}
+	else
+		*buf = xstrjoin_free2(*buf, ms_substr(in, 0, word_len, sh), sh);
+	return (in + word_len);
+}
+
+char	*handle_wildcard(char *in, t_shell *sh)
+{
+	t_sem	s;
+	size_t	word_len;
+	int		has_wc;
+	char	*processed_in;
+
+	s.buf = ms_strdup("", sh);
+	while (*in)
+	{
+		processed_in = process_whitespace(&s.buf, in, sh);
+		if (processed_in != in)
+		{
+			in = processed_in;
+			continue ;
+		}
+		word_len = find_word_boundary(in, &has_wc, &s);
+		in = process_word(&s.buf, in, word_len, has_wc, sh);
+	}
+	return (s.buf);
 }
