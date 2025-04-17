@@ -7,23 +7,18 @@ typedef struct s_lexical_token	t_lexical_token;
 typedef struct s_args			t_args;
 typedef struct s_ast			t_ast;
 
-typedef enum e_sem_trigger
+typedef enum e_quote_state
 {
-	ST_NONE,       // 参照なし
-	ST_CMD,        // BILDIN or PATH
-	ST_QUOTE,      // "'`
-	ST_BACK_SLASH, // バックスラッシュ
-	ST_WILDCARD,   // *
-	ST_DOLLAR,     // $VAR $?
-	ST_REDIRECT    // < > << >>
-}								t_sem_trigger;
+	QS_NONE,
+	QS_SINGLE,
+	QS_DOUBLE,
+	QS_BACK,
+}								t_quote_state;
 
-typedef enum e_quote
+typedef struct s_sem
 {
-	QS_QUOTE_NONE,   // クォートなし
-	QS_QUOTE_SINGLE, // シングルクォート内
-	QS_QUOTE_DOUBLE, // ダブルクォート内
-	QS_QUOTE_BACK,   // バッククォート内
-}								t_quote;
+	char			*buf;
+	t_quote_state	quote_state;
+}								t_sem;
 
 #endif

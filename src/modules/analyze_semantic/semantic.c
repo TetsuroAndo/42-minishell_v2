@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/17 08:32:48 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 10:04:45 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,26 @@
 //   → PATH 解決
 //     → minishell: %s: command not found
 // → 展開可能文字 * $
+
+t_quote_state is_quote_type(int c)
+{
+	if (c == '"')
+		return (QS_DOUBLE);
+	if (c == '\'')
+		return (QS_SINGLE);
+	if (c == '`')
+		return (QS_BACK);
+	return (QS_NONE);
+}
+
+int check_qs(int c, t_sem *sem)
+{
+	if (sem->quote_state == QS_NONE)
+		sem->quote_state = is_quote_type(c);
+	else if (sem->quote_state == is_quote_type(c))
+		sem->quote_state = QS_NONE;
+	return (c);
+}
 
 /*
 ** ワイルドカード（*）を検出し、展開結果をバッファに追加する
@@ -42,25 +62,34 @@ int	extract_wildcard(char **buf, char *in, t_shell *shell)
 */
 char	*handle_wildcard(char *in, t_shell *shell)
 {
-	char	*buf;
-	size_t	i;
+	t_sem sem;
+	size_t	i;	
 
-	buf = ms_strdup("", shell);
+	sem.buf = ms_strdup("", shell);
+	sem.quote_state = QS_NONE;
 	while (*in)
 	{
 		i = 0;
-		while (in[i] && (!ft_isbackslash(in[i]) && in[i] != '*'))
+		while (check_qs(in[i], &sem) && ((!ft_isbackslash(in[i]) && in[i] != '*') || 
+				sem.quote_state == QS_SINGLE || sem.quote_state == QS_DOUBLE))
 			i++;
-		buf = xstrjoin_free2(buf, ms_substr(in, 0, i, shell), shell);
+		sem.buf = xstrjoin_free2(sem.buf, ms_substr(in, 0, i, shell), shell);
 		in += i;
-		if (in[i] == '*')
-			in += extract_wildcard(&buf, in, shell);
+		if (*in == '*' && sem.quote_state == QS_NONE)
+			in += extract_wildcard(&sem.buf, in, shell);
 		else if (*in)
-			in++;
+			check_qs(*in++, &sem);
 	}
-	return (buf);
+	return (sem.buf);
 }
 
+/*
+** 変数名を検出し、展開結果をバッファに追加する
+** buf: 結果を格納するバッファへのポインタ
+** in: 変数名を含む入力文字列
+** shell: シェル情報
+** 戻り値: inを何文字進めたか
+*/
 int	extract_varname(char **buf, char *in, t_shell *shell)
 {
 	size_t	key_len;
@@ -85,32 +114,33 @@ int	extract_varname(char **buf, char *in, t_shell *shell)
 }
 
 /*
-**バックスラッシュと$記号を見つけて適切にバッファーにデータを詰めて返す
+** バックスラッシュと$記号を見つけて適切にバッファーにデータを詰めて返す
 */
 char	*handle_env(char *in, t_shell *shell)
 {
-	char	*buf;
+	t_sem sem;
 	size_t	i;
 
-	buf = ms_strdup("", shell);
+	sem.buf = ms_strdup("", shell);
+	sem.quote_state = QS_NONE;
 	while (*in)
 	{
 		i = 0;
-		while (in[i] && (!ft_isbackslash(in[i]) && in[i] != '$'))
+		while (check_qs(in[i], &sem) && ((!ft_isbackslash(in[i]) && in[i] != '$') || sem.quote_state == QS_SINGLE))
 			i++;
-		buf = xstrjoin_free2(buf, ms_substr(in, 0, i, shell), shell);
+		sem.buf = xstrjoin_free2(sem.buf, ms_substr(in, 0, i, shell), shell);
 		in += i;
-		if (in[i] == '$')
-			in += extract_varname(&buf, in, shell);
-		else if (ft_isbackslash(*in) && in[1] != '*')
+		if (*in == '$' && sem.quote_state != QS_SINGLE)
+			in += extract_varname(&sem.buf, in, shell);
+		else if (ft_isbackslash(*in) && in[1] != '*' && sem.quote_state != QS_SINGLE)
 		{
-			buf = xstrjoin_free2(buf, ms_substr(in + 1, 0, 1, shell), shell);
+			sem.buf = xstrjoin_free2(sem.buf, ms_substr(in + 1, 0, 1, shell), shell);
 			in += 2;
 		}
 		else if (*in)
-			in++;
+			check_qs(*in++, &sem);
 	}
-	return (buf);
+	return (sem.buf);
 }
 
 int	resolve_path(char *in, t_shell *shell)
@@ -159,12 +189,12 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *shell)
 	// 文字リテラル
 	if (data->value)
 		aft_env = handle_env(data->value, shell);
-		if (aft_env)
-		{
-			if (!ft_strchr(aft_env ,' '))
-				;//ここに空白区切りであたらしく引数リストを構成する関数を置く
-			aft_wlc = handle_wildcard(data->value, shell);
-		}
+	if (aft_env)
+	{
+		if (!ft_strchr(aft_env ,' '))
+			;//ここに空白区切りであたらしく引数リストを構成する関数を置く
+		aft_wlc = handle_wildcard(data->value, shell);
+	}
 	if (!aft_wlc)
 		return (1);
 	// リダイレクト
