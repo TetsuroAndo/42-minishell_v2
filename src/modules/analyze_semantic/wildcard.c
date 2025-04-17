@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 16:40:52 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/17 17:11:40 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,15 +157,36 @@ static char	*collect_matches(DIR *dir, const char *pattern, t_shell *sh)
 	return (buf);
 }
 
-char	*handle_wildcard(char *in, t_shell *sh)
+static char	*process_split_wildcard(char **split, t_shell *sh)
+{
+	char	*buf;
+	char	*tmp;
+	char	*joined;
+	int		i;
+
+	buf = NULL;
+	for (i = 0; split[i]; i++)
+	{
+		tmp = handle_wildcard(split[i], sh);
+		if (!tmp)
+			continue ;
+		if (!buf)
+			buf = ms_strdup(tmp, sh);
+		else
+		{
+			joined = ft_strjoin3(buf, " ", tmp);
+			free(buf);
+			buf = joined;
+		}
+	}
+	return (buf);
+}
+
+static char	*process_directory_wildcard(char *in, t_shell *sh)
 {
 	DIR		*dir;
 	char	*buf;
 
-	if (!in || !sh)
-		return (NULL);
-	if (!strchr(in, '*'))
-		return (in);
 	dir = opendir(sh->cwd);
 	if (!dir)
 		return (in);
@@ -175,4 +196,25 @@ char	*handle_wildcard(char *in, t_shell *sh)
 		return (buf);
 	else
 		return (in);
+}
+
+char	*handle_wildcard(char *in, t_shell *sh)
+{
+	char	**split;
+	char	*buf;
+
+	if (!in || !sh)
+		return (NULL);
+	if (ft_strchr(in, ' '))
+	{
+		split = xsplit(in, ' ', sh);
+		if (!split)
+			return (NULL);
+		buf = process_split_wildcard(split, sh);
+		ft_strs_clear(split);
+		return (buf);
+	}
+	if (!strchr(in, '*'))
+		return (in);
+	return (process_directory_wildcard(in, sh));
 }

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 17:18:45 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 17:25:03 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,7 @@ int	add_to_list(t_list **list, char **words, t_shell *sh)
 	i = 1;
 	while (words[i])
 	{
-		tok = xmalloc(1, sh);
+		tok = xmalloc(sizeof *tok, sh);
 		if (!tok)
 			return (1);
 		tok->type = TT_WORD;
@@ -334,7 +334,8 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 	if (!aft_env || *aft_env == '\0')
 		return (ft_dprintf(2, "minishell: ambiguous redirect\n"), 1);
 	aft_wlc = handle_wildcard(aft_env, sh);
-	free(aft_env);
+	if (aft_wlc != aft_env)
+		free(aft_env);
 	if (!aft_wlc || *aft_wlc == '\0' || ft_strchr(aft_wlc, ' '))
 		return (ft_dprintf(2, "minishell: %s: ambiguous redirect\n", aft_wlc),
 			free(aft_wlc), 1);
