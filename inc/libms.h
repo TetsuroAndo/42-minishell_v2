@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 16:22:28 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 16:26:31 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int						path_home(char path[], const char *src, int mode,
 							t_shell *shell);
 int						path_relative(char path[], const char *src, int mode,
 							t_shell *shell);
-char					*path_resolve(char **in, t_shell *shell);
+int						path_resolve(char **in, t_shell *shell);
 
 /*
 ** ============================================================================

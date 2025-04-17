@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 16:21:46 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 16:34:27 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,31 @@
 //   → PATH 解決
 //     → minishell: %s: command not found
 // → 展開可能文字 * $
+
+char    *strip_quotes(const char *s, t_shell *sh)
+{
+    size_t  i = 0, j = 0, len = ft_strlen(s);
+    char    *out = xmalloc(len + 1, sh);
+
+    while (i < len)
+    {
+        if (s[i] == '\'' || s[i] == '"')
+            i++;
+        else
+            out[j++] = s[i++];
+    }
+    out[j] = '\0';
+    return (out);
+}
+int is_quoted(const char *s)
+{
+    while (*s)
+        if (*s == '\'' || *s == '"')
+            return (1);
+        else
+            ++s;
+    return (0);
+}
 
 /* -------------------------------------------------------------------------- */
 /* Environment                                                                */
@@ -121,61 +146,48 @@ int	valid_redir(t_lexical_token *d, t_shell *sh)
 /* heredoc                                                                    */
 /* -------------------------------------------------------------------------- */
 
-static int	delimiter_is_quoted(const char *s)
-{
-	while (*s)
-		if (*s == '\'' || *s == '"')
-			return (1);
-		else
-			++s;
-	return (0);
-}
-
 /*
 ** heredoc:
 **  - tmpfile を作成し、ユーザが delimiter を打つまで readline
 **  - delimiter が quote されていなければ $ 展開をかける
 **  - 完了後、tok を < (RELLIR_IN) と同じ扱いに書き換える
 */
-static int	handle_heredoc(t_lexical_token *tok, t_shell *sh)
+static int  handle_heredoc(t_lexical_token *tok, t_shell *sh)
 {
-	char	tmpl[] = "/tmp/ms_hd_XXXXXX";
-	int		fd;
-	char	*line;
-	int		quoted;
-	char	*exp;
+    char    *delim_raw  = tok->value;
+    int      quoted     = is_quoted(delim_raw);
+    char    *delim_noq  = strip_quotes(delim_raw, sh);
+    char    *delim      = quoted ? delim_noq : handle_env(delim_noq, sh);
+    char    *body       = ms_strdup("", sh);
+    char    *line;
 
-	fd = mkstemp(tmpl);
-	quoted = delimiter_is_quoted(tok->value);
-	if (fd == -1)
-		return (ft_dprintf(2, "minishell: heredoc: cannot create tmp\n"), 1);
-	while (1)
-	{
-		line = readline("> ");
-		if (!line) /* Ctrl‑D */
-			break ;
-		if (!ft_strcmp(line, tok->value)) /* delimiter 到達 */
-		{
-			free(line);
-			break ;
-		}
-		if (!quoted) /* 展開あり */
-		{
-			exp = handle_env(line, sh);
-			write(fd, exp, ft_strlen(exp));
-			free(exp);
-		}
-		else /* quote 付き delimiter: そのまま書く */
-			write(fd, line, ft_strlen(line));
-		write(fd, "\n", 1);
-		free(line);
-	}
-	close(fd);
-	/* token の種別 / value を < に置換 */
-	free(tok->value);
-	tok->value = ms_strdup(tmpl, sh);
-	tok->type = TT_REDIR_IN;
-	return (0);
+    while (42)                                   /* readline で 42 … */
+    {
+        line = readline("> ");
+        if (!line)                               /* Ctrl‑D */
+            break;
+        if ((delim[0] == '\0' && line[0] == '\0')||
+            ft_strcmp(line, delim) == 0)         /* 終了判定 */
+        {
+            free(line);
+            break;
+        }
+        if (!quoted)
+        {
+            char *exp = handle_env(line, sh);    /* 展開あり */
+            body = xstrjoin_free2(body, exp, sh);
+        }
+        else
+            body = xstrjoin_free2(body, line, sh);
+        body = xstrjoin_free(body, "\n", sh);
+    }
+    /* 後始末 */
+    free(delim_noq);
+    if (!quoted)
+        free(delim);
+    tok->value   = body;
+    tok->type = TT_REDIR_IN;
+    return (0);
 }
 
 /* -------------------------------------------------------------------------- */

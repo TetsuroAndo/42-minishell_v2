@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 15:38:52 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 16:37:32 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,49 +71,56 @@ static int	append_entry(char **buf, char *entry, char *pat, t_shell *sh)
  */
 size_t	extract_wildcard(char **buf, char *in, t_shell *sh)
 {
-	size_t			len;
-	DIR				*dp;
-	struct dirent	*ent;
-	char			*pat;
-	int				matched;
+	int	m;
+	int	i;
 
-	len = 0;
-	while (in[len] && !ft_isspace(in[len]))
-		++len;
-	pat = ms_substr(in, 0, len, sh);
-	dp = opendir(sh->cwd);
-	if (!dp)
-		return (0);
-	matched = 0;
-	ent = readdir(dp);
-	while (ent)
+	m = strlen(p);
+	i = 1;
+	while (i <= m)
 	{
-		if (wc_match(pat, ent->d_name))
-			matched |= append_entry(buf, ent->d_name, pat, sh);
-		ent = readdir(dp);
+		update_first_cell(p[i - 1], prev, curr);
+		process_row_cells(p[i - 1], s, prev, curr);
+		swap_rows(&prev, &curr);
+		i++;
 	}
-	if (!matched) // 1 つもマッチしなかったら そのままパターンを残す
-		*buf = xstrjoin_free(*buf, pat, sh);
-	free(pat);
-	return (closedir(dp), ft_strlen(*buf));
 }
 
-/**
- * @brief 空白文字を処理し、バッファに追加する
- *
- * @param buf バッファへのポインタ
- * @param in 入力文字列
- * @param sh シェル情報
- * @return char* 処理後の入力位置
- */
-static char	*process_whitespace(char **buf, char *in, t_shell *sh)
+int	wildcard_match(const char *p, const char *s)
 {
-	if (ft_isspace(*in))
-	{
-		*buf = xstrjoin_free2(*buf, ms_substr(in, 0, 1, sh), sh);
-		return (in + 1);
-	}
-	return (in);
+	int	m;
+	int	n;
+	int	*prev;
+	int	*curr;
+	int	result;
+
+	m = ft_strlen(p);
+	n = ft_strlen(s);
+	if (is_invalid_input(p, s))
+		return (0);
+	prev = init_dp_row(n);
+	curr = init_dp_row(n);
+	if (!prev || !curr)
+		return (0);
+	prev[0] = 1;
+	update_dp_row(p, s, prev, curr);
+	if (m % 2 == 0)
+		result = prev[n];
+	else
+		result = curr[n];
+	free(prev);
+	free(curr);
+	return (result);
+}
+
+static char	*append_match(char *buf, const char *name, t_shell *sh)
+{
+	char	*new_buf;
+
+	if (!buf)
+		return (ms_strdup(name, sh));
+	new_buf = ft_strjoin3(buf, " ", name);
+	free(buf);
+	return (new_buf);
 }
 
 /**
@@ -168,22 +175,20 @@ static char	*process_word(char **buf, char *in, size_t word_len, int has_wc,
 
 char	*handle_wildcard(char *in, t_shell *sh)
 {
-	t_sem	s;
-	size_t	word_len;
-	int		has_wc;
-	char	*processed_in;
+	DIR		*dir;
+	char	*buf;
 
-	s.buf = ms_strdup("", sh);
-	while (*in)
-	{
-		processed_in = process_whitespace(&s.buf, in, sh);
-		if (processed_in != in)
-		{
-			in = processed_in;
-			continue ;
-		}
-		word_len = find_word_boundary(in, &has_wc, &s);
-		in = process_word(&s.buf, in, word_len, has_wc, sh);
-	}
-	return (s.buf);
+	if (!in || !sh)
+		return (NULL);
+	if (!strchr(in, '*'))
+		return (in);
+	dir = opendir(sh->cwd);
+	if (!dir)
+		return (in);
+	buf = collect_matches(dir, in, sh);
+	closedir(dir);
+	if (buf)
+		return (buf);
+	else
+		return (in);
 }
