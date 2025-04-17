@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 15:36:05 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/17 15:37:47 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ char	*handle_wildcard(char *in, t_shell *sh)
 	buf = collect_matches(dir, in, sh);
 	closedir(dir);
 	if (buf)
-		rteurn(buf);
+		return (buf);
 	else
 		return (in);
 }
