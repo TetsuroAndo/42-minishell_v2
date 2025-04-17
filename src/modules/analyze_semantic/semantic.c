@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 17:29:39 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/17 23:07:19 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,15 @@ char	*handle_env(char *in, t_shell *sh)
 		in += i;
 		if (*in == '$' && s.quote_state != QS_SINGLE)
 			in += extract_varname(&s.buf, in + 1, sh) + 1;
-		else if (ft_isbackslash(*in) && in[1] != '*'
-			&& s.quote_state != QS_SINGLE)
+		else if (ft_isbackslash(*in) && s.quote_state != QS_SINGLE)
 		{
-			s.buf = xstrjoin_free2(s.buf, ms_substr(in + 1, 0, 1, sh), sh);
-			in += 2;
+			if (ft_isbackslash(in[1]) || (in[1] == '*') || (in[1] == '\'') || (in[1] == '"'))
+				s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, 2, sh), sh);
+			else
+			{
+				s.buf = xstrjoin_free2(s.buf, ms_substr(in + 1, 0, 1, sh), sh);
+				in += 2;
+			}
 		}
 		else if (*in)
 			check_qs(*in++, &s);
@@ -160,8 +164,8 @@ static char	*read_heredoc_body(char *delim, int quoted, t_shell *sh)
 	while (42)
 	{
 		line = readline("> ");
-		if (!line || (delim[0] == '\0' && line[0] == '\0')
-			|| ft_strcmp(line, delim) == 0)
+		if (!line || (delim[0] == '\0' && line[0] == '\0') || ft_strcmp(line,
+				delim) == 0)
 		{
 			free(line);
 			break ;

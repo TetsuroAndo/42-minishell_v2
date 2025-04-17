@@ -6,12 +6,32 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 17:11:40 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/17 23:06:02 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_sem.h"
 #include <stdlib.h>
+
+typedef struct s_pat_elem {
+    char	*str;
+	int		*map;
+} t_pat_elem;
+
+t_pat_elem	*convert_str2pat(char *p, t_shell *shell)
+{
+	t_pat_elem	*pat;
+	size_t	i;
+
+	pat->str = ms_strdup(p, shell); //
+	pat->map = (void *)xmalloc((ft_strlen(p) + 1) * sizeof(char),shell); //クォート
+	while (p)
+	{
+
+	}
+
+	return pat;
+}
 
 static int	is_invalid_input(const char *p, const char *s)
 {
@@ -214,7 +234,5 @@ char	*handle_wildcard(char *in, t_shell *sh)
 		ft_strs_clear(split);
 		return (buf);
 	}
-	if (!strchr(in, '*'))
-		return (in);
 	return (process_directory_wildcard(in, sh));
 }
