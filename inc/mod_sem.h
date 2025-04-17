@@ -2,9 +2,10 @@
 # define MOD_SEM_H
 
 # include "core.h"
-# include <dirent.h> /* opendir, readdir, closedir */
-# include <fcntl.h>  /* open                      */
-# include <unistd.h> /* access                    */
+# include <dirent.h>
+# include <fcntl.h>
+# include <unistd.h>
+# include <readline/readline.h>
 
 typedef struct s_lexical_token	t_lexical_token;
 typedef struct s_args			t_args;

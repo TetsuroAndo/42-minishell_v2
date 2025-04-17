@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   libms.h                                            :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 11:04:13 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 16:22:28 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #ifndef LIBMS_H
 # define LIBMS_H
@@ -64,11 +64,13 @@ int						xdup2(int oldfd, int newfd, t_shell *shell);
 ** ms_path - パス解決関連の関数
 ** ============================================================================
 */
+
+int						is_builtin(char *cmd);
 int						path_home(char path[], const char *src, int mode,
 							t_shell *shell);
 int						path_relative(char path[], const char *src, int mode,
 							t_shell *shell);
-char					*path_resolve(const char *cmd, t_shell *shell);
+char					*path_resolve(char **in, t_shell *shell);
 
 /*
 ** ============================================================================
