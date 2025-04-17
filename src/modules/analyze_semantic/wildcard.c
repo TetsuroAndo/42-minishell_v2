@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 15:37:47 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/17 16:27:34 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,10 @@ int	wildcard_match(const char *p, const char *s)
 		return (0);
 	prev[0] = 1;
 	update_dp_row(p, s, prev, curr);
-	result = prev[n];
+	if (m % 2 == 0)
+		result = prev[n];
+	else
+		result = curr[n];
 	free(prev);
 	free(curr);
 	return (result);
@@ -127,7 +130,7 @@ static char	*append_match(char *buf, const char *name, t_shell *sh)
 	char	*new_buf;
 
 	if (!buf)
-		return (xdup(name, sh));
+		return (ms_strdup(name, sh));
 	new_buf = ft_strjoin3(buf, " ", name);
 	free(buf);
 	return (new_buf);
@@ -159,8 +162,10 @@ char	*handle_wildcard(char *in, t_shell *sh)
 	DIR		*dir;
 	char	*buf;
 
-	if (!in || !sh || !sh->cwd)
+	if (!in || !sh)
 		return (NULL);
+	if (!strchr(in, '*'))
+		return (in);
 	dir = opendir(sh->cwd);
 	if (!dir)
 		return (in);
