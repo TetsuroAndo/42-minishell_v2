@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 16:34:27 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 17:18:45 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,31 +20,6 @@
 //   → PATH 解決
 //     → minishell: %s: command not found
 // → 展開可能文字 * $
-
-char    *strip_quotes(const char *s, t_shell *sh)
-{
-    size_t  i = 0, j = 0, len = ft_strlen(s);
-    char    *out = xmalloc(len + 1, sh);
-
-    while (i < len)
-    {
-        if (s[i] == '\'' || s[i] == '"')
-            i++;
-        else
-            out[j++] = s[i++];
-    }
-    out[j] = '\0';
-    return (out);
-}
-int is_quoted(const char *s)
-{
-    while (*s)
-        if (*s == '\'' || *s == '"')
-            return (1);
-        else
-            ++s;
-    return (0);
-}
 
 /* -------------------------------------------------------------------------- */
 /* Environment                                                                */
@@ -146,48 +121,82 @@ int	valid_redir(t_lexical_token *d, t_shell *sh)
 /* heredoc                                                                    */
 /* -------------------------------------------------------------------------- */
 
-/*
-** heredoc:
-**  - tmpfile を作成し、ユーザが delimiter を打つまで readline
-**  - delimiter が quote されていなければ $ 展開をかける
-**  - 完了後、tok を < (RELLIR_IN) と同じ扱いに書き換える
-*/
-static int  handle_heredoc(t_lexical_token *tok, t_shell *sh)
+/**
+ * @brief デリミタを準備する
+ * 
+ * @param delim_raw 生のデリミタ文字列
+ * @param quoted クォートされているかの情報を格納する変数へのポインタ
+ * @param sh シェル情報
+ * @return char* 処理済みのデリミタ
+ */
+static char	*prepare_delimiter(char *delim_raw, int *quoted, t_shell *sh)
 {
-    char    *delim_raw  = tok->value;
-    int      quoted     = is_quoted(delim_raw);
-    char    *delim_noq  = strip_quotes(delim_raw, sh);
-    char    *delim      = quoted ? delim_noq : handle_env(delim_noq, sh);
-    char    *body       = ms_strdup("", sh);
-    char    *line;
+	char	*delim_noq;
+	char	*delim;
 
-    while (42)                                   /* readline で 42 … */
-    {
-        line = readline("> ");
-        if (!line)                               /* Ctrl‑D */
-            break;
-        if ((delim[0] == '\0' && line[0] == '\0')||
-            ft_strcmp(line, delim) == 0)         /* 終了判定 */
-        {
-            free(line);
-            break;
-        }
-        if (!quoted)
-        {
-            char *exp = handle_env(line, sh);    /* 展開あり */
-            body = xstrjoin_free2(body, exp, sh);
-        }
-        else
-            body = xstrjoin_free2(body, line, sh);
-        body = xstrjoin_free(body, "\n", sh);
-    }
-    /* 後始末 */
-    free(delim_noq);
-    if (!quoted)
-        free(delim);
-    tok->value   = body;
-    tok->type = TT_REDIR_IN;
-    return (0);
+	*quoted = is_quoted(delim_raw);
+	delim_noq = strip_quotes(delim_raw, sh);
+	if (*quoted)
+		delim = delim_noq;
+	else
+		delim = handle_env(delim_noq, sh);
+	return (delim);
+}
+
+/**
+ * @brief ヒアドキュメントの本文を読み込む
+ * 
+ * @param delim デリミタ文字列
+ * @param quoted デリミタがクォートされているか
+ * @param sh シェル情報
+ * @return char* 読み込んだヒアドキュメントの本文
+ */
+static char	*read_heredoc_body(char *delim, int quoted, t_shell *sh)
+{
+	char	*body;
+	char	*line;
+
+	body = ms_strdup("", sh);
+	while (42)
+	{
+		line = readline("> ");
+		if (!line || (delim[0] == '\0' && line[0] == '\0') 
+			|| ft_strcmp(line, delim) == 0)
+		{
+			free(line);
+			break ;
+		}
+		if (!quoted)
+			body = xstrjoin_free2(body, handle_env(line, sh), sh);
+		else
+			body = xstrjoin_free2(body, line, sh);
+		body = xstrjoin_free(body, "\n", sh);
+	}
+	return (body);
+}
+
+/**
+ * @brief ヒアドキュメントを処理する
+ * 
+ * @param tok 処理するトークン
+ * @param sh シェル情報
+ * @return int 成功時0、失敗時1
+ */
+static int	handle_heredoc(t_lexical_token *tok, t_shell *sh)
+{
+	char	*delim_raw;
+	int		quoted;
+	char	*delim;
+	char	*body;
+
+	delim_raw = tok->value;
+	delim = prepare_delimiter(delim_raw, &quoted, sh);
+	body = read_heredoc_body(delim, quoted, sh);
+	if (!quoted)
+		free(delim);
+	tok->value = body;
+	tok->type = TT_REDIR_IN;
+	return (0);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -228,11 +237,18 @@ int	add_to_list(t_list **list, char **words, t_shell *sh)
 static int	process_simple_token(t_lexical_token *data, char *value, int idx,
 		t_shell *sh)
 {
-	/* 入っていない → そのまま置換してパス解決 */
-	if (idx == 0 && path_resolve(&value, sh))
-		return (free(value), 1);
-	free(data->value);
-	data->value = value;
+	if (idx == 0)
+	{
+		if (path_resolve(&data->value, sh))
+			return (1);
+		if (value != data->value)
+			free(value);
+	}
+	else
+	{
+		free(data->value);
+		data->value = value;
+	}
 	return (0);
 }
 
@@ -286,9 +302,10 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 	if (!env_exp)
 		return (1);
 	wc_exp = handle_wildcard(env_exp, sh);
-	free(env_exp);
 	if (!wc_exp)
-		return (1);
+		return (free(env_exp), 1);
+	if (wc_exp != env_exp)
+		free(env_exp);
 	if (!ft_strchr(wc_exp, ' '))
 		return (process_simple_token(data, wc_exp, idx, sh));
 	return (process_split_token(list, data, wc_exp, idx, sh));
