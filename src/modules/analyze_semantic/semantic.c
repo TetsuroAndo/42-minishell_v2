@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 13:21:09 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 14:27:39 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "mod_sem.h"
 
@@ -106,30 +106,35 @@ static int	is_builtin(char *cmd)
 	return (0);
 }
 
-int	resolve_path(char *in, t_shell *sh)
+int	resolve_path(char **in, t_shell *sh)
 {
 	char	**paths;
 	char	*test;
 	size_t	i;
 
-	if (is_builtin(in))
+	if (is_builtin(*in))
 		return (0);
-	if (ft_strchr(in, '/'))
-		return (access(in, X_OK));
+	if (ft_strchr(*in, '/'))
+		return (access(*in, X_OK));
 	paths = xsplit(ms_getenv("PATH", sh), ':', sh);
 	if (!paths)
 		return (1);
 	i = 0;
 	while (paths[i])
 	{
-		test = xstrjoin3(paths[i], "/", in, sh);
+		test = xstrjoin3(paths[i], "/", *in, sh);
+		ft_dprintf(2, "test: %s\n", test);
 		if (access(test, X_OK) == 0)
+		{
+			free(*in);
+			*in = ms_strdup(test, sh);
 			return (ft_strs_clear(paths), 0);
+		}
 		free(test);
 		++i;
 	}
-	ft_strs_clear(paths);
-	return (1);
+	ft_dprintf(2, "minishell: %s: command not found\n", *in);
+	return (ft_strs_clear(paths), 1);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -194,7 +199,7 @@ int	proc_argv(t_list **list, t_lexical_token *data, int count, t_shell *shell)
 		return (free(aft_env), 1);
 	if (count == 0) // コマンド解決（最初の引数の場合）
 	{
-		if (resolve_path(aft_wlc, shell))
+		if (resolve_path(&aft_wlc, shell))
 			return (free(aft_env), 1);
 	}
 	free(data->value); // トークン値の更新
