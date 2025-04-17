@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/17 10:04:45 by teando           ###   ########.fr       */
+/*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
+/*   Updated: 2025/04/17 10:17:26 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 //     → minishell: %s: command not found
 // → 展開可能文字 * $
 
-t_quote_state is_quote_type(int c)
+t_quote_state	is_quote_type(int c)
 {
 	if (c == '"')
 		return (QS_DOUBLE);
@@ -32,7 +32,7 @@ t_quote_state is_quote_type(int c)
 	return (QS_NONE);
 }
 
-int check_qs(int c, t_sem *sem)
+int	check_qs(int c, t_sem *sem)
 {
 	if (sem->quote_state == QS_NONE)
 		sem->quote_state = is_quote_type(c);
@@ -50,10 +50,11 @@ int check_qs(int c, t_sem *sem)
 */
 int	extract_wildcard(char **buf, char *in, t_shell *shell)
 {
-	const char *pwd = shell->cwd;
+	const char	*pwd = shell->cwd;
+
 	//
-	//パターンマッチングの関数を作る。
-	return 0;
+	// パターンマッチングの関数を作る。
+	return (0);
 }
 
 /*
@@ -62,16 +63,17 @@ int	extract_wildcard(char **buf, char *in, t_shell *shell)
 */
 char	*handle_wildcard(char *in, t_shell *shell)
 {
-	t_sem sem;
-	size_t	i;	
+	t_sem	sem;
+	size_t	i;
 
 	sem.buf = ms_strdup("", shell);
 	sem.quote_state = QS_NONE;
 	while (*in)
 	{
 		i = 0;
-		while (check_qs(in[i], &sem) && ((!ft_isbackslash(in[i]) && in[i] != '*') || 
-				sem.quote_state == QS_SINGLE || sem.quote_state == QS_DOUBLE))
+		while (check_qs(in[i], &sem) && ((!ft_isbackslash(in[i])
+					&& in[i] != '*') || sem.quote_state == QS_SINGLE
+				|| sem.quote_state == QS_DOUBLE))
 			i++;
 		sem.buf = xstrjoin_free2(sem.buf, ms_substr(in, 0, i, shell), shell);
 		in += i;
@@ -118,7 +120,7 @@ int	extract_varname(char **buf, char *in, t_shell *shell)
 */
 char	*handle_env(char *in, t_shell *shell)
 {
-	t_sem sem;
+	t_sem	sem;
 	size_t	i;
 
 	sem.buf = ms_strdup("", shell);
@@ -126,15 +128,18 @@ char	*handle_env(char *in, t_shell *shell)
 	while (*in)
 	{
 		i = 0;
-		while (check_qs(in[i], &sem) && ((!ft_isbackslash(in[i]) && in[i] != '$') || sem.quote_state == QS_SINGLE))
+		while (check_qs(in[i], &sem) && ((!ft_isbackslash(in[i])
+					&& in[i] != '$') || sem.quote_state == QS_SINGLE))
 			i++;
 		sem.buf = xstrjoin_free2(sem.buf, ms_substr(in, 0, i, shell), shell);
 		in += i;
 		if (*in == '$' && sem.quote_state != QS_SINGLE)
 			in += extract_varname(&sem.buf, in, shell);
-		else if (ft_isbackslash(*in) && in[1] != '*' && sem.quote_state != QS_SINGLE)
+		else if (ft_isbackslash(*in) && in[1] != '*'
+			&& sem.quote_state != QS_SINGLE)
 		{
-			sem.buf = xstrjoin_free2(sem.buf, ms_substr(in + 1, 0, 1, shell), shell);
+			sem.buf = xstrjoin_free2(sem.buf, ms_substr(in + 1, 0, 1, shell),
+					shell);
 			in += 2;
 		}
 		else if (*in)
@@ -150,26 +155,26 @@ int	resolve_path(char *in, t_shell *shell)
 
 int	proc_argv(t_list **list, t_lexical_token *data, int count, t_shell *shell)
 {
-	char *aft_env;
-	char *aft_wlc;
-	
+	char	*aft_env;
+	char	*aft_wlc;
+
 	// 文字リテラル
 	if (data->value)
 		aft_env = handle_env(data->value, shell);
 	if (aft_env)
 	{
-		if (!ft_strchr(aft_env ,' '))
-			;//ここに空白区切りであたらしく引数リストを構成する関数を置く
+		if (!ft_strchr(aft_env, ' '))
+			; // ここに空白区切りであたらしく引数リストを構成する関数を置く
 		aft_wlc = handle_wildcard(data->value, shell);
-		if (aft_wlc && !ft_strchr(aft_wlc ,' '))
-			;//コマンドの方はワイルドカードのあとに引数をまた構成する
+		if (aft_wlc && !ft_strchr(aft_wlc, ' '))
+			; // コマンドの方はワイルドカードのあとに引数をまた構成する
 	}
 	if (!aft_wlc)
 		return (1);
 	// CMD 解決
 	if (count == 0)
 		if (resolve_path(data->value, shell))
-			rteurn(1);
+			return (1);
 	free(data->value);
 	free(aft_env);
 	data->value = aft_wlc;
@@ -183,16 +188,16 @@ int	valid_redir(t_lexical_token *data, t_shell *shell)
 
 int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *shell)
 {
-	char *aft_env;
-	char *aft_wlc;
+	char	*aft_env;
+	char	*aft_wlc;
 
 	// 文字リテラル
 	if (data->value)
 		aft_env = handle_env(data->value, shell);
 	if (aft_env)
 	{
-		if (!ft_strchr(aft_env ,' '))
-			;//ここに空白区切りであたらしく引数リストを構成する関数を置く
+		if (!ft_strchr(aft_env, ' '))
+			; // ここに空白区切りであたらしく引数リストを構成する関数を置く
 		aft_wlc = handle_wildcard(data->value, shell);
 	}
 	if (!aft_wlc)
@@ -234,7 +239,7 @@ t_status	mod_sem(t_shell *shell)
 	ast = shell->ast;
 	if (ast2cmds(ast, shell))
 	{
-		//エラーハンドリング
+		// エラーハンドリング
 		return (shell->status);
 	}
 	return (E_NONE);
