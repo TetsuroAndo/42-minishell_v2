@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   libms.h                                            :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 08:39:14 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 11:04:13 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #ifndef LIBMS_H
 # define LIBMS_H
@@ -84,8 +84,9 @@ int						xpipe(int pipfds[], t_shell *shell);
 ** ms_string - 文字列操作関連の関数
 ** ============================================================================
 */
-int ms_lstiter(t_list *lst, int (*f)(void *, int, t_shell *), t_shell *shell);
-void skip_spaces(const char *line, size_t *pos);
+int						ms_lstiter(t_list *lst, int (*f)(t_list **, void *, int,
+								t_shell *), t_shell *shell);
+void					skip_spaces(const char *line, size_t *pos);
 char					*ms_strndup(const char *s, size_t n, t_shell *shell);
 char					*ms_strdup(const char *s, t_shell *shell);
 char					*ms_substr(char const *s, unsigned int start,
@@ -99,10 +100,13 @@ t_list					*xlstnew(void *data, t_shell *shell);
 t_list					*xlst_from_strs(char **strs, t_shell *shell);
 char					**xlst_to_strs(t_list *lst, t_shell *shell);
 char					**xsplit(char *str, char sep, t_shell *shell);
-char					*xstrjoin(char const *s1, char const *s2, t_shell *shell);
-char					*xstrjoin3(char const *s1, char const *s2, char const *s3, t_shell *shell);
+char					*xstrjoin(char const *s1, char const *s2,
+							t_shell *shell);
+char					*xstrjoin3(char const *s1, char const *s2,
+							char const *s3, t_shell *shell);
 char					*xstrjoin_free(char const *s1, char const *s2,
 							t_shell *shell);
-char					*xstrjoin_free2(char const *s1, char const *s2, t_shell *shell);
+char					*xstrjoin_free2(char const *s1, char const *s2,
+							t_shell *shell);
 
 #endif

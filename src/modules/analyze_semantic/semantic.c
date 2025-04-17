@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 10:17:26 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/17 11:04:23 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "mod_sem.h"
 
@@ -41,14 +41,15 @@ int	check_qs(int c, t_sem *sem)
 	return (c);
 }
 
-/*
-** ワイルドカード（*）を検出し、展開結果をバッファに追加する
-** buf: 結果を格納するバッファへのポインタ
-** in: '*' を含む入力文字列
-** shell: シェル情報
-** 戻り値: inを何文字進めたか
-*/
-int	extract_wildcard(char **buf, char *in, t_shell *shell)
+/**
+ * @brief ワイルドカード（*）を検出し、展開結果をバッファに追加する
+ *
+ * @param buf		結果を格納するバッファへのポインタ
+ * @param in 		'*' を含む入力文字列
+ * @param shell		シェル情報
+ * @return size_t	inを何文字進めたか
+ */
+size_t	extract_wildcard(char **buf, char *in, t_shell *shell)
 {
 	const char	*pwd = shell->cwd;
 
@@ -57,10 +58,14 @@ int	extract_wildcard(char **buf, char *in, t_shell *shell)
 	return (0);
 }
 
-/*
-** 入力文字列中のバックスラッシュとワイルドカード(*)を処理し、
-** 展開結果を新しいバッファとして返す
-*/
+/**
+ * @brief 入力文字列中のバックスラッシュとワイルドカード(*)を処理し、
+ *        展開結果を新しいバッファとして返す
+ *
+ * @param in 処理する入力文字列
+ * @param shell シェル情報
+ * @return char* 展開後の文字列
+ */
 char	*handle_wildcard(char *in, t_shell *shell)
 {
 	t_sem	sem;
@@ -85,39 +90,39 @@ char	*handle_wildcard(char *in, t_shell *shell)
 	return (sem.buf);
 }
 
-/*
-** 変数名を検出し、展開結果をバッファに追加する
-** buf: 結果を格納するバッファへのポインタ
-** in: 変数名を含む入力文字列
-** shell: シェル情報
-** 戻り値: inを何文字進めたか
-*/
-int	extract_varname(char **buf, char *in, t_shell *shell)
+/**
+ * @brief 変数名を検出し、展開結果をバッファに追加する
+ *
+ * @param buf 		結果を格納するバッファへのポインタ
+ * @param in 		変数名を含む入力文字列
+ * @param shell 	シェル情報
+ * @return size_t	変数名inを何文字進めたか
+ */
+size_t	extract_varname(char **buf, char *in, t_shell *shell)
 {
 	size_t	key_len;
 	char	*key_str;
 	char	*env_val;
 
-	key_len = 0;
+	key_len = 1; // 0文字目には特殊記号を含むため
 	while (ft_isalnum_under(in[key_len]))
 		key_len++;
-	if (key_len == 0)
-	{
-		*buf = xstrjoin_free2(*buf, "$", shell);
-		return (1);
-	}
 	key_str = ms_substr(in, 0, key_len, shell);
 	env_val = ms_getenv(key_str, shell);
 	if (!env_val)
-		env_val = "";
+		env_val = ms_strdup("", shell);
 	*buf = xstrjoin_free2(*buf, env_val, shell);
 	xfree(&key_str);
 	return (key_len);
 }
 
-/*
-** バックスラッシュと$記号を見つけて適切にバッファーにデータを詰めて返す
-*/
+/**
+ * @brief バックスラッシュと$記号を処理し、環境変数を展開する
+ *
+ * @param in 処理する入力文字列
+ * @param shell シェル情報
+ * @return char* 展開後の文字列
+ */
 char	*handle_env(char *in, t_shell *shell)
 {
 	t_sem	sem;
@@ -134,7 +139,7 @@ char	*handle_env(char *in, t_shell *shell)
 		sem.buf = xstrjoin_free2(sem.buf, ms_substr(in, 0, i, shell), shell);
 		in += i;
 		if (*in == '$' && sem.quote_state != QS_SINGLE)
-			in += extract_varname(&sem.buf, in, shell);
+			in += extract_varname(&sem.buf, in + 1, shell) + 1;
 		else if (ft_isbackslash(*in) && in[1] != '*'
 			&& sem.quote_state != QS_SINGLE)
 		{
@@ -153,63 +158,93 @@ int	resolve_path(char *in, t_shell *shell)
 	return (0);
 }
 
+/**
+ * @brief 引数トークンを処理する
+ *
+ * @param list トークンリスト
+ * @param data 処理するトークンデータ
+ * @param count 引数の位置（0はコマンド）
+ * @param shell シェル情報
+ * @return int 成功時0、失敗時1
+ */
 int	proc_argv(t_list **list, t_lexical_token *data, int count, t_shell *shell)
 {
 	char	*aft_env;
 	char	*aft_wlc;
 
-	// 文字リテラル
-	if (data->value)
-		aft_env = handle_env(data->value, shell);
-	if (aft_env)
-	{
-		if (!ft_strchr(aft_env, ' '))
-			; // ここに空白区切りであたらしく引数リストを構成する関数を置く
-		aft_wlc = handle_wildcard(data->value, shell);
-		if (aft_wlc && !ft_strchr(aft_wlc, ' '))
-			; // コマンドの方はワイルドカードのあとに引数をまた構成する
-	}
-	if (!aft_wlc)
+	if (!data || !data->value)
 		return (1);
-	// CMD 解決
-	if (count == 0)
-		if (resolve_path(data->value, shell))
-			return (1);
-	free(data->value);
-	free(aft_env);
+	aft_env = handle_env(data->value, shell);
+	if (!aft_env)
+		return (1);
+	if (!ft_strchr(aft_env, ' ')) // スペースで区切られた引数の処理
+		;                         // ここに空白区切りであたらしく引数リストを構成する関数を置く
+	aft_wlc = handle_wildcard(aft_env, shell);
+	if (aft_wlc && !ft_strchr(aft_wlc, ' '))
+		; // コマンドの方はワイルドカードのあとに引数をまた構成する
+	if (!aft_wlc)
+		return (free(aft_env), 1);
+	if (count == 0) // コマンド解決（最初の引数の場合）
+	{
+		if (resolve_path(aft_wlc, shell))
+			return (free(aft_env), 1);
+	}
+	free(data->value); // トークン値の更新
 	data->value = aft_wlc;
-	return (0);
+	return (free(aft_env), 0);
 }
 
+/**
+ * @brief リダイレクトの有効性を検証する
+ *
+ * @param data リダイレクトトークン
+ * @param shell シェル情報
+ * @return int 成功時0、失敗時1
+ */
 int	valid_redir(t_lexical_token *data, t_shell *shell)
 {
 	return (0);
 }
 
+/**
+ * @brief リダイレクトトークンを処理する
+ *
+ * @param list トークンリスト
+ * @param data 処理するトークンデータ
+ * @param count 引数の位置
+ * @param shell シェル情報
+ * @return int 成功時0、失敗時1
+ */
 int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *shell)
 {
 	char	*aft_env;
 	char	*aft_wlc;
 
-	// 文字リテラル
-	if (data->value)
-		aft_env = handle_env(data->value, shell);
-	if (aft_env)
-	{
-		if (!ft_strchr(aft_env, ' '))
-			; // ここに空白区切りであたらしく引数リストを構成する関数を置く
-		aft_wlc = handle_wildcard(data->value, shell);
-	}
-	if (!aft_wlc)
+	if (!data || !data->value)
 		return (1);
-	// リダイレクト
-	valid_redir(data, shell);
+	/* 環境変数展開 */
+	aft_env = handle_env(data->value, shell);
+	if (!aft_env)
+		return (1);
+	if (!ft_strchr(aft_env, ' '))
+		; // ここに空白区切りであたらしく引数リストを構成する関数を置く
+	aft_wlc = handle_wildcard(aft_env, shell);
+	if (!aft_wlc)
+		return (free(aft_env), 1);
+	if (valid_redir(data, shell))
+		return (free(aft_env), free(aft_wlc), 1);
 	free(data->value);
-	free(aft_env);
 	data->value = aft_wlc;
-	return (0);
+	return (free(aft_env), 0);
 }
 
+/**
+ * @brief 抽象構文木からコマンドを生成する
+ *
+ * @param ast 抽象構文木
+ * @param shell シェル情報
+ * @return int 成功時0、失敗時1
+ */
 int	ast2cmds(t_ast *ast, t_shell *shell)
 {
 	int	status;
