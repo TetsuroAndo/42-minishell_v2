@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 16:26:31 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/18 23:59:17 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,21 @@
 # include "libft.h"
 
 typedef struct s_shell	t_shell;
-typedef struct s_ast	t_ast;
 typedef enum e_status	t_status;
+typedef struct s_ast	t_ast;
+
+/*
+** ============================================================================
+** ms_lexical - トークン関連の関数
+** ============================================================================
+*/
+void					free_token(void *token);
 
 /*
 ** ============================================================================
 ** ms_env - 環境変数関連の関数
 ** ============================================================================
 */
-
 // key
 int						ms_isactivekey(const char *key);
 t_status				ms_partenvarg(char *key, const char *arg);
@@ -43,12 +49,10 @@ t_status				ms_unset(const char *key, t_shell *shell);
 
 /*
 ** ============================================================================
-** ms_free - メモリ解放関連の関数
+** ms_ast- 抽象構文木関連の関数
 ** ============================================================================
 */
-void					xfree(void **ptr);
 void					free_ast(t_ast **ast);
-void					free_token(void *token);
 
 /*
 ** ============================================================================
@@ -74,10 +78,11 @@ int						path_resolve(char **in, t_shell *shell);
 
 /*
 ** ============================================================================
-** ms_process - プロセス関連の関数
+** ms_system - システム関連の関数
 ** ============================================================================
 */
 pid_t					xfork(t_shell *shell);
+void					xfree(void **ptr);
 void					*xmalloc(size_t size, t_shell *shell);
 int						xpipe(int pipfds[], t_shell *shell);
 
@@ -86,6 +91,8 @@ int						xpipe(int pipfds[], t_shell *shell);
 ** ms_string - 文字列操作関連の関数
 ** ============================================================================
 */
+int						is_quoted(const char *s);
+char					*trim_valid_quotes(const char *s, t_shell *sh);
 int						ms_lstiter(t_list *lst, int (*f)(t_list **, void *, int,
 								t_shell *), t_shell *shell);
 void					skip_spaces(const char *line, size_t *pos);
@@ -98,9 +105,6 @@ char					*ms_substr_r(char const *s, char delimiter,
 char					*ms_substr_l(char const *s, char delimiter,
 							t_shell *shell);
 char					*xitoa(int n, t_shell *shell);
-t_list					*xlstnew(void *data, t_shell *shell);
-t_list					*xlst_from_strs(char **strs, t_shell *shell);
-char					**xlst_to_strs(t_list *lst, t_shell *shell);
 char					**xsplit(char *str, char sep, t_shell *shell);
 char					*xstrjoin(char const *s1, char const *s2,
 							t_shell *shell);
@@ -110,5 +114,15 @@ char					*xstrjoin_free(char const *s1, char const *s2,
 							t_shell *shell);
 char					*xstrjoin_free2(char const *s1, char const *s2,
 							t_shell *shell);
+
+/*
+** ============================================================================
+** ms_lst - lst操作関連の関数
+** ============================================================================
+*/
+void					*ms_listshift(t_list **list);
+t_list					*xlstnew(void *data, t_shell *shell);
+t_list					*xlst_from_strs(char **strs, t_shell *shell);
+char					**xlst_to_strs(t_list *lst, t_shell *shell);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 21:33:24 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/18 23:45:56 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,15 +51,6 @@ static int	*init_dp_row(int n)
 	while (i <= n)
 		row[i++] = 0;
 	return (row);
-}
-
-static void	swap_rows(int **a, int **b)
-{
-	int	*tmp;
-
-	tmp = *a;
-	*a = *b;
-	*b = tmp;
 }
 
 static void	update_first_cell(char p_char, int *prev, int *curr, char map_char)
@@ -108,7 +99,7 @@ static void	update_dp_row(const char *p, const char *s, int *prev, int *curr,
 		// Changed p[i-1] to ex->str[i-1]
 		process_row_cells(ex->str[i - 1], s, prev, curr, ex->map[i - 1]);
 		// Changed p[i-1] to ex->str[i-1]
-		swap_rows(&prev, &curr);
+		ft_swap(&prev, &curr);
 		i++;
 	}
 }

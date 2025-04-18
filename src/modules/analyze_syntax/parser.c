@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 20:02:09 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/18 23:45:46 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,23 +39,11 @@ t_ast	*ast_new(t_ntype type, t_ast *left, t_ast *right, t_shell *shell)
 	return (node);
 }
 
-static t_lexical_token	*curr_token(t_list **token_list)
+t_lexical_token	*curr_token(t_list **token_list)
 {
 	if (!token_list || !(*token_list) || !(*token_list)->data)
 		return (NULL);
 	return ((t_lexical_token *)(*token_list)->data);
-}
-
-// あとでこれはlibft行き
-void	*ms_listshift(t_list **list)
-{
-	t_list	*tmp;
-
-	if (!list || !*list)
-		return (NULL);
-	tmp = *list;
-	*list = (*list)->next;
-	return (tmp);
 }
 
 static t_lexical_token	*alloc_l_tok(t_list **tok_lst, t_shell *shell)
@@ -166,8 +154,8 @@ simple_cmd redirections?
 */
 t_ast	*ast_cmd(t_list **tok_lst, t_shell *shell)
 {
-	t_ast	*node;
-	t_lexical_token *tok;
+	t_ast			*node;
+	t_lexical_token	*tok;
 
 	node = ast_new(NT_CMD, NULL, NULL, shell);
 	node->args = args_new(shell);
