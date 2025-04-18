@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   xfree.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:14:53 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/10 19:24:08 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/18 19:40:47 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	xfree(void **ptr)
 {
-	if (ptr != NULL && *ptr != NULL)
+	if (ptr != NULL || *ptr != NULL)
 	{
 		free(*ptr);
 		*ptr = NULL;
