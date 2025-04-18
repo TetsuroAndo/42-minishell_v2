@@ -6,7 +6,7 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/17 11:34:34 by teando           ###   ########.fr        #
+#    Updated: 2025/04/18 22:05:35 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -56,14 +56,14 @@ OBJ		:= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 # ビルドルール
 all: $(NAME)
 
-$(NAME): $(OBJ) $(LIBFT)
+$(NAME): $(LIBFT) $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(LFLAGS) $(IDFLAGS) $(DEFINE) -o $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(LIBFT_DIR)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(IDFLAGS) -c $< -o $@
 
-$(LIBFT):
+$(LIBFT): | $(LIBFT_DIR)/libft.h
 	$(MAKE) -C $(LIBFT_DIR)
 
 debug: CFLAGS += -g -fsanitize=address -O1 -fno-omit-frame-pointer
@@ -83,8 +83,8 @@ re: fclean all
 # == Submodule Targets ==
 # =======================
 
-$(LIBFT_DIR):
-	git submodule update --init --recursive
+$(LIBFT_DIR)/libft.h:
+	git submodule update --remote --init --recursive
 
 sub:
 	git submodule update --remote
