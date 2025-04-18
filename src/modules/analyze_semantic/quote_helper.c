@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   quote_helper.c                                     :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:57:56 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 20:05:50 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/18 21:00:32 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "mod_sem.h"
 
@@ -44,7 +44,7 @@ static int	is_close_quote(char c, char quote, char prev)
 
 /**
  * @brief クォートを取り除いた文字列を作成する
- * 
+ *
  * @param s 入力文字列
  * @param sh シェル情報
  * @return char* クォートを取り除いた新しい文字列
@@ -52,9 +52,10 @@ static int	is_close_quote(char c, char quote, char prev)
 char	*trim_valid_quotes(const char *s, t_shell *sh)
 {
 	char	out[PATH_MAX];
+	char	quote;
+	char	prev;
 	size_t	i;
 	size_t	j;
-	char	quote;
 
 	i = 0;
 	j = 0;
@@ -62,11 +63,12 @@ char	*trim_valid_quotes(const char *s, t_shell *sh)
 	while (s && s[i])
 	{
 		if (is_open_quote(s[i], quote))
-			quote = s[i++];
-		else if (is_close_quote(s[i], quote, s[i - 1]))
+			quote = s[i], i++;
+		else if (is_close_quote(s[i], quote, prev))
 			quote = 0, i++;
 		else
 			out[j++] = s[i++];
+		prev = s[i - 1];
 	}
 	out[j] = '\0';
 	if (quote)
@@ -76,7 +78,7 @@ char	*trim_valid_quotes(const char *s, t_shell *sh)
 
 /**
  * @brief 文字列にクォートが含まれているかチェックする
- * 
+ *
  * @param s チェックする文字列
  * @return int クォートが含まれていれば1、なければ0
  */

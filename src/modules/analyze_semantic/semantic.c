@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 19:51:05 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/18 21:00:31 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "mod_sem.h"
 
@@ -46,7 +46,11 @@ size_t	extract_varname(char **buf, char *in, t_shell *sh)
 	val = ms_getenv(key, sh);
 	if (!val)
 		val = ms_strdup("", sh);
-	*buf = xstrjoin_free2(*buf, val, sh);
+	/* env_spc['?'] 等はスタックキャッシュなので val を free しない */
+	if (ft_strlen(key) == 1) /* 1文字環境変数 -> env_spc */
+		*buf = xstrjoin_free(*buf, val, sh);
+	else
+		*buf = xstrjoin_free2(*buf, val, sh);
 	free(key);
 	return (klen);
 }
@@ -251,8 +255,8 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 		free(val);
 	free(data->value);
 	data->value = trimmed;
-    if (idx == 0 && path_resolve(&data->value, sh))
-        return (1);
+	if (idx == 0 && path_resolve(&data->value, sh))
+		return (1);
 	return (0);
 }
 
