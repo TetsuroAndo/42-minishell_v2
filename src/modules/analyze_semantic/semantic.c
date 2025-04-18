@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 15:27:57 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/18 18:23:44 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,19 +267,25 @@ static int	process_simple_token(t_lexical_token *data, char *value, int idx,
  * @param sh シェル情報
  * @return int 成功時0、失敗時1
  */
-static int	process_split_token(t_list **list, t_lexical_token *data,
-		char *value, int idx, t_shell *sh)
+static int	process_split_token(t_list **list, char *value, int idx,
+		t_shell *sh)
 {
-	char	**words;
+	char			**words;
+	t_lexical_token	*data;
 
-	words = xsplit(value, ' ', sh);
-	if (!words)
+	if (!list || !*list)
 		return (free(value), 1);
-	free(data->value); // 先頭語で current トークンを上書き
-	data->value = ms_strdup(words[0], sh);
-	if (add_to_list(list, words, sh)) // 追加トークン(words[1]〜) をリストに連結
+	data = (t_lexical_token *)(*list)->data;
+	if (!data)
+		return (free(value), 1);
+	words = xsplit(value, ' ', sh);
+	if (!words || !words[0])
 		return (ft_strs_clear(words), free(value), 1);
-	if (idx == 0 && path_resolve(&data->value, sh)) // 先頭語についてパス解決（ここで初めて呼ぶ
+	free(data->value);
+	data->value = ms_strdup(words[0], sh);
+	if (add_to_list(list, words, sh))
+		return (ft_strs_clear(words), free(value), 1);
+	if (idx == 0 && path_resolve(&data->value, sh))
 		return (ft_strs_clear(words), free(value), 1);
 	ft_strs_clear(words);
 	free(value);
@@ -300,6 +306,7 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 	char	*env_exp;
 	char	*wc_exp;
 	char	*anq_exp;
+	int		space_count;
 
 	if (!data || !data->value)
 		return (1);
@@ -317,7 +324,12 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 		return (1);
 	if (!ft_strchr(anq_exp, ' '))
 		return (process_simple_token(data, anq_exp, idx, sh));
-	return (process_split_token(list, data, anq_exp, idx, sh));
+	space_count = ft_count_words(anq_exp, ' ');
+	if (process_split_token(list, anq_exp, idx, sh))
+		return (1);
+	while (space_count-- > 0 && *list && (*list)->next)
+		*list = (*list)->next;
+	return (0);
 }
 
 /**

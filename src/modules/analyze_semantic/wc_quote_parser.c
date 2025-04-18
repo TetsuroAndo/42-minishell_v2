@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:43:38 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/18 15:23:45 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/18 15:33:11 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@ static void	init_map(char *map, size_t len)
 	}
 	map[i] = '\0';
 }
-
-// ...existing code...
 
 static void	set_quote_map(char *str, char *map, int start, int end)
 {
