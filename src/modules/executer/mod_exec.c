@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   mod_exec.c                                         :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 04:01:46 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 04:30:19 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "mod_exec.h"
 
@@ -41,21 +41,17 @@ int	exe_run(t_ast *node, t_shell *sh)
 {
 	if (!node)
 		return (0);
-	switch (node->ntype)
-	{
-	case NT_CMD:
+	else if (node->ntype == NT_CMD)
 		return (exe_cmd(node, sh));
-	case NT_PIPE:
+	else if (node->ntype == NT_PIPE)
 		return (exe_pipe(node, sh));
-	case NT_AND: /* fall‑through */
-	case NT_OR:
-	case NT_LIST:
+	else if (node->ntype == NT_AND || node->ntype == NT_OR
+		|| node->ntype == NT_LIST)
 		return (exe_bool(node, sh));
-	case NT_SUBSHELL:
+	else if (node->ntype == NT_SUBSHELL)
 		return (exe_sub(node, sh));
-	default:
+	else
 		return (1); /* 不明ノード型 → エラー */
-	}
 }
 
 /* ========================================================= */
@@ -70,6 +66,7 @@ static int	exe_cmd(t_ast *node, t_shell *sh)
 	int			status;
 	pid_t		pid;
 	int			wstatus;
+	struct stat	sb;
 
 	if (!node || node->ntype != NT_CMD)
 		return (1);
@@ -80,6 +77,8 @@ static int	exe_cmd(t_ast *node, t_shell *sh)
 	argv = toklist_to_argv(node->args->argv, sh);
 	if (!argv || !argv[0])
 		return (127);
+	if (stat(argv[0], &sb) == 0 && S_ISDIR(sb.st_mode))
+		return (E_IS_DIR);
 	/* 3. FD 差し替え */
 	bk_in = (t_fdbackup){-1, STDIN_FILENO};
 	bk_out = (t_fdbackup){-1, STDOUT_FILENO};
@@ -111,7 +110,8 @@ static int	exe_cmd(t_ast *node, t_shell *sh)
 		waitpid(pid, &wstatus, 0);
 		if (WIFEXITED(wstatus))
 			status = WEXITSTATUS(wstatus);
-		status = 128 + WTERMSIG(wstatus);
+		else
+			status = 128 + WTERMSIG(wstatus);
 	}
 	/* 5. FD 復旧 & 後始末 */
 	fdbackupexit(&bk_in);

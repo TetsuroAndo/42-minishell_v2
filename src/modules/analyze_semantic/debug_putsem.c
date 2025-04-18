@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   debug_putsem.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:45:55 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 00:29:11 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/19 04:14:51 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ static void	print_ast_rec(t_ast *ast, int depth)
 void	debug_print_sem(t_ast *ast, t_shell *sh)
 {
 	(void)sh;
+	if (!ast)
+		return ;
 	ft_dprintf(2, "===== semantic dump =====\n");
 	print_ast_rec(ast, 0);
 	ft_dprintf(2, "=========================\n");

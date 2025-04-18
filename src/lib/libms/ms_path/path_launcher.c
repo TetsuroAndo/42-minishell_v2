@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 01:47:27 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 03:16:10 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 04:11:52 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,7 @@ static int	__simple_link(char path[PATH_MAX + 1], const char *src, int mode,
  * @param sh シェル情報構造体
  * @return int 0:成功、-1:失敗
  */
-int	path_launcher(char path[PATH_MAX + 1], const char *src, int mode,
-		t_shell *sh)
+int	path_launcher(char path[], const char *src, int mode, t_shell *sh)
 {
 	if (src[0] == '/' && access(src, mode) == 0)
 	{
@@ -58,7 +57,7 @@ int	path_launcher(char path[PATH_MAX + 1], const char *src, int mode,
 	}
 	if (src[0] == '~')
 		return (path_home(path, src, mode, sh));
-	if (!ft_strnstr(src, ".", PATH_MAX))
+	if (!ft_strstr(src, "."))
 		return (__simple_link(path, src, mode, sh));
 	return (path_relative(path, src, mode, sh));
 }
