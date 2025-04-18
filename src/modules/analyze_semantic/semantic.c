@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 21:04:24 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/18 21:11:03 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ size_t	extract_varname(char **buf, char *in, t_shell *sh)
 	while (ft_isalnum_under(in[klen]))
 		++klen;
 	key = ms_substr(in, 0, klen, sh);
+	if (!key || !key[0])
+		return (0);
 	val = ms_getenv(key, sh);
 	if (!val)
 		val = ms_strdup("", sh);

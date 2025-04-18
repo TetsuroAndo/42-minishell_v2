@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:14:53 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/18 20:01:59 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/18 21:08:26 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	xfree(void **ptr)
 {
-	if (ptr != NULL && *ptr != NULL)
+	if (ptr != NULL || *ptr != NULL)
 	{
 		free(*ptr);
 		*ptr = NULL;
