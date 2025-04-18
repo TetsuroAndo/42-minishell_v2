@@ -1,33 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quote_helper.c                                     :+:      :+:    :+:   */
+/*   is_quote.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/17 12:57:56 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 23:58:36 by teando           ###   ########.fr       */
+/*   Created: 2025/04/18 23:58:06 by teando            #+#    #+#             */
+/*   Updated: 2025/04/18 23:59:04 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mod_sem.h"
-
-t_quote_state	is_quote_type(int c)
+/**
+ * @brief 文字列にクォートが含まれているかチェックする
+ *
+ * @param s チェックする文字列
+ * @return int クォートが含まれていれば1、なければ0
+ */
+int	is_quoted(const char *s)
 {
-	if (c == '"')
-		return (QS_DOUBLE);
-	if (c == '\'')
-		return (QS_SINGLE);
-	if (c == '`')
-		return (QS_BACK);
-	return (QS_NONE);
-}
-
-int	check_qs(int c, t_sem *sem)
-{
-	if (sem->quote_state == QS_NONE)
-		sem->quote_state = is_quote_type(c);
-	else if (sem->quote_state == is_quote_type(c))
-		sem->quote_state = QS_NONE;
-	return (c);
+	while (*s)
+	{
+		if (*s == '\'' || *s == '"')
+			return (1);
+		else
+			++s;
+	}
+	return (0);
 }

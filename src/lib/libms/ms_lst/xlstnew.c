@@ -1,33 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quote_helper.c                                     :+:      :+:    :+:   */
+/*   xlstnew.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/17 12:57:56 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 23:58:36 by teando           ###   ########.fr       */
+/*   Created: 2025/04/18 23:29:22 by teando            #+#    #+#             */
+/*   Updated: 2025/04/18 23:29:45 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mod_sem.h"
+#include "libms.h"
 
-t_quote_state	is_quote_type(int c)
+t_list	*xlstnew(void *data, t_shell *shell)
 {
-	if (c == '"')
-		return (QS_DOUBLE);
-	if (c == '\'')
-		return (QS_SINGLE);
-	if (c == '`')
-		return (QS_BACK);
-	return (QS_NONE);
-}
+	t_list	*list;
 
-int	check_qs(int c, t_sem *sem)
-{
-	if (sem->quote_state == QS_NONE)
-		sem->quote_state = is_quote_type(c);
-	else if (sem->quote_state == is_quote_type(c))
-		sem->quote_state = QS_NONE;
-	return (c);
+	list = ft_lstnew(data);
+	if (!list)
+		shell_exit(shell, E_ALLOCATE);
+	return (list);
 }

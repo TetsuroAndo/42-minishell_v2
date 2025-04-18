@@ -42,11 +42,10 @@ char							*handle_wildcard(char *in, t_shell *sh);
 // helper
 t_quote_state					is_quote_type(int c);
 int								check_qs(int c, t_sem *sem);
-char							*trim_valid_quotes(const char *s, t_shell *sh);
-int								is_quoted(const char *s);
 
 // wildcard_helper
 t_extract						*convert_ex(char *str, t_shell *shell);
-char							*replace_with_unquoted(char *str_ptr, t_shell *shell);
+char							*replace_with_unquoted(char *str_ptr,
+									t_shell *shell);
 
 #endif

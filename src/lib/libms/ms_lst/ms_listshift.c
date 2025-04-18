@@ -1,33 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quote_helper.c                                     :+:      :+:    :+:   */
+/*   ms_listshift.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/17 12:57:56 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 23:58:36 by teando           ###   ########.fr       */
+/*   Created: 2025/04/18 23:32:44 by teando            #+#    #+#             */
+/*   Updated: 2025/04/18 23:33:08 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mod_sem.h"
+#include "libms.h"
 
-t_quote_state	is_quote_type(int c)
+void	*ms_listshift(t_list **list)
 {
-	if (c == '"')
-		return (QS_DOUBLE);
-	if (c == '\'')
-		return (QS_SINGLE);
-	if (c == '`')
-		return (QS_BACK);
-	return (QS_NONE);
-}
+	t_list	*tmp;
 
-int	check_qs(int c, t_sem *sem)
-{
-	if (sem->quote_state == QS_NONE)
-		sem->quote_state = is_quote_type(c);
-	else if (sem->quote_state == is_quote_type(c))
-		sem->quote_state = QS_NONE;
-	return (c);
+	if (!list || !*list)
+		return (NULL);
+	tmp = *list;
+	*list = (*list)->next;
+	return (tmp);
 }

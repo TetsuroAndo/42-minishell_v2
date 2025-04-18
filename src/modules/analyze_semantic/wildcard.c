@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 21:33:24 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/19 00:59:39 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,15 +53,6 @@ static int	*init_dp_row(int n)
 	return (row);
 }
 
-static void	swap_rows(int **a, int **b)
-{
-	int	*tmp;
-
-	tmp = *a;
-	*a = *b;
-	*b = tmp;
-}
-
 static void	update_first_cell(char p_char, int *prev, int *curr, char map_char)
 {
 	if (p_char == '*' && map_char == EX_OUT)
@@ -100,7 +91,7 @@ static void	update_dp_row(const char *p, const char *s, int *prev, int *curr,
 	int	m;
 	int	i;
 
-	m = strlen(ex->str); // Changed from strlen(p) to strlen(ex->str)
+	m = ft_strlen(ex->str); // Changed from strlen(p) to strlen(ex->str)
 	i = 1;
 	while (i <= m)
 	{
@@ -108,7 +99,7 @@ static void	update_dp_row(const char *p, const char *s, int *prev, int *curr,
 		// Changed p[i-1] to ex->str[i-1]
 		process_row_cells(ex->str[i - 1], s, prev, curr, ex->map[i - 1]);
 		// Changed p[i-1] to ex->str[i-1]
-		swap_rows(&prev, &curr);
+		ft_swapint(&prev, &curr);
 		i++;
 	}
 }
@@ -171,8 +162,8 @@ static char	*collect_matches(DIR *dir, const char *pattern, t_shell *sh)
 	entry = readdir(dir);
 	while (entry)
 	{
-		if (ft_strncmp(entry->d_name, ".", 2) != 0 && ft_strncmp(entry->d_name,
-				"..", 3) != 0 && wildcard_match(pattern, entry->d_name, sh))
+		if (ft_strncmp(entry->d_name, ".", 1) != 0 && ft_strncmp(entry->d_name,
+				"..", 2) != 0 && wildcard_match(pattern, entry->d_name, sh))
 		{
 			buf = append_match(buf, entry->d_name, sh);
 			if (!buf)
