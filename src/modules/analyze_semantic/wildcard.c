@@ -3,49 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 23:06:02 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/18 14:52:04 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_sem.h"
 #include <stdlib.h>
 
-typedef struct s_pat_elem {
-    char	*str;
-	int		*map;
-} t_pat_elem;
+/* -------------------------------------------------------------------------- */
+/* Wildcard                                                                   */
+/* -------------------------------------------------------------------------- */
 
-t_pat_elem	*convert_str2pat(char *p, t_shell *shell)
-{
-	t_pat_elem	*pat;
-	size_t	i;
-
-	pat->str = ms_strdup(p, shell); //
-	pat->map = (void *)xmalloc((ft_strlen(p) + 1) * sizeof(char),shell); //クォート
-	while (p)
-	{
-
-	}
-
-	return pat;
-}
-
-static int	is_invalid_input(const char *p, const char *s)
+static int	is_invalid_input(const char *p, const char *str, t_extract *ex)
 {
 	int	i;
 	int	non_star;
 
 	i = 0;
 	non_star = 0;
-	if (!p || !s)
+	if (!p || !str || !ex)
 		return (1);
 	while (p[i])
-		if (p[i++] != '*')
+	{
+		if (p[i] == '*' && ex->map[i] == EX_OUT)
+			;
+		else
 			non_star++;
-	return (non_star > (int)strlen(s));
+		i++;
+	}
+	return (non_star > (int)strlen(str));
 }
 
 static int	*init_dp_row(int n)
@@ -71,15 +60,16 @@ static void	swap_rows(int **a, int **b)
 	*b = tmp;
 }
 
-static void	update_first_cell(char p_char, int *prev, int *curr)
+static void	update_first_cell(char p_char, int *prev, int *curr, char map_char)
 {
-	if (p_char == '*')
+	if (p_char == '*' && map_char == EX_OUT)
 		curr[0] = prev[0];
 	else
 		curr[0] = 0;
 }
 
-static void	process_row_cells(char p_char, const char *s, int *prev, int *curr)
+static void	process_row_cells(char p_char, const char *s, int *prev, int *curr,
+		char map_char)
 {
 	int	j;
 	int	n;
@@ -88,7 +78,7 @@ static void	process_row_cells(char p_char, const char *s, int *prev, int *curr)
 	j = 1;
 	while (j <= n)
 	{
-		if (p_char == '*')
+		if (p_char == '*' && map_char == EX_OUT)
 			curr[j] = prev[j] || curr[j - 1];
 		else
 		{
@@ -102,46 +92,58 @@ static void	process_row_cells(char p_char, const char *s, int *prev, int *curr)
 }
 
 /* ワイルドカード DP 更新 */
-static void	update_dp_row(const char *p, const char *s, int *prev, int *curr)
+static void	update_dp_row(const char *p, const char *s, int *prev, int *curr,
+		t_extract *ex)
 {
 	int	m;
 	int	i;
 
-	m = strlen(p);
+	m = strlen(ex->str);  // Changed from strlen(p) to strlen(ex->str)
 	i = 1;
 	while (i <= m)
 	{
-		update_first_cell(p[i - 1], prev, curr);
-		process_row_cells(p[i - 1], s, prev, curr);
+		update_first_cell(ex->str[i - 1], prev, curr, ex->map[i - 1]);  // Changed p[i-1] to ex->str[i-1]
+		process_row_cells(ex->str[i - 1], s, prev, curr, ex->map[i - 1]);  // Changed p[i-1] to ex->str[i-1]
 		swap_rows(&prev, &curr);
 		i++;
 	}
 }
 
-int	wildcard_match(const char *p, const char *s)
+int	wildcard_match(const char *p, const char *str, t_shell *shell)
 {
-	int	m;
-	int	n;
-	int	*prev;
-	int	*curr;
-	int	result;
+	int			m;
+	int			n;
+	int			*prev;
+	int			*curr;
+	int			result;
+	t_extract	*ex;
 
-	m = ft_strlen(p);
-	n = ft_strlen(s);
-	if (is_invalid_input(p, s))
+	n = ft_strlen(str);
+	ex = convert_ex((char *)p, shell);
+	if (is_invalid_input(p, str, ex))
+	{
+		if (ex)
+			return (free(ex->str), free(ex->map), free(ex), 0);
 		return (0);
+	}
+	m = ft_strlen(ex->str);  // Use ex->str length instead of p
 	prev = init_dp_row(n);
 	curr = init_dp_row(n);
 	if (!prev || !curr)
+	{
+		if (ex)
+			return (free(ex->str), free(ex->map), free(ex), 0);
 		return (0);
+	}
 	prev[0] = 1;
-	update_dp_row(p, s, prev, curr);
+	update_dp_row(ex->str, str, prev, curr, ex);  // Pass ex->str instead of p
 	if (m % 2 == 0)
 		result = prev[n];
 	else
 		result = curr[n];
-	free(prev);
-	free(curr);
+	free(prev), free(curr);
+	if (ex)
+		free(ex->str), free(ex->map), free(ex);
 	return (result);
 }
 
@@ -166,7 +168,7 @@ static char	*collect_matches(DIR *dir, const char *pattern, t_shell *sh)
 	while (entry)
 	{
 		if (ft_strncmp(entry->d_name, ".", 2) != 0 && ft_strncmp(entry->d_name,
-				"..", 3) != 0 && wildcard_match(pattern, entry->d_name))
+				"..", 3) != 0 && wildcard_match(pattern, entry->d_name, sh))
 		{
 			buf = append_match(buf, entry->d_name, sh);
 			if (!buf)
@@ -185,7 +187,8 @@ static char	*process_split_wildcard(char **split, t_shell *sh)
 	int		i;
 
 	buf = NULL;
-	for (i = 0; split[i]; i++)
+	i = 0;
+	while (split[i])
 	{
 		tmp = handle_wildcard(split[i], sh);
 		if (!tmp)
@@ -198,6 +201,7 @@ static char	*process_split_wildcard(char **split, t_shell *sh)
 			free(buf);
 			buf = joined;
 		}
+		i++;
 	}
 	return (buf);
 }

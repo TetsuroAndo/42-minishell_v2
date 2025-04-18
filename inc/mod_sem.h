@@ -4,8 +4,8 @@
 # include "core.h"
 # include <dirent.h>
 # include <fcntl.h>
-# include <unistd.h>
 # include <readline/readline.h>
+# include <unistd.h>
 
 typedef struct s_lexical_token	t_lexical_token;
 typedef struct s_args			t_args;
@@ -18,6 +18,15 @@ typedef enum e_quote_state
 	QS_DOUBLE,
 	QS_BACK,
 }								t_quote_state;
+
+# define EX_IN 'I'
+# define EX_OUT 'O'
+
+typedef struct s_extract
+{
+	char						*str;
+	char						*map;
+}								t_extract;
 
 typedef struct s_sem
 {
@@ -33,7 +42,11 @@ char							*handle_wildcard(char *in, t_shell *sh);
 // helper
 t_quote_state					is_quote_type(int c);
 int								check_qs(int c, t_sem *sem);
-char	*strip_quotes(const char *s, t_shell *sh);
-int	is_quoted(const char *s);
+char							*strip_quotes(const char *s, t_shell *sh);
+int								is_quoted(const char *s);
+
+// wildcard_helper
+t_extract						*convert_ex(char *str, t_shell *shell);
+char							*replace_with_unquoted(char *str_ptr, t_shell *shell);
 
 #endif

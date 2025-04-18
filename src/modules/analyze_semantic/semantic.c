@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 23:07:19 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/18 15:27:57 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,8 @@ char	*handle_env(char *in, t_shell *sh)
 			in += extract_varname(&s.buf, in + 1, sh) + 1;
 		else if (ft_isbackslash(*in) && s.quote_state != QS_SINGLE)
 		{
-			if (ft_isbackslash(in[1]) || (in[1] == '*') || (in[1] == '\'') || (in[1] == '"'))
+			if (ft_isbackslash(in[1]) || (in[1] == '*') || (in[1] == '\'')
+					|| (in[1] == '"'))
 				s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, 2, sh), sh);
 			else
 			{
@@ -296,9 +297,9 @@ static int	process_split_token(t_list **list, t_lexical_token *data,
  */
 int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 {
-	char	*expanded_value;
 	char	*env_exp;
 	char	*wc_exp;
+	char	*anq_exp;
 
 	if (!data || !data->value)
 		return (1);
@@ -306,13 +307,17 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 	if (!env_exp)
 		return (1);
 	wc_exp = handle_wildcard(env_exp, sh);
-	if (!wc_exp)
-		return (free(env_exp), 1);
-	if (wc_exp != env_exp)
+	if (env_exp != wc_exp)
 		free(env_exp);
-	if (!ft_strchr(wc_exp, ' '))
-		return (process_simple_token(data, wc_exp, idx, sh));
-	return (process_split_token(list, data, wc_exp, idx, sh));
+	if (!wc_exp)
+		return (1);
+	anq_exp = replace_with_unquoted(wc_exp, sh);
+	free(wc_exp);
+	if (!anq_exp)
+		return (1);
+	if (!ft_strchr(anq_exp, ' '))
+		return (process_simple_token(data, anq_exp, idx, sh));
+	return (process_split_token(list, data, anq_exp, idx, sh));
 }
 
 /**
@@ -328,6 +333,7 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 {
 	char	*aft_env;
 	char	*aft_wlc;
+	char	*aft_unq;
 
 	(void)count;
 	if (!data || !data->value)
@@ -336,17 +342,21 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 		return (handle_heredoc(data, sh)); // heredoc は専用ルートで処理する
 	aft_env = handle_env(data->value, sh);
 	if (!aft_env || *aft_env == '\0')
-		return (ft_dprintf(2, "minishell: ambiguous redirect\n"), 1);
+		return (ft_dprintf(2, "minishell: ambiguous redirect\n"), free(aft_env),
+			1);
 	aft_wlc = handle_wildcard(aft_env, sh);
-	if (aft_wlc != aft_env)
-		free(aft_env);
-	if (!aft_wlc || *aft_wlc == '\0' || ft_strchr(aft_wlc, ' '))
-		return (ft_dprintf(2, "minishell: %s: ambiguous redirect\n", aft_wlc),
-			free(aft_wlc), 1);
+	free(aft_env);
+	if (!aft_wlc)
+		return (ft_dprintf(2, "minishell: ambiguous redirect\n"), 1);
+	aft_unq = replace_with_unquoted(aft_wlc, sh);
+	free(aft_wlc);
+	if (!aft_unq || *aft_unq == '\0' || ft_strchr(aft_unq, ' '))
+		return (ft_dprintf(2, "minishell: %s: ambiguous redirect\n",
+				aft_unq ? aft_unq : ""), free(aft_unq), 1);
 	free(data->value);
-	data->value = aft_wlc;
+	data->value = aft_unq;
 	if (valid_redir(data, sh))
-		return (free(aft_wlc), 1);
+		return (free(aft_unq), 1);
 	return (0);
 }
 
