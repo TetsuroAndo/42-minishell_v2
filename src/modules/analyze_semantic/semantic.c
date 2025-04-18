@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 21:11:03 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 00:37:37 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,10 @@ size_t	extract_varname(char **buf, char *in, t_shell *sh)
 	while (ft_isalnum_under(in[klen]))
 		++klen;
 	key = ms_substr(in, 0, klen, sh);
-	if (!key || !key[0])
+	if (!key)
 		return (0);
+	if (!key[0])
+		return (free(key), 0);
 	val = ms_getenv(key, sh);
 	if (!val)
 		val = ms_strdup("", sh);
@@ -301,7 +303,6 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 {
 	char	*env_exp;
 	char	*wc_exp;
-	char	*anq_exp;
 	int		space_count;
 
 	if (!data || !data->value)
@@ -314,14 +315,10 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 		free(env_exp);
 	if (!wc_exp)
 		return (1);
-	anq_exp = replace_with_unquoted(wc_exp, sh);
-	free(wc_exp);
-	if (!anq_exp)
-		return (1);
-	if (!ft_strchr(anq_exp, ' '))
-		return (process_simple_token(data, anq_exp, idx, sh));
-	space_count = ft_count_words(anq_exp, ' ');
-	if (process_split_token(list, anq_exp, idx, sh))
+	if (!ft_strchr(wc_exp, ' '))
+		return (process_simple_token(data, wc_exp, idx, sh));
+	space_count = ft_count_words(wc_exp, ' ');
+	if (process_split_token(list, wc_exp, idx, sh))
 		return (1);
 	while (space_count-- > 0 && *list && (*list)->next)
 		*list = (*list)->next;

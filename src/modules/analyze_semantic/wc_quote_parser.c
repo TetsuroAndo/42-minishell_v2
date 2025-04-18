@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wc_quote_parser.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:43:38 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/18 15:33:11 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/19 00:30:48 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,6 @@ static void	mark_quotes(char *str, char *map)
 		handle_unclosed_quote(map, start, i);
 }
 
-static int	is_quote(char c)
-{
-	return (c == '\'' || c == '\"');
-}
-
 static void	copy_char(t_extract *res, char c, char m, int *r)
 {
 	res->str[*r] = c;
@@ -88,6 +83,7 @@ static t_extract	*extract_inner(char *str, char *map, t_shell *shell)
 	int			r;
 	int			in;
 	int			len;
+	char		q;
 
 	res = xmalloc(sizeof(t_extract), shell);
 	i = 0;
@@ -100,8 +96,13 @@ static t_extract	*extract_inner(char *str, char *map, t_shell *shell)
 		return (free(res->str), free(res->map), free(res), NULL);
 	while (str[i])
 	{
-		if (map[i] == EX_IN && is_quote(str[i]))
-			in = !in;
+		if (!in && (str[i] == '\'' || str[i] == '\"'))
+		{
+			q = str[i];
+			in = 1;
+		}
+		else if (in && str[i] == q)
+			in = 0;
 		else
 			copy_char(res, str[i], map[i], &r);
 		i++;
