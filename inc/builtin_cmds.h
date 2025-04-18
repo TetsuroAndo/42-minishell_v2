@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   builtin_cmds.h                                     :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:59:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 00:22:37 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 02:51:36 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #ifndef BUILTIN_CMDS_H
 # define BUILTIN_CMDS_H
@@ -30,6 +30,7 @@ t_status		__echo(int argc, char **argv, t_shell *sh);
 t_status		__exit(int argc, char **argv, t_shell *sh);
 
 /* dispatcher */
+int				path_launcher(char path[], const char *src, int mode, t_shell *sh);
 int				builtin_launch(char **argv, t_shell *sh);
 
 #endif

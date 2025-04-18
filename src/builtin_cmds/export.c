@@ -6,13 +6,13 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 23:11:41 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 00:26:17 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 03:04:52 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin_cmds.h"
 
-static t_status	put_export(t_shell *sh)
+static t_status	__put_export(t_shell *sh)
 {
 	char	**envp;
 	int		len;
@@ -43,7 +43,7 @@ t_status	__export(int argc, char **argv, t_shell *sh)
 	int	i;
 
 	if (argc == 1)
-		return (put_export(sh));
+		return (__put_export(sh));
 	i = 0;
 	while (++i < argc)
 	{

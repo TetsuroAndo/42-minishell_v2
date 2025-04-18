@@ -3,19 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   executer.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:40:08 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/18 21:43:02 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/19 03:12:36 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_exec.h"
 
-t_status	mod_exec(t_shell *shell)
+t_status	mod_exec(t_shell *sh)
 {
-	t_ast *ast;
+	int	st;
 
-	ast = shell->ast;
-	return (shell->status);
+	if (!sh || !sh->ast)
+		return (E_NONE);
+	st = exe_run(sh->ast, sh);
+	sh->status = st;
+	return (E_NONE);
 }

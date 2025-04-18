@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:43:33 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 00:16:12 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 03:01:29 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ t_status	__env(int argc, char **argv, t_shell *sh)
 {
 	t_list	*lst;
 
-	
 	if (argc != 1)
 		return (ft_dprintf(2, "minishell: env: no option supported\n"), 1);
 	lst = sh->env_map;

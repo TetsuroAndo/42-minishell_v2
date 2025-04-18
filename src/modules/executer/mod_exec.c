@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   mod_exec.c                                         :+:      :+:    :+:   */
@@ -6,26 +6,18 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 00:22:35 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 03:14:21 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "mod_exec.h"
 
 /* ──────── static forward decls ──────── */
-static int	exe_run(t_ast *node, t_shell *sh);
 static int	exe_cmd(t_ast *node, t_shell *sh);
 static int	exe_pipe(t_ast *node, t_shell *sh);
 static int	exe_bool(t_ast *node, t_shell *sh); /* AND / OR / LIST */
 static int	exe_sub(t_ast *node, t_shell *sh);
 static int	handle_redr(t_args *args, t_shell *sh);
-
-/* 小さな RAII 風 FD バックアップ構造体 */
-typedef struct s_fdbackup
-{
-	int		saved_fd;
-	int		target_fd;
-}			t_fdbackup;
 
 static void	fdbackup_enter(t_fdbackup *bk, int tgt)
 {
@@ -42,25 +34,10 @@ static void	fdbackup_exit(t_fdbackup *bk)
 }
 
 /* ========================================================= */
-/*                 外部公開関数 : mod_exec                  */
-/* ========================================================= */
-
-t_status	mod_exec(t_shell *sh)
-{
-	int	st;
-
-	if (!sh || !sh->ast)
-		return (E_NONE);
-	st = exe_run(sh->ast, sh);
-	sh->status = st;
-	return (E_NONE);
-}
-
-/* ========================================================= */
 /*                   AST dispatcher : exe_run                */
 /* ========================================================= */
 
-static int	exe_run(t_ast *node, t_shell *sh)
+int	exe_run(t_ast *node, t_shell *sh)
 {
 	if (!node)
 		return (0);
