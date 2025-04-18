@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 23:45:56 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 00:05:03 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ static void	update_dp_row(const char *p, const char *s, int *prev, int *curr,
 	int	m;
 	int	i;
 
-	m = strlen(ex->str); // Changed from strlen(p) to strlen(ex->str)
+	m = ft_strlen(ex->str); // Changed from strlen(p) to strlen(ex->str)
 	i = 1;
 	while (i <= m)
 	{
