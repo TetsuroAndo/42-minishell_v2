@@ -42,7 +42,7 @@ char							*handle_wildcard(char *in, t_shell *sh);
 // helper
 t_quote_state					is_quote_type(int c);
 int								check_qs(int c, t_sem *sem);
-char							*strip_quotes(const char *s, t_shell *sh);
+char							*trim_valid_quotes(const char *s, t_shell *sh);
 int								is_quoted(const char *s);
 
 // wildcard_helper

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:57:56 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 17:08:19 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/18 19:50:56 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,16 @@ int	check_qs(int c, t_sem *sem)
 	return (c);
 }
 
+static int	is_open_quote(char c, char quote)
+{
+	return (!quote && (c == '\'' || c == '"'));
+}
+
+static int	is_close_quote(char c, char quote, char prev)
+{
+	return (quote && c == quote && prev != '\\');
+}
+
 /**
  * @brief クォートを取り除いた文字列を作成する
  * 
@@ -39,26 +49,29 @@ int	check_qs(int c, t_sem *sem)
  * @param sh シェル情報
  * @return char* クォートを取り除いた新しい文字列
  */
-char	*strip_quotes(const char *s, t_shell *sh)
+char	*trim_valid_quotes(const char *s, t_shell *sh)
 {
+	char	out[PATH_MAX];
 	size_t	i;
 	size_t	j;
-	size_t	len;
-	char	*out;
+	char	quote;
 
 	i = 0;
 	j = 0;
-	len = ft_strlen(s);
-	out = xmalloc(len + 1, sh);
-	while (i < len)
+	quote = 0;
+	while (s && s[i])
 	{
-		if (s[i] == '\'' || s[i] == '"')
-			i++;
+		if (is_open_quote(s[i], quote))
+			quote = s[i++];
+		else if (is_close_quote(s[i], quote, s[i - 1]))
+			quote = 0, i++;
 		else
 			out[j++] = s[i++];
 	}
 	out[j] = '\0';
-	return (out);
+	if (quote)
+		return (ms_strdup(s, sh));
+	return (ms_strdup(out, sh));
 }
 
 /**

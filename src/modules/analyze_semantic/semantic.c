@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 18:23:44 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/18 19:51:05 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ static char	*prepare_delimiter(char *delim_raw, int *quoted, t_shell *sh)
 	char	*delim;
 
 	*quoted = is_quoted(delim_raw);
-	delim_noq = strip_quotes(delim_raw, sh);
+	delim_noq = trim_valid_quotes(delim_raw, sh);
 	if (*quoted)
 		delim = delim_noq;
 	else
@@ -167,10 +167,12 @@ static char	*read_heredoc_body(char *delim, int quoted, t_shell *sh)
 		line = readline("> ");
 		if (!line || (delim[0] == '\0' && line[0] == '\0') || ft_strcmp(line,
 				delim) == 0)
-		{
-			free(line);
-			break ;
-		}
+			if (!line || (delim[0] == '\0' && line[0] == '\0')
+				|| ft_strcmp(line, delim) == 0)
+			{
+				free(line);
+				break ;
+			}
 		if (!quoted)
 			body = xstrjoin_free2(body, handle_env(line, sh), sh);
 		else
@@ -239,21 +241,18 @@ int	add_to_list(t_list **list, char **words, t_shell *sh)
  * @param sh シェル情報
  * @return int 成功時0、失敗時1
  */
-static int	process_simple_token(t_lexical_token *data, char *value, int idx,
+static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 		t_shell *sh)
 {
-	if (idx == 0)
-	{
-		if (path_resolve(&data->value, sh))
-			return (1);
-		if (value != data->value)
-			free(value);
-	}
-	else
-	{
-		free(data->value);
-		data->value = value;
-	}
+	char	*trimmed;
+
+	trimmed = trim_valid_quotes(val, sh);
+	if (trimmed != val)
+		free(val);
+	free(data->value);
+	data->value = trimmed;
+    if (idx == 0 && path_resolve(&data->value, sh))
+        return (1);
 	return (0);
 }
 
@@ -292,15 +291,7 @@ static int	process_split_token(t_list **list, char *value, int idx,
 	return (0);
 }
 
-/**
- * @brief 引数トークンを処理する
- *
- * @param list トークンリスト
- * @param data 処理するトークンデータ
- * @param idx 引数の位置（0はコマンド）
- * @param shell シェル情報
- * @return int 成功時0、失敗時1
- */
+/* ===== 4. public: argv 用メイン関数 ============================ */
 int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 {
 	char	*env_exp;
@@ -333,7 +324,7 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 }
 
 /**
- * @brief リダイレクトトークンを処理する
+ * @brief リダイレクトトー���ンを処理する
  *
  * @param list トークンリスト
  * @param data 処理するトークンデータ
@@ -385,7 +376,7 @@ int	ast2cmds(t_ast *ast, t_shell *shell)
 
 	status = 0;
 	if (ast == NULL)
-		return (1);
+		return (0);
 	if (ast->ntype != NT_CMD)
 	{
 		status += ast2cmds(ast->left, shell);

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:12:00 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 11:34:44 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/18 19:51:09 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static void	shell_loop(t_shell *shell, const char *prompt)
 {
 	int	status;
 
-	while (1)
+	while (42)
 	{
 		line_init(shell);
 		shell->source_line = launch_readline(prompt);
