@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   xclose.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:15:46 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 19:26:51 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/19 03:52:09 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdio.h>
 
-int	xclose(int *fd)
+int xclose(int *fd)
 {
-	int	ret;
+	int ret;
 
 	if (!fd || *fd < 3)
 		return (0);

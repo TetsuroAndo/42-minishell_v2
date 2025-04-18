@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 23:59:17 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 03:54:35 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void					free_ast(t_ast **ast);
 */
 int						xclose(int *fd);
 int						xdup(int oldfd, t_shell *shell);
-int						xdup2(int oldfd, int newfd, t_shell *shell);
+int						xdup2(int *oldfd, int newfd, t_shell *shell);
 
 /*
 ** ============================================================================
@@ -93,8 +93,6 @@ int						xpipe(int pipfds[], t_shell *shell);
 */
 int						is_quoted(const char *s);
 char					*trim_valid_quotes(const char *s, t_shell *sh);
-int						ms_lstiter(t_list *lst, int (*f)(t_list **, void *, int,
-								t_shell *), t_shell *shell);
 void					skip_spaces(const char *line, size_t *pos);
 char					*ms_strndup(const char *s, size_t n, t_shell *shell);
 char					*ms_strdup(const char *s, t_shell *shell);
@@ -121,6 +119,8 @@ char					*xstrjoin_free2(char const *s1, char const *s2,
 ** ============================================================================
 */
 void					*ms_listshift(t_list **list);
+int						ms_lstiter(t_list *lst, int (*f)(t_list **, void *, int,
+							t_shell *), t_shell *shell);
 t_list					*xlstnew(void *data, t_shell *shell);
 t_list					*xlst_from_strs(char **strs, t_shell *shell);
 char					**xlst_to_strs(t_list *lst, t_shell *shell);

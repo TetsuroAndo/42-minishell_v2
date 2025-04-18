@@ -107,6 +107,14 @@ static void fdbackup_exit(t_fdbackup *bk) {
 - `fork()` して子で `exe_run()` を再帰呼出し。
 - 親は `waitpid()` → 子の結果をそのまま返す。
 
+### 5.5 handle_redr()
+
+- 資源管理が明確で再利用価値が高い：リダイレクト一覧を解析し FD 設定を準備する処理は exe_cmd() から独立させた方がテストしやすい。
+
+1. args->redr を走査し open()
+2. エラー文言出力＋戻り値で通知
+3. 成功時は args->fds[0/1] にセット いつ close するか を決め打ち出来る：exe_cmd() が FDBackup で dup2 済み・エラー時即 close、正常時も復旧直後に close。
+
 ## 6. シグナル & ジョブ制御
 
 | シグナル  | 親プロセス               | 子プロセス             |

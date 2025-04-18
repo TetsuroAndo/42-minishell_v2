@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   mod_exec.c                                         :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 03:14:21 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 04:01:46 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "mod_exec.h"
 
@@ -19,12 +19,12 @@ static int	exe_bool(t_ast *node, t_shell *sh); /* AND / OR / LIST */
 static int	exe_sub(t_ast *node, t_shell *sh);
 static int	handle_redr(t_args *args, t_shell *sh);
 
-static void	fdbackup_enter(t_fdbackup *bk, int tgt)
+static void	fdbackup_enter(t_fdbackup *bk, int tgt, t_shell *sh)
 {
 	bk->target_fd = tgt;
-	bk->saved_fd = dup(tgt);
+	bk->saved_fd = xdup(tgt, sh);
 }
-static void	fdbackup_exit(t_fdbackup *bk)
+static void	fdbackupexit(t_fdbackup *bk)
 {
 	if (bk->saved_fd != -1)
 	{
@@ -85,13 +85,13 @@ static int	exe_cmd(t_ast *node, t_shell *sh)
 	bk_out = (t_fdbackup){-1, STDOUT_FILENO};
 	if (node->args->fds[0] != -1)
 	{
-		fdbackup_enter(&bk_in, STDIN_FILENO);
-		xdup2(node->args->fds[0], STDIN_FILENO, sh);
+		fdbackup_enter(&bk_in, STDIN_FILENO, sh);
+		xdup2(&node->args->fds[0], STDIN_FILENO, sh);
 	}
 	if (node->args->fds[1] != -1)
 	{
-		fdbackup_enter(&bk_out, STDOUT_FILENO);
-		xdup2(node->args->fds[1], STDOUT_FILENO, sh);
+		fdbackup_enter(&bk_out, STDOUT_FILENO, sh);
+		xdup2(&node->args->fds[1], STDOUT_FILENO, sh);
 	}
 	/* 4. ビルトイン判定 → 実行 */
 	if (is_builtin(argv[0]))
@@ -105,7 +105,7 @@ static int	exe_cmd(t_ast *node, t_shell *sh)
 			signal(SIGQUIT, SIG_DFL);
 			execvp(argv[0], argv);
 			perror(argv[0]);
-			_exit(127);
+			exit(127);
 		}
 		node->args->pid = pid;
 		waitpid(pid, &wstatus, 0);
@@ -114,8 +114,8 @@ static int	exe_cmd(t_ast *node, t_shell *sh)
 		status = 128 + WTERMSIG(wstatus);
 	}
 	/* 5. FD 復旧 & 後始末 */
-	fdbackup_exit(&bk_in);
-	fdbackup_exit(&bk_out);
+	fdbackupexit(&bk_in);
+	fdbackupexit(&bk_out);
 	// ft_strs_clear(argv);
 	return (status);
 }
@@ -137,20 +137,20 @@ static int	exe_pipe(t_ast *node, t_shell *sh)
 	lpid = xfork(sh);
 	if (lpid == 0)
 	{
-		xdup2(fds[1], STDOUT_FILENO, sh);
+		xdup2(&fds[1], STDOUT_FILENO, sh);
 		close(fds[0]);
 		close(fds[1]);
 		st = exe_run(node->left, sh);
-		_exit(st);
+		exit(st);
 	}
 	rpid = xfork(sh);
 	if (rpid == 0)
 	{
-		xdup2(fds[0], STDIN_FILENO, sh);
+		xdup2(&fds[0], STDIN_FILENO, sh);
 		close(fds[0]);
 		close(fds[1]);
 		st = exe_run(node->right, sh);
-		_exit(st);
+		exit(st);
 	}
 	close(fds[0]);
 	close(fds[1]);
@@ -196,7 +196,7 @@ static int	exe_sub(t_ast *node, t_shell *sh)
 	if (pid == 0)
 	{
 		int st = exe_run(node->left, sh); /* subshell の AST は left に格納 */
-		_exit(st);
+		exit(st);
 	}
 	waitpid(pid, &wst, 0);
 	if (WIFEXITED(wst))
@@ -205,9 +205,31 @@ static int	exe_sub(t_ast *node, t_shell *sh)
 }
 
 /* ========================================================= */
-/*                      リダイレクト解析                      */
+/*                  ★ 追加：ヒアドキュメント ★                   */
 /* ========================================================= */
+static int	heredoc_into_fd(char *body, t_args *args, t_shell *sh)
+{
+	int	hd[2];
 
+	if (xpipe(hd, sh))
+		return (1);
+	/* write() は短い本文なら一括送信で十分。失敗時はシェルごと死ぬ想定。*/
+	if (write(hd[1], body, ft_strlen(body)) == -1 || close(hd[1]) == -1)
+	{
+		perror("heredoc write");
+		close(hd[0]);
+		return (1);
+	}
+	/* 直近の < や << が勝つ POSIX 仕様を踏襲。 */
+	if (args->fds[0] > 2)
+		xclose(&args->fds[0]);
+	args->fds[0] = hd[0]; /* read end を stdin 置換候補に */
+	return (0);
+}
+
+/* ========================================================= */
+/*                 ★ 改修：redirect 一括ハンドラ ★              */
+/* ========================================================= */
 static int	handle_redr(t_args *args, t_shell *sh)
 {
 	t_list			*lst;
@@ -217,16 +239,40 @@ static int	handle_redr(t_args *args, t_shell *sh)
 	while (lst)
 	{
 		tok = lst->data;
+		/*
+		** 1) ここで ttype を見て FD を確定。
+		** 2) << は SEM フェーズで TT_REDIR_IN へ変換されるので
+		**    "値に改行が含まれるか" でヒアドキュメントと判別。
+		*/
 		if (tok->type == TT_REDIR_IN)
-			args->fds[0] = open(tok->value, O_RDONLY);
+		{
+			if (ft_strchr(tok->value, '\n')) /* here‑doc 本文 */
+			{
+				if (heredoc_into_fd(tok->value, args, sh))
+					return (1);
+			}
+			else
+			{
+				if (args->fds[0] > 2)
+					xclose(&args->fds[0]);
+				args->fds[0] = open(tok->value, O_RDONLY);
+			}
+		}
 		else if (tok->type == TT_REDIR_OUT)
-			args->fds[1] = open(tok->value, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+		{
+			if (args->fds[1] > 2)
+				xclose(&args->fds[1]);
+			args->fds[1] = open(tok->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		}
 		else if (tok->type == TT_APPEND)
+		{
+			if (args->fds[1] > 2)
+				xclose(&args->fds[1]);
 			args->fds[1] = open(tok->value, O_WRONLY | O_CREAT | O_APPEND,
-					0666);
-		else /* HEREDOC は SEM で << 本文→ファイル化済, ここでは REPLACED */
-			args->fds[0] = open(tok->value, O_RDONLY);
-		if (args->fds[0] == -1 || args->fds[1] == -1)
+					0644);
+		}
+		if ((args->fds[0] == -1 && tok->type == TT_REDIR_IN) || (args->fds[1] ==
+				-1 && (tok->type == TT_REDIR_OUT || tok->type == TT_APPEND)))
 			return (perror(tok->value), 1);
 		lst = lst->next;
 	}
