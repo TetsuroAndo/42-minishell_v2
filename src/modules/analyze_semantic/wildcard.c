@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 18:38:34 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/18 21:33:24 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,13 +227,13 @@ static char	*process_directory_wildcard(char *in, t_shell *sh)
 
 	dir = opendir(sh->cwd);
 	if (!dir)
-		return (in);
+		return (ms_strdup(in, sh));
 	buf = collect_matches(dir, in, sh);
 	closedir(dir);
 	if (buf)
 		return (buf);
 	else
-		return (in);
+		return (ms_strdup(in, sh));
 }
 
 char	*handle_wildcard(char *in, t_shell *sh)
