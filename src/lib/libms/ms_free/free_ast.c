@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_ast.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:56:24 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/14 23:40:43 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/18 20:02:57 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,20 +20,8 @@
  */
 static void	clear_args(t_args *args)
 {
-	int	i;
-
 	if (!args)
 		return ;
-	if (args->cargv)
-	{
-		i = 0;
-		while (args->cargv[i])
-		{
-			xfree((void **)&args->cargv[i]);
-			i++;
-		}
-		xfree((void **)&args->cargv);
-	}
 	if (args->argv)
 		ft_lstclear(&args->argv, free_token);
 	if (args->redr)

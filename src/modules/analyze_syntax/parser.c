@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 13:49:40 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/18 20:02:09 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@ t_args	*args_new(t_shell *shell)
 	t_args	*args;
 
 	args = (t_args *)xmalloc(sizeof(t_args), shell);
-	args->path[0] = '\0';
-	args->cargv = NULL;
 	args->argv = NULL;
 	args->redr = NULL;
 	args->fds[0] = -1;

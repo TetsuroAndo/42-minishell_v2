@@ -3,140 +3,129 @@
 /*                                                        :::      ::::::::   */
 /*   debug_putsyn.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 05:04:33 by teando            #+#    #+#             */
-/*   Updated: 2025/04/16 19:26:18 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/18 20:02:18 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "core.h"
 #include "mod_syn.h"
 
-static char	*get_node_type_str(t_ntype type)
+static const char	*type_str(t_ntype type)
 {
-	static const char	*type_names[] = {"SIMPLE_CMD", "CMD", "PIPE", "LIST",
+	static const char	*g_type_name[] = {"SIMPLE_CMD", "CMD", "PIPE", "LIST",
 			"EOF", "AND", "OR", "SUBSHELL", "REDIRECT"};
 
-	if (type < 0 || type >= sizeof(type_names) / sizeof(type_names[0]))
+	if (type < 0 || type >= (int)(sizeof(g_type_name) / sizeof(char *)))
 		return ("UNKNOWN");
-	return ((char *)type_names[type]);
+	return (g_type_name[type]);
 }
 
-static void	print_cmd_args(t_args *args, int index)
+static void	put_prefix(const char *prefix, int is_last)
 {
-	t_list			*arg_list;
-	t_lexical_token	*token;
+	ft_putstr_fd((char *)prefix, 2);
+	if (is_last)
+		ft_putstr_fd("└── ", 2);
+	else
+		ft_putstr_fd("├── ", 2);
+}
+
+/* ****************************************************************** */
+/*          コマンド / リダイレクト表示                                      */
+/* ****************************************************************** */
+
+static void	print_tok_list(t_list *lst, int redir)
+{
+	const char		*fmt[4] = {"%s", "< %s", "> %s", ">> %s"};
 	int				first;
+	t_lexical_token	*tok;
 
-	if (!args)
-		return ;
-	printf("[");
-	if (index == 0)
-		arg_list = args->argv;
-	else
-		arg_list = args->redr;
-	if (!arg_list)
-	{
-		printf("]");
-		return ;
-	}
 	first = 1;
-	while (arg_list)
+	while (lst)
 	{
-		token = arg_list->data;
+		tok = lst->data;
 		if (!first)
-			printf(", ");
-		if (index == 0)
-			printf("%s", token->value);
+			ft_putstr_fd(", ", 2);
+		if (!redir)
+			ft_dprintf(2, fmt[0], tok->value);
+		else if (tok->type == TT_REDIR_IN)
+			ft_dprintf(2, fmt[1], tok->value);
+		else if (tok->type == TT_REDIR_OUT)
+			ft_dprintf(2, fmt[2], tok->value);
 		else
-		{
-			if (token->type == TT_REDIR_IN)
-				printf("< %s", token->value);
-			else if (token->type == TT_REDIR_OUT)
-				printf("> %s", token->value);
-			else if (token->type == TT_APPEND)
-				printf(">> %s", token->value);
-			else if (token->type == TT_HEREDOC)
-				printf("<< %s", token->value);
-			else
-				printf("Unknown Redirect: %s", token->value);
-		}
+			ft_dprintf(2, fmt[3], tok->value);
 		first = 0;
-		arg_list = arg_list->next;
+		lst = lst->next;
 	}
-	printf("]");
 }
 
-static void	print_tree_node(t_ast *ast, const char *prefix, int is_left,
-		int has_right)
+static void	print_cmd_detail(t_args *args, const char *pref, int is_last)
 {
-	char	*indent;
+	char	*sub_pref;
 
-	if (!ast)
-		return ;
-	printf("%s", prefix);
-	if (is_left)
-		printf("├─ LEFT ── ");
-	else
-		printf("└─ RIGHT ─ ");
-	printf("[%s]", get_node_type_str(ast->ntype));
-	if (ast->ntype == NT_CMD && ast->args)
+	sub_pref = xstrjoin_free(ms_strdup(pref, NULL), is_last ? "    " : "│   ",
+			NULL);
+	if (args->argv)
 	{
-		if (has_right)
-			indent = "│          ";
-		else
-			indent = "           ";
-		printf("\n%s%s", prefix, indent);
-		if (ast->args->argv || ast->args->redr)
-		{
-			if (ast->args->argv)
-			{
-				printf("├─ Command: ");
-				print_cmd_args(ast->args, 0);
-				printf("\n%s%s", prefix, indent);
-			}
-			if (ast->args->redr)
-			{
-				printf("└─ Redirs: ");
-				print_cmd_args(ast->args, 1);
-				printf("\n");
-			}
-		}
-		else
-			printf("└─ No args or redirs\n");
+		put_prefix(sub_pref, 0);
+		ft_putstr_fd("Command: [", 2);
+		print_tok_list(args->argv, 0);
+		ft_putendl_fd("]", 2);
 	}
-	else
-		printf("\n");
+	if (args->redr)
+	{
+		put_prefix(sub_pref, 1);
+		ft_putstr_fd("Redirs : [", 2);
+		print_tok_list(args->redr, 1);
+		ft_putendl_fd("]", 2);
+	}
+	free(sub_pref);
 }
 
-static void	print_ast_tree(t_ast *ast, const char *prefix, int is_left,
-		t_shell *shell)
+/* ****************************************************************** */
+/*          木構造の再帰出力                                            */
+/* ****************************************************************** */
+
+static void	print_ast_rec(t_ast *ast, const char *pref, int is_last)
 {
-	char	*new_prefix;
+	char	*next_pref;
 
 	if (!ast)
 		return ;
-	print_tree_node(ast, prefix, is_left, ast->right != NULL);
-	if (is_left && ast->right)
-		new_prefix = xstrjoin_free(ms_strdup(prefix, shell), "│  ", shell);
-	else
-		new_prefix = xstrjoin_free(ms_strdup(prefix, shell), "    ", shell);
-	if (ast->left)
-		print_ast_tree(ast->left, new_prefix, 1, shell);
-	if (ast->right)
-		print_ast_tree(ast->right, new_prefix, 0, shell);
-	xfree((void **)&new_prefix);
+	put_prefix(pref, is_last);
+	ft_dprintf(2, "[%s]\n", type_str(ast->ntype));
+	if (ast->ntype == NT_CMD)
+		print_cmd_detail(ast->args, pref, is_last);
+	/* 子ノードの prefix を作成 */
+	next_pref = xstrjoin_free(ms_strdup(pref, NULL), is_last ? "    " : "│   ",
+			NULL);
+	if (ast->left && ast->right)
+	{
+		print_ast_rec(ast->left, next_pref, 0);
+		print_ast_rec(ast->right, next_pref, 1);
+	}
+	else if (ast->left)
+		print_ast_rec(ast->left, next_pref, 1);
+	else if (ast->right)
+		print_ast_rec(ast->right, next_pref, 1);
+	free(next_pref);
 }
+
+/* ****************************************************************** */
+/*          エントリポイント                                               */
+/* ****************************************************************** */
 
 void	debug_print_ast(t_ast *ast, t_shell *shell)
 {
+	(void)shell;
 	if (!ast)
-		printf("(Empty AST)\n");
+		ft_putendl_fd("(Empty AST)", 2);
 	else
 	{
-		printf("\n=== Abstract Syntax Tree ===\n");
-		print_ast_tree(ast, "", 1, shell);
-		printf("===========================\n\n");
+		ft_putendl_fd("\n=== Abstract Syntax Tree ===", 2);
+		print_ast_rec(ast, "", 1);
+		ft_putendl_fd("===========================\n", 2);
 	}
 }

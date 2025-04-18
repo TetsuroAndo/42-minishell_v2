@@ -30,11 +30,9 @@ typedef enum e_ntype
 
 typedef struct s_args
 {
-	char			path[PATH_MAX];
-	char			**cargv;
 	t_list *argv; // 引数リスト
 	t_list *redr; // リダイレクトリスト
-	int				fds[2];
+	int				fds[2]; // IN[0], OUT[1]
 	pid_t			pid;
 }					t_args;
 
