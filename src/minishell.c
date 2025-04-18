@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:12:00 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 19:51:09 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/18 22:45:46 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static void	shell_loop(t_shell *shell, const char *prompt)
 			shell->source_line = NULL;
 			continue ;
 		}
-		status = mod_lex(shell) || mod_syn(shell) || mod_sem(shell);
+		status = mod_lex(shell) || mod_syn(shell) || mod_sem(shell) || mod_exec(shell) || 0;
 		if (status != E_NONE)
 			printf("error status: %d\n", status);
 	}

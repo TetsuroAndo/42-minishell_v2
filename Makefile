@@ -6,7 +6,7 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/18 22:05:35 by teando           ###   ########.fr        #
+#    Updated: 2025/04/18 22:44:39 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,6 +51,8 @@ SRC		+= $(shell find $(SRC_DIR)/lib/libms -name '*.c')
 SRC		+= $(shell find $(SRC_DIR)/modules/analyze_lexical -name '*.c')
 SRC		+= $(shell find $(SRC_DIR)/modules/analyze_syntax -name '*.c')
 SRC		+= $(shell find $(SRC_DIR)/modules/analyze_semantic -name '*.c')
+SRC		+= $(shell find $(SRC_DIR)/modules/executer -name '*.c')
+SRC		+= $(shell find $(SRC_DIR)/builtin_cmds -name '*.c')
 OBJ		:= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 
 # ビルドルール

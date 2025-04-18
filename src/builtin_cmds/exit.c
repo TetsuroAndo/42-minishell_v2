@@ -1,27 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/10 16:58:14 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 00:24:59 by teando           ###   ########.fr       */
+/*   Created: 2025/04/18 22:43:58 by teando            #+#    #+#             */
+/*   Updated: 2025/04/19 00:26:57 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin_cmds.h"
 
-t_status	__pwd(int argc, char **argv, t_shell *sh)
+t_status	__exit(int argc, char **argv, t_shell *sh)
 {
-	char	buf[PATH_MAX + 1];
+	long	code;
+	char	*end;
 
-	(void)argv;
-	(void)sh;
-	if (argc != 1)
-		return (ft_dprintf(2, "minishell: pwd: too many arguments\n"), 1);
-	if (!getcwd(buf, sizeof buf))
-		return (perror("pwd"), 1);
-	buf[sizeof buf - 1] = '\0';
-	return (printf("%s\n", buf), 0);
+	code = sh->status;
+	if (argc > 2)
+		return (ft_dprintf(2, "minishell: exit: too many arguments\n"), 1);
+	if (argc == 2)
+	{
+		code = ft_strtol(argv[1], &end, 10);
+		if (*end)
+		{
+			ft_dprintf(2, "minishell: exit: numeric argument required\n");
+			code = 255;
+		}
+	}
+	printf("exit\n");
+	shell_exit(sh, (int)(code & 0xFF));
+	return (0);
 }
