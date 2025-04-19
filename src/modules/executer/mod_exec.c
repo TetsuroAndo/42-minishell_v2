@@ -6,11 +6,36 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 04:30:19 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 05:57:21 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_exec.h"
+
+/* ========================================================= */
+/*                   Signal handling utility                 */
+/* ========================================================= */
+
+void	sig_ignore_parent(int *enabled)
+{
+	static struct sigaction	old_int, old_quit;
+	struct sigaction		ign;
+
+	if (*enabled)			/* restore */
+	{
+		sigaction(SIGINT, &old_int, NULL);
+		sigaction(SIGQUIT, &old_quit, NULL);
+		*enabled = 0;
+		return ;
+	}
+	ign.sa_handler = SIG_IGN;
+	sigemptyset(&ign.sa_mask);
+	ign.sa_flags = 0;
+
+	sigaction(SIGINT, &ign, &old_int);
+	sigaction(SIGQUIT, &ign, &old_quit);
+	*enabled = 1;
+}
 
 /* ──────── static forward decls ──────── */
 static int	exe_cmd(t_ast *node, t_shell *sh);
@@ -67,6 +92,7 @@ static int	exe_cmd(t_ast *node, t_shell *sh)
 	pid_t		pid;
 	int			wstatus;
 	struct stat	sb;
+	int			sig_held;
 
 	if (!node || node->ntype != NT_CMD)
 		return (1);
@@ -97,6 +123,8 @@ static int	exe_cmd(t_ast *node, t_shell *sh)
 		status = builtin_launch(argv, sh);
 	else
 	{
+		sig_held = 0;
+		sig_ignore_parent(&sig_held);	/* ── ① 親は一時的に無視 ── */
 		pid = xfork(sh);
 		if (pid == 0)
 		{
@@ -108,6 +136,7 @@ static int	exe_cmd(t_ast *node, t_shell *sh)
 		}
 		node->args->pid = pid;
 		waitpid(pid, &wstatus, 0);
+		sig_ignore_parent(&sig_held);	/* ── ② 親ハンドラを復元 ── */
 		if (WIFEXITED(wstatus))
 			status = WEXITSTATUS(wstatus);
 		else
@@ -116,7 +145,6 @@ static int	exe_cmd(t_ast *node, t_shell *sh)
 	/* 5. FD 復旧 & 後始末 */
 	fdbackupexit(&bk_in);
 	fdbackupexit(&bk_out);
-	// ft_strs_clear(argv);
 	return (status);
 }
 
@@ -132,7 +160,10 @@ static int	exe_pipe(t_ast *node, t_shell *sh)
 	pid_t	rpid;
 	int		st_l;
 	int		st_r;
+	int		sig_held;
 
+	sig_held = 0;
+	sig_ignore_parent(&sig_held);	/* ── ① 親は一時的に無視 ── */
 	xpipe(fds, sh); /* fds[0] = r, fds[1] = w */
 	lpid = xfork(sh);
 	if (lpid == 0)
@@ -156,6 +187,7 @@ static int	exe_pipe(t_ast *node, t_shell *sh)
 	close(fds[1]);
 	waitpid(lpid, &st_l, 0);
 	waitpid(rpid, &st_r, 0);
+	sig_ignore_parent(&sig_held);	/* ── ② 親ハンドラを復元 ── */
 	if (WIFEXITED(st_r))
 		return (WEXITSTATUS(st_r));
 	return (128 + WTERMSIG(st_r));
