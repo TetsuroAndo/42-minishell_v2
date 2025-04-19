@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wc_quote_parser.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:43:38 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/19 00:30:48 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/19 20:52:06 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ static void	init_map(char *map, size_t len)
 
 static void	set_quote_map(char *str, char *map, int start, int end)
 {
+	(void)str;
 	for (int i = start; i <= end; i++)
 		map[i] = EX_IN;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   line_init.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:43:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/15 14:09:32 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/19 20:46:14 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,23 @@
  *
  * @param shell シェル構造体へのポインタ
  */
-void	line_init(t_shell *shell)
+void	line_init(t_shell *sh)
 {
-	if (!shell)
+	if (!sh)
 		shell_exit(NULL, 1);
-	xfree((void **)&shell->source_line);
-	if (shell->token_list)
-		ft_lstclear(&shell->token_list, free_token);
-	if (shell->ast)
-		free_ast(&shell->ast);
-	xfree((void **)&shell->env_spc['?']);
-	if (WIFSIGNALED(shell->status))
-		shell->status = g_signal_status + 128;
-	else if (WIFEXITED(shell->status))
-		shell->status = WEXITSTATUS(shell->status);
-	shell->env_spc['?'] = xitoa(shell->status, shell);
+	xfree((void **)&sh->source_line);
+	if (sh->token_list)
+		ft_lstclear(&sh->token_list, free_token);
+	if (sh->ast)
+		free_ast(&sh->ast);
+	xfree((void **)&sh->env_spc['?']);
+	if (WIFSIGNALED(sh->status))
+		sh->status = g_signal_status + 128;
+	else if (WIFEXITED(sh->status))
+		sh->status = WEXITSTATUS(sh->status);
+	sh->env_spc['?'] = xitoa(sh->status, sh);
 	g_signal_status = 0;
-	shell->status = 0;
+	sh->status = 0;
+	if (sh->debug & DEBUG_CORE)
+		put_line_init(sh);
 }

@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   finalize.c                                         :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:10 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 20:27:20 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 21:04:46 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "core.h"
 #include "libms.h"
@@ -64,7 +64,8 @@ void	shell_cleanup(t_shell *shell)
  */
 void	shell_exit(t_shell *shell, int status)
 {
-	printf("shell exit with status %d\n", status);
+	if (shell->debug & DEBUG_CORE)
+		ft_dprintf(STDERR_FILENO, "[SHELL_EXIT_STATUS]: %d\n", status);
 	/*statusによっては終了までする必要ないときがある気がする*/
 	shell_cleanup(shell);
 	xfree((void **)&shell);

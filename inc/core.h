@@ -21,7 +21,7 @@
 # include <unistd.h>
 
 # ifndef DEBUG_MODE
-#  define DEBUG_MODE DEBUG_NONE
+#  define DEBUG_MODE DEBUG_ALL
 # endif
 
 extern volatile sig_atomic_t	g_signal_status;

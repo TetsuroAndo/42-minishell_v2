@@ -6,15 +6,15 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/19 08:52:52 by teando           ###   ########.fr        #
+#    Updated: 2025/04/19 21:13:08 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		:= minishell
 CC			:= cc
-CFLAGS		:=
+CFLAGS		:= -Wall -Wextra -Werror
 RM			:= rm -rf
-DEFINE		:= -DDEBUG_MODE=DEBUG_ALL
+DEFINE		:= -DDEBUG_MODE=DEBUG_NONE
 
 # ディレクトリ設定
 ROOT_DIR	:= .
@@ -55,31 +55,36 @@ SRC		+= $(shell find $(SRC_DIR)/modules/executer -name '*.c')
 SRC		+= $(shell find $(SRC_DIR)/builtin_cmds -name '*.c')
 OBJ		:= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 
-# ビルドルール
+# dev all
+all: CFLAGS += -g -fsanitize=address -O1 -fno-omit-frame-pointer
+all: DEFINE = -DDEBUG_MODE=DEBUG_ALL
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(LFLAGS) $(IDFLAGS) $(DEFINE) -o $(NAME)
-	@echo '-----------------------'
-	@echo ' ______             __ '
-	@echo '/_  __/______ ____ / / '
-	@echo ' / / / __/ _ `(_-</ _ \'
-	@echo '/_/ /_/  \_,_/___/_//_/'
-	@echo '-----------------------'
+	@echo "====================="
+	@echo "== Build Complete! =="
+	@echo "====================="
+	@echo "[Executable]: $(NAME)"
+	@echo "[UNAME_S]: $(UNAME_S)"
+	@echo "[LIBRARY]: $(LIBFT)"
+	@echo "[INCLUDEDIR]: $(INC_DIR) $(LIBFT_DIR)"
+	@echo "[Compiler flags/CFLAGS]: $(CFLAGS)"
+	@echo "[Linker flags/LFLAGS]: $(LFLAGS)"
+	@echo "[Debug flags/DEFINE]: $(DEFINE)"
+	@echo "====================="
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(LIBFT_DIR)
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $(IDFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(IDFLAGS) $(DEFINE) -fPIC -MMD -MP -c $< -o $@
 
 $(LIBFT): | $(LIBFT_DIR)/libft.h
 	$(MAKE) -C $(LIBFT_DIR)
 
 c:
 	$(RM) $(OBJ_DIR)
-
 f: c
 	$(RM) $(NAME)
-
 r: f all
 
 clean:
@@ -96,27 +101,26 @@ re: fclean all
 # == PRODUCTION =========
 # =======================
 
-no: DEFINE = -D DEBUG_MODE=DEBUG_NONE
-no: r
+v: CFLAGS += -O2
+v: f $(NAME)
 
 # =======================
 # == DEBUG =============
 # =======================
 
 debug: CFLAGS += -g -fsanitize=address -O1 -fno-omit-frame-pointer
-debug: DEFINE = -D DEBUG_MODE=DEBUG_ALL
+debug: DEFINE = -DDEBUG_MODE=DEBUG_ALL
 debug: r
 	@echo "====================="
 	@echo "== Build Complete! =="
 	@echo "====================="
 	@echo "[Executable]: $(NAME)"
-	@echo "[Source files]: $(SRC)"
-	@echo "[Object files]: $(OBJ)"
-	@echo "[Library]: $(LIBFT)"
-	@echo "[Include directories]: $(INC_DIR) $(LIBFT_DIR)"
-	@echo "[Linker flags]: $(LFLAGS)"
-	@echo "[Compiler flags]: $(CFLAGS)"
-	@echo "[Debug flags]: $(DEFINE)"
+	@echo "[UNAME_S]: $(UNAME_S)"
+	@echo "[LIBRARY]: $(LIBFT)"
+	@echo "[INCLUDEDIR]: $(INC_DIR) $(LIBFT_DIR)"
+	@echo "[Compiler flags/CFLAGS]: $(CFLAGS)"
+	@echo "[Linker flags/LFLAGS]: $(LFLAGS)"
+	@echo "[Debug flags/DEFINE]: $(DEFINE)"
 	@echo "====================="
 
 # =======================
@@ -130,6 +134,6 @@ sub:
 	git submodule update --remote
 
 norm:
-	@norminette $(SRCS) $(INC_DIR)
+	@norminette $(SRC) $(INC_DIR)
 
-.PHONY: all clean fclean re norm fclean_libft fclean_libms
+.PHONY: all clean fclean re norm

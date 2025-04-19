@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 08:39:43 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 08:49:30 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 20:48:48 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ static int check_eof(char *s, t_shell *sh)
 
 void	ms_put_ascii(t_shell *sh)
 {
+	check_eof("------------ powerd by teando and tomsato ---", sh);
 	check_eof("▄▄▄█████▓ ██▀███   ▄▄▄        ██████  ██░ ██ ", sh);
 	check_eof("▓  ██▒ ▓▒▓██ ▒ ██▒▒████▄    ▒██    ▒ ▓██░ ██▒", sh);
 	check_eof("▒ ▓██░ ▒░▓██ ░▄█ ▒▒██  ▀█▄  ░ ▓██▄   ▒██▀▀██░", sh);

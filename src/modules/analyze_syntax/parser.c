@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 23:45:46 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 20:51:41 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,6 @@ simple_cmd redirections?
 t_ast	*ast_cmd(t_list **tok_lst, t_shell *shell)
 {
 	t_ast			*node;
-	t_lexical_token	*tok;
 
 	node = ast_new(NT_CMD, NULL, NULL, shell);
 	node->args = args_new(shell);
@@ -196,8 +195,9 @@ t_ast	*ast_primary(t_list **tok_lst, t_shell *shell)
 			return (free_ast(&node), NULL);
 		}
 		ms_listshift(tok_lst);
+		return (node);
 	}
-	return (node);
+	return (NULL);
 }
 
 /* 複数のコマンドをつなげる（一個のときにある）

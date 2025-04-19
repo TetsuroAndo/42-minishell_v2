@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 00:37:37 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/19 20:51:58 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -341,6 +341,7 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 	char	*aft_unq;
 
 	(void)count;
+	(void)list;
 	if (!data || !data->value)
 		return (1);
 	if (data->type == TT_HEREDOC)

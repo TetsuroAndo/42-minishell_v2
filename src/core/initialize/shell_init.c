@@ -6,32 +6,33 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:25:22 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 08:24:48 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 14:24:48 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "core.h"
 
-static void init_env(char **env, char *bin_name, t_shell *shell)
+static void	init_env(char **env, char *bin_name, t_shell *sh)
 {
-	shell->env_map = xlst_from_strs(env, shell);
-	if (!shell->env_map)
-		shell_exit(shell, E_ALLOCATE);
-	shell->env_spc['?'] = xitoa(0, shell);
-	if (!shell->env_spc['?'])
-		shell_exit(shell, E_ALLOCATE);
-	shell->env_spc['\0'] = ms_strdup(bin_name, shell);
-	if(!shell->env_spc['\0'])
-		shell_exit(shell, E_ALLOCATE);
+	sh->env_map = xlst_from_strs(env, sh);
+	if (!sh->env_map)
+		shell_exit(sh, E_ALLOCATE);
+	sh->env_spc['?'] = xitoa(0, sh);
+	if (!sh->env_spc['?'])
+		shell_exit(sh, E_ALLOCATE);
+	sh->env_spc['\0'] = ms_strdup(bin_name, sh);
+	if (!sh->env_spc['\0'])
+		shell_exit(sh, E_ALLOCATE);
 }
 
-static void init_fd_backup(t_shell *shell)
+static void	init_fd_backup(t_shell *sh)
 {
-	shell->stdin_backup = xdup(STDIN_FILENO, shell);
-	shell->stdout_backup = xdup(STDOUT_FILENO, shell);
-	shell->stderr_backup = xdup(STDERR_FILENO, shell);
-	if (shell->stdin_backup == -1 || shell->stdout_backup == -1 || shell->stderr_backup == -1)
-		shell_exit(shell, E_SYSTEM);
+	sh->stdin_backup = xdup(STDIN_FILENO, sh);
+	sh->stdout_backup = xdup(STDOUT_FILENO, sh);
+	sh->stderr_backup = xdup(STDERR_FILENO, sh);
+	if (sh->stdin_backup == -1 || sh->stdout_backup == -1
+		|| sh->stderr_backup == -1)
+		shell_exit(sh, E_SYSTEM);
 }
 
 /**
@@ -40,24 +41,26 @@ static void init_fd_backup(t_shell *shell)
  * @param env 環境変数配列
  * @return t_shell* 成功時シェル構造体へのポインタ、エラー時NULL
  */
-t_shell *shell_init(char **env, char *bin_name)
+t_shell	*shell_init(char **env, char *bin_name)
 {
-	t_shell	*shell;
+	t_shell	*sh;
 
-	shell = ft_calloc(sizeof(t_shell), 1);
-	if (!shell)
+	sh = ft_calloc(sizeof(t_shell), 1);
+	if (!sh)
 		shell_exit(NULL, E_ALLOCATE);
-	shell->bin_name = bin_name;
-	init_env(env, bin_name, shell);
-	init_fd_backup(shell);
-	if (getcwd(shell->cwd, PATH_MAX) == NULL)
+	sh->bin_name = bin_name;
+	init_env(env, bin_name, sh);
+	init_fd_backup(sh);
+	if (getcwd(sh->cwd, PATH_MAX) == NULL)
 	{
 		perror("getcwd");
-		shell_exit(shell, E_SYSTEM);
+		shell_exit(sh, E_SYSTEM);
 	}
-	shell->status = E_NONE;
-	shell->exit_flag = 0;
-	shell->interactive = isatty(STDIN_FILENO);
-	shell->debug = DEBUG_MODE;
-	return (shell);
+	sh->status = E_NONE;
+	sh->exit_flag = 0;
+	sh->interactive = isatty(STDIN_FILENO);
+	sh->debug = DEBUG_MODE;
+	if (sh->debug & DEBUG_CORE)
+		put_sh_init(sh);
+	return (sh);
 }
