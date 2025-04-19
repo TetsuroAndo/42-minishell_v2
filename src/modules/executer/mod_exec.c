@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 06:54:07 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 07:06:58 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ static void	fdbackup_enter(t_fdbackup *bk, int tgt, t_shell *sh)
 	bk->target_fd = tgt;
 	bk->saved_fd = xdup(tgt, sh);
 }
+
 static void	fdbackupexit(t_fdbackup *bk)
 {
 	if (bk->saved_fd != -1)
@@ -74,66 +75,82 @@ int	exe_run(t_ast *node, t_shell *sh)
 /*                        NT_CMD                             */
 /* ========================================================= */
 
+static int	prepare_cmd_args(t_ast *node, char ***argv, t_shell *sh)
+{
+	struct stat	sb;
+
+	if (handle_redr(node->args, sh))
+		return (1);
+	*argv = toklist_to_argv(node->args->argv, sh);
+	if (!*argv || !(*argv)[0])
+		return (127);
+	if (stat((*argv)[0], &sb) == 0 && S_ISDIR(sb.st_mode))
+		return (E_IS_DIR);
+	return (0);
+}
+
+static void	setup_redirections(t_ast *node, t_fdbackup *bk_in, 
+							t_fdbackup *bk_out, t_shell *sh)
+{
+	*bk_in = (t_fdbackup){-1, STDIN_FILENO};
+	*bk_out = (t_fdbackup){-1, STDOUT_FILENO};
+	if (node->args->fds[0] != -1)
+	{
+		fdbackup_enter(bk_in, STDIN_FILENO, sh);
+		xdup2(&node->args->fds[0], STDIN_FILENO, sh);
+	}
+	if (node->args->fds[1] != -1)
+	{
+		fdbackup_enter(bk_out, STDOUT_FILENO, sh);
+		xdup2(&node->args->fds[1], STDOUT_FILENO, sh);
+	}
+}
+
+static int	execute_external_cmd(char **argv, t_ast *node, t_shell *sh)
+{
+	pid_t	pid;
+	int		wstatus;
+	int		status;
+	int		sig_held;
+
+	sig_held = 0;
+	sig_ignore_parent(&sig_held);
+	pid = xfork(sh);
+	if (pid == 0)
+	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
+		execvp(argv[0], argv);
+		perror(argv[0]);
+		exit(127);
+	}
+	node->args->pid = pid;
+	waitpid(pid, &wstatus, 0);
+	sig_ignore_parent(&sig_held);
+	if (WIFEXITED(wstatus))
+		status = WEXITSTATUS(wstatus);
+	else
+		status = 128 + WTERMSIG(wstatus);
+	return (status);
+}
+
 int	exe_cmd(t_ast *node, t_shell *sh)
 {
 	char		**argv;
 	t_fdbackup	bk_in;
 	t_fdbackup	bk_out;
 	int			status;
-	pid_t		pid;
-	int			wstatus;
-	struct stat	sb;
-	int			sig_held;
 
 	if (!node || node->ntype != NT_CMD)
 		return (1);
-	/* 1. リダイレクトを解析して FD を args->fds へ */
-	if (handle_redr(node->args, sh))
-		return (1);
-	/* 2. argv を C 配列化 */
-	argv = toklist_to_argv(node->args->argv, sh);
-	if (!argv || !argv[0])
-		return (127);
-	if (stat(argv[0], &sb) == 0 && S_ISDIR(sb.st_mode))
-		return (E_IS_DIR);
-	/* 3. FD 差し替え */
-	bk_in = (t_fdbackup){-1, STDIN_FILENO};
-	bk_out = (t_fdbackup){-1, STDOUT_FILENO};
-	if (node->args->fds[0] != -1)
-	{
-		fdbackup_enter(&bk_in, STDIN_FILENO, sh);
-		xdup2(&node->args->fds[0], STDIN_FILENO, sh);
-	}
-	if (node->args->fds[1] != -1)
-	{
-		fdbackup_enter(&bk_out, STDOUT_FILENO, sh);
-		xdup2(&node->args->fds[1], STDOUT_FILENO, sh);
-	}
-	/* 4. ビルトイン判定 → 実行 */
+	status = prepare_cmd_args(node, &argv, sh);
+	if (status)
+		return (status);
+	setup_redirections(node, &bk_in, &bk_out, sh);
 	if (is_builtin(argv[0]))
 		status = builtin_launch(argv, sh);
 	else
-	{
-		sig_held = 0;
-		sig_ignore_parent(&sig_held);	/* ── ① 親は一時的に無視 ── */
-		pid = xfork(sh);
-		if (pid == 0)
-		{
-			signal(SIGINT, SIG_DFL);
-			signal(SIGQUIT, SIG_DFL);
-			execvp(argv[0], argv);
-			perror(argv[0]);
-			exit(127);
-		}
-		node->args->pid = pid;
-		waitpid(pid, &wstatus, 0);
-		sig_ignore_parent(&sig_held);	/* ── ② 親ハンドラを復元 ── */
-		if (WIFEXITED(wstatus))
-			status = WEXITSTATUS(wstatus);
-		else
-			status = 128 + WTERMSIG(wstatus);
-	}
-	/* 5. FD 復旧 & 後始末 */
+		status = execute_external_cmd(argv, node, sh);
 	fdbackupexit(&bk_in);
 	fdbackupexit(&bk_out);
 	return (status);
@@ -143,45 +160,70 @@ int	exe_cmd(t_ast *node, t_shell *sh)
 /*                         NT_PIPE                           */
 /* ========================================================= */
 
-int	exe_pipe(t_ast *node, t_shell *sh)
+static pid_t	execute_left_pipe(t_ast *node, int fds[2], t_shell *sh)
 {
-	int		fds[2];
 	pid_t	lpid;
 	int		st;
-	pid_t	rpid;
-	int		st_l;
-	int		st_r;
-	int		sig_held;
 
-	sig_held = 0;
-	sig_ignore_parent(&sig_held);	/* ── ① 親は一時的に無視 ── */
-	xpipe(fds, sh); /* fds[0] = r, fds[1] = w */
 	lpid = xfork(sh);
 	if (lpid == 0)
 	{
 		xdup2(&fds[1], STDOUT_FILENO, sh);
-		close(fds[0]);
-		close(fds[1]);
+		xclose(&fds[0]);
+		xclose(&fds[1]);
 		st = exe_run(node->left, sh);
 		exit(st);
 	}
+	return (lpid);
+}
+
+static pid_t	execute_right_pipe(t_ast *node, int fds[2], t_shell *sh)
+{
+	pid_t	rpid;
+	int		st;
+
 	rpid = xfork(sh);
 	if (rpid == 0)
 	{
 		xdup2(&fds[0], STDIN_FILENO, sh);
-		close(fds[0]);
-		close(fds[1]);
+		xclose(&fds[0]);
+		xclose(&fds[1]);
 		st = exe_run(node->right, sh);
 		exit(st);
 	}
-	close(fds[0]);
-	close(fds[1]);
+	return (rpid);
+}
+
+static int	wait_for_pipe_children(pid_t lpid, pid_t rpid, int *sig_held)
+{
+	int	st_l;
+	int	st_r;
+
 	waitpid(lpid, &st_l, 0);
 	waitpid(rpid, &st_r, 0);
-	sig_ignore_parent(&sig_held);	/* ── ② 親ハンドラを復元 ── */
+	sig_ignore_parent(sig_held);
 	if (WIFEXITED(st_r))
 		return (WEXITSTATUS(st_r));
 	return (128 + WTERMSIG(st_r));
+}
+
+int	exe_pipe(t_ast *node, t_shell *sh)
+{
+	int		fds[2];
+	pid_t	lpid;
+	pid_t	rpid;
+	int		sig_held;
+	int		status;
+
+	sig_held = 0;
+	sig_ignore_parent(&sig_held);
+	xpipe(fds, sh);
+	lpid = execute_left_pipe(node, fds, sh);
+	rpid = execute_right_pipe(node, fds, sh);
+	xclose(&fds[0]);
+	xclose(&fds[1]);
+	status = wait_for_pipe_children(lpid, rpid, &sig_held);
+	return (status);
 }
 
 /* ========================================================= */
@@ -254,50 +296,65 @@ int	heredoc_into_fd(char *body, t_args *args, t_shell *sh)
 /* ========================================================= */
 /*                    redirect 一括ハンドラ                    */
 /* ========================================================= */
+
+static int	handle_input_redirection(t_lexical_token *tok, t_args *args, t_shell *sh)
+{
+	if (ft_strchr(tok->value, '\n'))
+	{
+		if (heredoc_into_fd(tok->value, args, sh))
+			return (1);
+	}
+	else
+	{
+		if (args->fds[0] > 2)
+			xclose(&args->fds[0]);
+		args->fds[0] = open(tok->value, O_RDONLY);
+		if (args->fds[0] == -1)
+			return (perror(tok->value), 1);
+	}
+	return (0);
+}
+
+static int	handle_output_redirection(t_lexical_token *tok, t_args *args)
+{
+	if (args->fds[1] > 2)
+		xclose(&args->fds[1]);
+	args->fds[1] = open(tok->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (args->fds[1] == -1)
+		return (perror(tok->value), 1);
+	return (0);
+}
+
+static int	handle_append_redirection(t_lexical_token *tok, t_args *args)
+{
+	if (args->fds[1] > 2)
+		xclose(&args->fds[1]);
+	args->fds[1] = open(tok->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (args->fds[1] == -1)
+		return (perror(tok->value), 1);
+	return (0);
+}
+
 int	handle_redr(t_args *args, t_shell *sh)
 {
 	t_list			*lst;
 	t_lexical_token	*tok;
+	int				result;
 
 	lst = args->redr;
 	while (lst)
 	{
 		tok = lst->data;
-		/*
-		** 1) ここで ttype を見て FD を確定。
-		** 2) << は SEM フェーズで TT_REDIR_IN へ変換されるので
-		**    "値に改行が含まれるか" でヒアドキュメントと判別。
-		*/
 		if (tok->type == TT_REDIR_IN)
-		{
-			if (ft_strchr(tok->value, '\n')) /* here‑doc 本文 */
-			{
-				if (heredoc_into_fd(tok->value, args, sh))
-					return (1);
-			}
-			else
-			{
-				if (args->fds[0] > 2)
-					xclose(&args->fds[0]);
-				args->fds[0] = open(tok->value, O_RDONLY);
-			}
-		}
+			result = handle_input_redirection(tok, args, sh);
 		else if (tok->type == TT_REDIR_OUT)
-		{
-			if (args->fds[1] > 2)
-				xclose(&args->fds[1]);
-			args->fds[1] = open(tok->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		}
+			result = handle_output_redirection(tok, args);
 		else if (tok->type == TT_APPEND)
-		{
-			if (args->fds[1] > 2)
-				xclose(&args->fds[1]);
-			args->fds[1] = open(tok->value, O_WRONLY | O_CREAT | O_APPEND,
-					0644);
-		}
-		if ((args->fds[0] == -1 && tok->type == TT_REDIR_IN) || (args->fds[1] ==
-				-1 && (tok->type == TT_REDIR_OUT || tok->type == TT_APPEND)))
-			return (perror(tok->value), 1);
+			result = handle_append_redirection(tok, args);
+		else
+			result = 0;
+		if (result)
+			return (1);
 		lst = lst->next;
 	}
 	return (0);

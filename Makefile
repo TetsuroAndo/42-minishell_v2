@@ -6,7 +6,7 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/20 06:50:34 by teando           ###   ########.fr        #
+#    Updated: 2025/04/20 07:15:16 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,7 +57,7 @@ OBJ		:= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 
 # dev all
 all: CFLAGS += -g -fsanitize=address -O1 -fno-omit-frame-pointer
-all: DEFINE = -DDEBUG_MODE=DEBUG_ALL
+all: DEFINE := -DDEBUG_MODE=DEBUG_ALL
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ)
@@ -109,7 +109,7 @@ v: f $(NAME)
 # =======================
 
 debug: CFLAGS += -g -fsanitize=address -O1 -fno-omit-frame-pointer
-debug: DEFINE = -DDEBUG_MODE=DEBUG_ALL
+debug: DEFINE := -DDEBUG_MODE=DEBUG_ALL
 debug: r
 	@echo "====================="
 	@echo "== Build Complete! =="
