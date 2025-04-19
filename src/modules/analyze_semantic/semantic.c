@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 22:41:53 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 22:43:46 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,7 +253,8 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 {
 	char	*trimmed;
 
-	printf("[process_simple_token] val: %s\n", val);
+	if (sh->debug & DEBUG_SEM)
+		printf("[process_simple_token] value: %s\n", val);
 	trimmed = trim_valid_quotes(val, sh);
 	if (trimmed != val)
 		free(val);
@@ -285,6 +286,8 @@ static int	process_split_token(t_list **list, char *value, int idx,
 	data = (t_lexical_token *)(*list)->data;
 	if (!data)
 		return (free(value), 1);
+	if (sh->debug & DEBUG_SEM)
+		printf("[process_split_token] value: %s\n", value);
 	words = xsplit(value, ' ', sh);
 	if (!words || !words[0])
 		return (ft_strs_clear(words), free(value), 1);
