@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:43:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 20:46:14 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 23:09:38 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	line_init(t_shell *sh)
 	sh->env_spc['?'] = xitoa(sh->status, sh);
 	g_signal_status = 0;
 	sh->status = 0;
+	ft_lstclear(&sh->gcli, free);
 	if (sh->debug & DEBUG_CORE)
 		put_line_init(sh);
 }

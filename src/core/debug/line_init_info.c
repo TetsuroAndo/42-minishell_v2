@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 15:40:02 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 20:50:33 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 23:14:11 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,13 @@ void	put_line_init(t_shell *sh)
 {
 	if (!sh)
 		return ;
-	ft_dprintf(STDERR_FILENO, "\n");
+	// ft_dprintf(STDERR_FILENO, "\n");
 	// init(NULL) check
 }
 
 void	put_line_info(t_shell *sh)
 {
+	ft_dprintf(STDERR_FILENO, "\n");
 	// env_spc[?] status
 	printf("EXIT[%s] | ", sh->env_spc['?']);
 	// cwd

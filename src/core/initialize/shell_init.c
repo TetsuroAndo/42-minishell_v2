@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:25:22 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 14:24:48 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 23:10:49 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ t_shell	*shell_init(char **env, char *bin_name)
 		perror("getcwd");
 		shell_exit(sh, E_SYSTEM);
 	}
+	sh->gcsh = NULL;
+	sh->gcli = NULL; 
 	sh->status = E_NONE;
 	sh->exit_flag = 0;
 	sh->interactive = isatty(STDIN_FILENO);
