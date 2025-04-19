@@ -6,13 +6,13 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/19 21:13:08 by teando           ###   ########.fr        #
+#    Updated: 2025/04/19 22:33:48 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		:= minishell
 CC			:= cc
-CFLAGS		:= -Wall -Wextra -Werror
+CFLAGS		:= #-Wall -Wextra -Werror
 RM			:= rm -rf
 DEFINE		:= -DDEBUG_MODE=DEBUG_NONE
 

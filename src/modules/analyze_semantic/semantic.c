@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 20:51:58 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 22:41:53 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,6 +253,7 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 {
 	char	*trimmed;
 
+	printf("[process_simple_token] val: %s\n", val);
 	trimmed = trim_valid_quotes(val, sh);
 	if (trimmed != val)
 		free(val);
@@ -304,18 +305,25 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 	char	*env_exp;
 	char	*wc_exp;
 	int		space_count;
+	int		quoted;
 
 	if (!data || !data->value)
 		return (1);
+	quoted = is_quoted(data->value);
 	env_exp = handle_env(data->value, sh);
 	if (!env_exp)
 		return (1);
-	wc_exp = handle_wildcard(env_exp, sh);
-	if (env_exp != wc_exp)
-		free(env_exp);
+	if (quoted)
+		wc_exp = env_exp;
+	else
+	{
+		wc_exp = handle_wildcard(env_exp, sh);
+		if (env_exp != wc_exp)
+			free(env_exp);
+	}
 	if (!wc_exp)
 		return (1);
-	if (!ft_strchr(wc_exp, ' '))
+	if (quoted || !ft_strchr(wc_exp, ' '))
 		return (process_simple_token(data, wc_exp, idx, sh));
 	space_count = ft_count_words(wc_exp, ' ');
 	if (process_split_token(list, wc_exp, idx, sh))

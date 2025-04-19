@@ -6,24 +6,57 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 23:57:33 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 23:58:57 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 22:41:22 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
 
-static int	is_open_quote(char c, char quote)
+/**
+ * @brief クォート状態を更新する
+ *
+ * @param c 現在の文字
+ * @param quote 現在のクォート状態
+ * @param prev 直前の文字
+ * @return char 更新後のクォート状態
+ */
+static char	update_quote_state(char c, char quote, char prev)
 {
-	return (!quote && (c == '\'' || c == '"'));
-}
-
-static int	is_close_quote(char c, char quote, char prev)
-{
-	return (quote && c == quote && prev != '\\');
+	if (!quote && (c == '\'' || c == '"' || c == '`'))
+		return (c);
+	else if (quote && c == quote && prev != '\\')
+		return (0);
+	return (quote);
 }
 
 /**
- * @brief クォートを取り除いた文字列を作成する
+ * @brief 文字をコピーするかスキップするか処理する
+ *
+ * @param s 入力文字列
+ * @param i 現在の位置へのポインタ
+ * @param out 出力文字列
+ * @param j 出力位置へのポインタ
+ * @param quote 現在のクォート状態
+ * @param prev 直前の文字へのポインタ
+ */
+static void	copy_or_skip_char(const char *s, size_t *i, char *out, size_t *j,
+		char *quote, char *prev)
+{
+	char	new_quote;
+
+	new_quote = update_quote_state(s[*i], *quote, *prev);
+	if (new_quote != *quote)
+	{
+		*quote = new_quote;
+		(*i)++;
+	}
+	else
+		out[(*j)++] = s[(*i)++];
+	*prev = s[*i - 1];
+}
+
+/**
+ * @brief 文字列からクォートを取り除く
  *
  * @param s 入力文字列
  * @param sh シェル情報
@@ -31,27 +64,23 @@ static int	is_close_quote(char c, char quote, char prev)
  */
 char	*trim_valid_quotes(const char *s, t_shell *sh)
 {
-	char	out[PATH_MAX];
-	char	quote;
-	char	prev;
+	char	*out;
 	size_t	i;
 	size_t	j;
+	char	quote;
+	char	prev;
 
 	i = 0;
 	j = 0;
-	quote = 0;
-	while (s && s[i])
-	{
-		if (is_open_quote(s[i], quote))
-			quote = s[i], i++;
-		else if (is_close_quote(s[i], quote, prev))
-			quote = 0, i++;
-		else
-			out[j++] = s[i++];
-		prev = s[i - 1];
-	}
+	quote = 0;   /* いま内側で効いているクォート種別 ('"`) */
+	prev = '\0'; /* 直前文字、エスケープ判定用            */
+	if (!s)
+		return (ms_strdup("", sh));
+	out = xmalloc(ft_strlen(s) + 1, sh);
+	while (s[i])
+		copy_or_skip_char(s, &i, out, &j, &quote, &prev);
 	out[j] = '\0';
 	if (quote)
 		return (ms_strdup(s, sh));
-	return (ms_strdup(out, sh));
+	return (out);
 }

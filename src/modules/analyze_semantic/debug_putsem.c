@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:45:55 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 04:14:51 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 22:31:01 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	print_toklst(t_list *lst, char *lbl, int depth)
 	ft_dprintf(2, "%s:", lbl);
 	while (lst)
 	{
-		ft_dprintf(2, " '%s'", ((t_lexical_token *)lst->data)->value);
+		ft_dprintf(2, " [%s]", ((t_lexical_token *)lst->data)->value);
 		lst = lst->next;
 	}
 	ft_dprintf(2, "\n");
