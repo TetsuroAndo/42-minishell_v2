@@ -68,6 +68,9 @@ typedef struct s_shell
 	int stdin_backup;  // 標準入力バックアップ
 	int stdout_backup; // 標準出力バックアップ
 	int stderr_backup; // 標準エラー出力バックアップ
+	// ガベージコレクション
+	t_list *gcsh;      // shellプロセスごとの自動解放対象のメモリリスト
+	t_list *gcli;      // Line ごとの自動解放対象のメモリリスト
 	// その他
 	int interactive; // インタラクティブモード
 	int debug;       // デバッグモード
