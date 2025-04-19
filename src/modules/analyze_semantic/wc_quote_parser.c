@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:43:38 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/19 20:52:06 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 07:56:20 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ static t_extract	*extract_inner(char *str, char *map, t_shell *shell)
 	res->str = malloc(len + 1);
 	res->map = malloc(len + 1);
 	if (!res->str || !res->map)
-		return (free(res->str), free(res->map), free(res), NULL);
+		return (xfree((void **)&res->str), xfree((void **)&res->map), xfree((void **)&res), NULL);
 	while (str[i])
 	{
 		if (!in && (str[i] == '\'' || str[i] == '\"'))
@@ -125,7 +125,7 @@ t_extract	*convert_ex(char *str, t_shell *shell)
 	init_map(map, len);
 	mark_quotes(str, map);
 	ex = extract_inner(str, map, shell);
-	free(map);
+	xfree((void **)&map);
 	return (ex);
 }
 
@@ -140,7 +140,7 @@ char	*replace_with_unquoted(char *str, t_shell *shell)
 	if (!ex)
 		return (NULL);
 	result = ex->str;
-	free(ex->map);
-	free(ex);
+	xfree((void **)&ex->map);
+	xfree((void **)&ex);
 	return (result);
 }

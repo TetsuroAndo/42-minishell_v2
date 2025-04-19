@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 22:13:52 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 08:46:27 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 07:56:20 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,13 @@ t_status    ms_setenv(char *entry, t_shell *shell)
     if (ms_partenvarg(key, entry) != E_NONE)
         return (E_ENV_KEY);
     value = ms_validate_value(entry, shell);
-    free(entry);
+    xfree((void **)&entry);
     entry = xstrjoin3(key, "=", value, shell);
-    free(value);
+    xfree((void **)&value);
     lst = ft_list_find(shell->env_map, (void *)key, ms_envcmp);
     if (lst)
     {
-        free(lst->data);
+        xfree((void **)&lst->data);
         lst->data = entry;
         return (E_NONE);
     }

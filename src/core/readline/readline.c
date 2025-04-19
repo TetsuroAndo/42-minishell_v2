@@ -89,10 +89,10 @@ char	*launch_readline(const char *prompt)
 	while (!is_quotes_balanced(line))
 	{
 		if (g_signal_status == SIGINT)
-			return (free(line), NULL);
+			return (xfree((void **)&line), NULL);
 		cont_line = read_command_line("> ");
 		if (!cont_line)
-			return (free(line), NULL);
+			return (xfree((void **)&line), NULL);
 		tmp = ft_strjoin_free(line, "\n");
 		line = ft_strjoin_free2(tmp, cont_line);
 		if (!line)

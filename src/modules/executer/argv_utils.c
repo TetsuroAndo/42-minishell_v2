@@ -21,7 +21,7 @@ char	**toklist_to_argv(t_list *lst, t_shell *sh)
 	size_t			i;
 
 	n = ft_lstsize(lst);
-	argv = xmalloc(sizeof(char *) * (n + 1), sh);
+	argv = xmalloc_gcline(sizeof(char *) * (n + 1), sh);
 	i = 0;
 	while (lst)
 	{

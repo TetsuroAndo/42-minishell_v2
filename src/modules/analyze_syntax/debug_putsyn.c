@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 05:04:33 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 20:02:18 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 07:56:20 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ static void	print_cmd_detail(t_args *args, const char *pref, int is_last)
 		print_tok_list(args->redr, 1);
 		ft_putendl_fd("]", 2);
 	}
-	free(sub_pref);
+	xfree((void **)&sub_pref);
 }
 
 /* ****************************************************************** */
@@ -110,7 +110,7 @@ static void	print_ast_rec(t_ast *ast, const char *pref, int is_last)
 		print_ast_rec(ast->left, next_pref, 1);
 	else if (ast->right)
 		print_ast_rec(ast->right, next_pref, 1);
-	free(next_pref);
+	xfree((void **)&next_pref);
 }
 
 /* ****************************************************************** */

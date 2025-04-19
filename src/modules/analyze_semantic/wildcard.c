@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 20:52:16 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 07:56:20 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ int	wildcard_match(const char *p, const char *str, t_shell *shell)
 	if (is_invalid_input(p, str, ex))
 	{
 		if (ex)
-			return (free(ex->str), free(ex->map), free(ex), 0);
+			return (xfree((void **)&ex->str), xfree((void **)&ex->map), xfree((void **)&ex), 0);
 		return (0);
 	}
 	m = ft_strlen(ex->str);
@@ -128,7 +128,7 @@ int	wildcard_match(const char *p, const char *str, t_shell *shell)
 	if (!prev || !curr)
 	{
 		if (ex)
-			return (free(ex->str), free(ex->map), free(ex), 0);
+			return (xfree((void **)&ex->str), xfree((void **)&ex->map), xfree((void **)&ex), 0);
 		return (0);
 	}
 	prev[0] = 1;
@@ -137,9 +137,9 @@ int	wildcard_match(const char *p, const char *str, t_shell *shell)
 		result = prev[n];
 	else
 		result = curr[n];
-	free(prev), free(curr);
+	xfree((void **)&prev), xfree((void **)&curr);
 	if (ex)
-		free(ex->str), free(ex->map), free(ex);
+		xfree((void **)&ex->str), xfree((void **)&ex->map), xfree((void **)&ex);
 	return (result);
 }
 
@@ -150,7 +150,7 @@ static char	*append_match(char *buf, const char *name, t_shell *sh)
 	if (!buf)
 		return (ms_strdup(name, sh));
 	new_buf = ft_strjoin3(buf, " ", name);
-	free(buf);
+	xfree((void **)&buf);
 	return (new_buf);
 }
 
@@ -204,7 +204,7 @@ static char	*process_split_wildcard(char **split, t_shell *sh)
 		else
 		{
 			joined = ft_strjoin3(buf, " ", tmp);
-			free(buf);
+			xfree((void **)&buf);
 			buf = joined;
 		}
 		i++;
@@ -237,7 +237,7 @@ char	*handle_wildcard(char *in, t_shell *sh)
 		return (NULL);
 	if (ft_strchr(in, ' '))
 	{
-		split = xsplit(in, ' ', sh);
+		split = xsplit(ms_strdup(in, sh), ' ', sh);
 		if (!split)
 			return (NULL);
 		buf = process_split_wildcard(split, sh);

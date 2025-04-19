@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:07 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 23:39:01 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 07:56:20 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ int	add_token(t_shell *shell, t_lexical_token *new_token)
 	new_node = xlstnew((void *)new_token, shell);
 	if (!new_node)
 	{
-		free(new_token->value);
-		free(new_token);
+		xfree((void **)&new_token->value);
+		xfree((void **)&new_token);
 		return (0);
 	}
 	if (!shell->token_list)

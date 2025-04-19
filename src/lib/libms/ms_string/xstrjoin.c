@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 10:38:37 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 08:00:59 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 07:56:44 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char	*xstrjoin_free(char const *s1, char const *s2, t_shell *shell)
 		return (NULL);
 	str = xstrjoin(s1, s2, shell);
 	if (s1)
-		free((void *)s1);
+		xfree((void **)&s1);
 	return (str);
 }
 
@@ -56,8 +56,8 @@ char	*xstrjoin_free2(char const *s1, char const *s2, t_shell *shell)
 		return (NULL);
 	str = xstrjoin(s1, s2, shell);
 	if (s1)
-		free((void *)s1);
+		xfree((void **)&s1);
 	if (s2)
-		free((void *)s2);
+		xfree((void **)&s2);
 	return (str);
 }

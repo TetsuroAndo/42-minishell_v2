@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 22:43:46 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 07:56:20 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ size_t	extract_varname(char **buf, char *in, t_shell *sh)
 	if (!key)
 		return (0);
 	if (!key[0])
-		return (free(key), 0);
+		return (xfree((void **)&key), 0);
 	val = ms_getenv(key, sh);
 	if (!val)
 		val = ms_strdup("", sh);
@@ -54,7 +54,7 @@ size_t	extract_varname(char **buf, char *in, t_shell *sh)
 		*buf = xstrjoin_free(*buf, val, sh);
 	else
 		*buf = xstrjoin_free2(*buf, val, sh);
-	free(key);
+	xfree((void **)&key);
 	return (klen);
 }
 
@@ -177,7 +177,7 @@ static char	*read_heredoc_body(char *delim, int quoted, t_shell *sh)
 			if (!line || (delim[0] == '\0' && line[0] == '\0')
 				|| ft_strcmp(line, delim) == 0)
 			{
-				free(line);
+				xfree((void **)&line);
 				break ;
 			}
 		if (!quoted)
@@ -207,7 +207,7 @@ static int	handle_heredoc(t_lexical_token *tok, t_shell *sh)
 	delim = prepare_delimiter(delim_raw, &quoted, sh);
 	body = read_heredoc_body(delim, quoted, sh);
 	if (!quoted)
-		free(delim);
+		xfree((void **)&delim);
 	tok->value = body;
 	tok->type = TT_REDIR_IN;
 	return (0);
@@ -257,8 +257,8 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 		printf("[process_simple_token] value: %s\n", val);
 	trimmed = trim_valid_quotes(val, sh);
 	if (trimmed != val)
-		free(val);
-	free(data->value);
+		xfree((void **)&val);
+	xfree((void **)&data->value);
 	data->value = trimmed;
 	if (idx == 0 && path_resolve(&data->value, sh))
 		return (1);
@@ -282,23 +282,22 @@ static int	process_split_token(t_list **list, char *value, int idx,
 	t_lexical_token	*data;
 
 	if (!list || !*list)
-		return (free(value), 1);
+		return (xfree((void **)&value), 1);
 	data = (t_lexical_token *)(*list)->data;
 	if (!data)
-		return (free(value), 1);
+		return (xfree((void **)&value), 1);
 	if (sh->debug & DEBUG_SEM)
 		printf("[process_split_token] value: %s\n", value);
 	words = xsplit(value, ' ', sh);
 	if (!words || !words[0])
-		return (ft_strs_clear(words), free(value), 1);
-	free(data->value);
+		return (xfree((void **)&value), ft_strs_clear(words), 1);
+	xfree((void **)&data->value);
 	data->value = ms_strdup(words[0], sh);
 	if (add_to_list(list, words, sh))
-		return (ft_strs_clear(words), free(value), 1);
+		return (ft_strs_clear(words), 1);
 	if (idx == 0 && path_resolve(&data->value, sh))
-		return (ft_strs_clear(words), free(value), 1);
+		return (ft_strs_clear(words), 1);
 	ft_strs_clear(words);
-	free(value);
 	return (0);
 }
 
@@ -322,7 +321,7 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 	{
 		wc_exp = handle_wildcard(env_exp, sh);
 		if (env_exp != wc_exp)
-			free(env_exp);
+			xfree((void **)&env_exp);
 	}
 	if (!wc_exp)
 		return (1);
@@ -359,21 +358,21 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 		return (handle_heredoc(data, sh)); // heredoc は専用ルートで処理する
 	aft_env = handle_env(data->value, sh);
 	if (!aft_env || *aft_env == '\0')
-		return (ft_dprintf(2, "minishell: ambiguous redirect\n"), free(aft_env),
+		return (ft_dprintf(2, "minishell: ambiguous redirect\n"), xfree((void **)&aft_env),
 			1);
 	aft_wlc = handle_wildcard(aft_env, sh);
-	free(aft_env);
+	xfree((void **)&aft_env);
 	if (!aft_wlc)
 		return (ft_dprintf(2, "minishell: ambiguous redirect\n"), 1);
 	aft_unq = replace_with_unquoted(aft_wlc, sh);
-	free(aft_wlc);
+	xfree((void **)&aft_wlc);
 	if (!aft_unq || *aft_unq == '\0' || ft_strchr(aft_unq, ' '))
 		return (ft_dprintf(2, "minishell: %s: ambiguous redirect\n",
-				aft_unq ? aft_unq : ""), free(aft_unq), 1);
-	free(data->value);
+				aft_unq ? aft_unq : ""), xfree((void **)&aft_unq), 1);
+	xfree((void **)&data->value);
 	data->value = aft_unq;
 	if (valid_redir(data, sh))
-		return (free(aft_unq), 1);
+		return (xfree((void **)&aft_unq), 1);
 	return (0);
 }
 

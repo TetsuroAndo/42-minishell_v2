@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 07:46:44 by teando            #+#    #+#             */
-/*   Updated: 2025/04/17 08:41:31 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 07:56:20 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ char	*ms_escapevalue(const char *value, t_shell *shell)
 	{
 		*pos = '\0';
 		tmp = xstrjoin3(res, "\\$", pos + 1, shell);
-		free(res);
+		xfree((void **)&res);
 		if (!tmp)
 			return (NULL);
 		res = tmp;
