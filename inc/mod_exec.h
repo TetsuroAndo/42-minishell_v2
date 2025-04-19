@@ -17,6 +17,11 @@ typedef struct s_fdbackup
 /* main */
 t_status						mod_exec(t_shell *sh);
 int								exe_run(t_ast *node, t_shell *sh);
+int								exe_cmd(t_ast *node, t_shell *sh);
+int								exe_pipe(t_ast *node, t_shell *sh);
+int								exe_bool(t_ast *node, t_shell *sh);
+int								exe_sub(t_ast *node, t_shell *sh);
+int								handle_redr(t_args *args, t_shell *sh);
 
 /* argv utils */
 char							**toklist_to_argv(t_list *lst, t_shell *sh);

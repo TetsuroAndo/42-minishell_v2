@@ -6,44 +6,13 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 05:57:21 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 06:54:07 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_exec.h"
 
-/* ========================================================= */
-/*                   Signal handling utility                 */
-/* ========================================================= */
-
-void	sig_ignore_parent(int *enabled)
-{
-	static struct sigaction	old_int, old_quit;
-	struct sigaction		ign;
-
-	if (*enabled)			/* restore */
-	{
-		sigaction(SIGINT, &old_int, NULL);
-		sigaction(SIGQUIT, &old_quit, NULL);
-		*enabled = 0;
-		return ;
-	}
-	ign.sa_handler = SIG_IGN;
-	sigemptyset(&ign.sa_mask);
-	ign.sa_flags = 0;
-
-	sigaction(SIGINT, &ign, &old_int);
-	sigaction(SIGQUIT, &ign, &old_quit);
-	*enabled = 1;
-}
-
-/* ──────── static forward decls ──────── */
-static int	exe_cmd(t_ast *node, t_shell *sh);
-static int	exe_pipe(t_ast *node, t_shell *sh);
-static int	exe_bool(t_ast *node, t_shell *sh); /* AND / OR / LIST */
-static int	exe_sub(t_ast *node, t_shell *sh);
-static int	handle_redr(t_args *args, t_shell *sh);
-
+/* ─────────── fd backup ─────────── */
 static void	fdbackup_enter(t_fdbackup *bk, int tgt, t_shell *sh)
 {
 	bk->target_fd = tgt;
@@ -56,6 +25,28 @@ static void	fdbackupexit(t_fdbackup *bk)
 		dup2(bk->saved_fd, bk->target_fd);
 		close(bk->saved_fd);
 	}
+}
+
+/* ──────── signal handling ──────── */
+void	sig_ignore_parent(int *enabled)
+{
+	static struct sigaction	old_int;
+	static struct sigaction	old_quit;
+	struct sigaction		ign;
+
+	if (*enabled)			/* restore */
+	{
+		sigaction(SIGINT, &old_int, NULL);
+		sigaction(SIGQUIT, &old_quit, NULL);
+		*enabled = 0;
+		return ;
+	}
+	ign.sa_handler = SIG_IGN;
+	sigemptyset(&ign.sa_mask);
+	ign.sa_flags = 0;
+	sigaction(SIGINT, &ign, &old_int);
+	sigaction(SIGQUIT, &ign, &old_quit);
+	*enabled = 1;
 }
 
 /* ========================================================= */
@@ -76,14 +67,14 @@ int	exe_run(t_ast *node, t_shell *sh)
 	else if (node->ntype == NT_SUBSHELL)
 		return (exe_sub(node, sh));
 	else
-		return (1); /* 不明ノード型 → エラー */
+		return (1);
 }
 
 /* ========================================================= */
 /*                        NT_CMD                             */
 /* ========================================================= */
 
-static int	exe_cmd(t_ast *node, t_shell *sh)
+int	exe_cmd(t_ast *node, t_shell *sh)
 {
 	char		**argv;
 	t_fdbackup	bk_in;
@@ -152,7 +143,7 @@ static int	exe_cmd(t_ast *node, t_shell *sh)
 /*                         NT_PIPE                           */
 /* ========================================================= */
 
-static int	exe_pipe(t_ast *node, t_shell *sh)
+int	exe_pipe(t_ast *node, t_shell *sh)
 {
 	int		fds[2];
 	pid_t	lpid;
@@ -197,7 +188,7 @@ static int	exe_pipe(t_ast *node, t_shell *sh)
 /*                  NT_AND / NT_OR / NT_LIST                  */
 /* ========================================================= */
 
-static int	exe_bool(t_ast *node, t_shell *sh)
+int	exe_bool(t_ast *node, t_shell *sh)
 {
 	int	st_left;
 	int	run_right;
@@ -219,15 +210,16 @@ static int	exe_bool(t_ast *node, t_shell *sh)
 /*                        NT_SUBSHELL                        */
 /* ========================================================= */
 
-static int	exe_sub(t_ast *node, t_shell *sh)
+int	exe_sub(t_ast *node, t_shell *sh)
 {
 	pid_t	pid;
 	int		wst;
+	int		st;
 
 	pid = xfork(sh);
 	if (pid == 0)
 	{
-		int st = exe_run(node->left, sh); /* subshell の AST は left に格納 */
+		st = exe_run(node->left, sh); /* subshell の AST は left に格納 */
 		exit(st);
 	}
 	waitpid(pid, &wst, 0);
@@ -237,9 +229,9 @@ static int	exe_sub(t_ast *node, t_shell *sh)
 }
 
 /* ========================================================= */
-/*                  ★ 追加：ヒアドキュメント ★                   */
+/*                      ヒアドキュメント                        */
 /* ========================================================= */
-static int	heredoc_into_fd(char *body, t_args *args, t_shell *sh)
+int	heredoc_into_fd(char *body, t_args *args, t_shell *sh)
 {
 	int	hd[2];
 
@@ -260,9 +252,9 @@ static int	heredoc_into_fd(char *body, t_args *args, t_shell *sh)
 }
 
 /* ========================================================= */
-/*                 ★ 改修：redirect 一括ハンドラ ★              */
+/*                    redirect 一括ハンドラ                    */
 /* ========================================================= */
-static int	handle_redr(t_args *args, t_shell *sh)
+int	handle_redr(t_args *args, t_shell *sh)
 {
 	t_list			*lst;
 	t_lexical_token	*tok;
