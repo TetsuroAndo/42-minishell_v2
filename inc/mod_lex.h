@@ -9,7 +9,7 @@ t_status		mod_lex(t_shell *shell);
 int				add_token(t_shell *shell, t_lexical_token *new_token);
 t_lexical_token	*create_token(t_token_type type, char *value, t_shell *shell);
 int				tokenize_line(t_shell *shell);
-t_token_type	get_one_char_op(char c);
+t_token_type	get_one_char_op(int c);
 t_token_type	get_two_char_op(const char *s, size_t *len);
 char			*read_word(const char *line, size_t *pos, t_shell *shell);
 

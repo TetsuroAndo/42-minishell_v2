@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:09 by teando            #+#    #+#             */
-/*   Updated: 2025/04/16 09:50:50 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 08:09:46 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ t_token_type	get_two_char_op(const char *s, size_t *len)
  * @param c 識別する文字
  * @return 識別した演算子のトークンタイプ、識別できない場合はTT_ERROR
  */
-t_token_type	get_one_char_op(char c)
+t_token_type	get_one_char_op(int c)
 {
 	static const t_token_type	op_map[128] = {
 		['|'] = TT_PIPE,
@@ -62,8 +62,7 @@ t_token_type	get_one_char_op(char c)
 		[')'] = TT_RPAREN,
 		[';'] = TT_SEMICOLON
 	};
-
-	if (c >= 0 && op_map[(int)c] != 0)
+	if (c >= 0 && c <= 127 && op_map[(int)c] != 0)
 		return (op_map[(int)c]);
 	return (TT_ERROR);
 }
