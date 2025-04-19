@@ -20,7 +20,9 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-# define DEFAULT_DEBUG DEBUG_ALL
+# ifndef DEBUG_MODE
+#  define DEBUG_MODE DEBUG_NONE
+# endif
 
 extern volatile sig_atomic_t	g_signal_status;
 

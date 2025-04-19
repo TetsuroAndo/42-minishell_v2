@@ -6,15 +6,15 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/18 22:44:39 by teando           ###   ########.fr        #
+#    Updated: 2025/04/19 08:52:52 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		:= minishell
 CC			:= cc
-CFLAGS		:= 
+CFLAGS		:=
 RM			:= rm -rf
-DEFINE		:= -D DEBUG_ALL
+DEFINE		:= -DDEBUG_MODE=DEBUG_ALL
 
 # ディレクトリ設定
 ROOT_DIR	:= .
@@ -60,6 +60,12 @@ all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(LFLAGS) $(IDFLAGS) $(DEFINE) -o $(NAME)
+	@echo '-----------------------'
+	@echo ' ______             __ '
+	@echo '/_  __/______ ____ / / '
+	@echo ' / / / __/ _ `(_-</ _ \'
+	@echo '/_/ /_/  \_,_/___/_//_/'
+	@echo '-----------------------'
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(LIBFT_DIR)
 	@mkdir -p $(dir $@)
@@ -68,8 +74,13 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(LIBFT_DIR)
 $(LIBFT): | $(LIBFT_DIR)/libft.h
 	$(MAKE) -C $(LIBFT_DIR)
 
-debug: CFLAGS += -g -fsanitize=address -O1 -fno-omit-frame-pointer
-debug: re
+c:
+	$(RM) $(OBJ_DIR)
+
+f: c
+	$(RM) $(NAME)
+
+r: f all
 
 clean:
 	$(RM) $(OBJ_DIR)
@@ -80,6 +91,33 @@ fclean: clean
 	$(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all
+
+# =======================
+# == PRODUCTION =========
+# =======================
+
+no: DEFINE = -D DEBUG_MODE=DEBUG_NONE
+no: r
+
+# =======================
+# == DEBUG =============
+# =======================
+
+debug: CFLAGS += -g -fsanitize=address -O1 -fno-omit-frame-pointer
+debug: DEFINE = -D DEBUG_MODE=DEBUG_ALL
+debug: r
+	@echo "====================="
+	@echo "== Build Complete! =="
+	@echo "====================="
+	@echo "[Executable]: $(NAME)"
+	@echo "[Source files]: $(SRC)"
+	@echo "[Object files]: $(OBJ)"
+	@echo "[Library]: $(LIBFT)"
+	@echo "[Include directories]: $(INC_DIR) $(LIBFT_DIR)"
+	@echo "[Linker flags]: $(LFLAGS)"
+	@echo "[Compiler flags]: $(CFLAGS)"
+	@echo "[Debug flags]: $(DEFINE)"
+	@echo "====================="
 
 # =======================
 # == Submodule Targets ==

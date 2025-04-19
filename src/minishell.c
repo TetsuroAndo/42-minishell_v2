@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:12:00 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 22:45:46 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/19 08:50:35 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,14 @@ static void	shell_loop(t_shell *shell, const char *prompt)
 
 int	main(int ac, char **av, char **env)
 {
-	t_shell	*shell;
+	t_shell	*sh;
 
 	(void)ac;
 	if (init_signals() == -1)
 		return (ft_dprintf(2, "signal setup failure\n"), 1);
-	shell = shell_init(env, av[0]);
-	shell_loop(shell, PROMPT);
-	shell_exit(shell, shell->status);
+	sh = shell_init(env, av[0]);
+	if (sh->debug & DEBUG_CORE)
+		ms_put_ascii(sh);
+	shell_loop(sh, PROMPT);
+	shell_exit(sh, sh->status);
 }
