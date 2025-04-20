@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wc_quote_parser.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:43:38 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/20 07:56:20 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 21:07:00 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,10 +135,10 @@ char	*replace_with_unquoted(char *str, t_shell *shell)
 	char *result;
 
 	if (!str)
-		return (NULL);
+		return (ms_strdup("", shell));
 	ex = convert_ex(str, shell);
 	if (!ex)
-		return (NULL);
+		return (ms_strdup("", shell));
 	result = ex->str;
 	xfree((void **)&ex->map);
 	xfree((void **)&ex);
