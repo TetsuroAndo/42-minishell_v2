@@ -9,8 +9,6 @@
 #include "mod_syn.h"
 #include "mod_sem.h"
 #include "mod_exec.h"
-#include "mod_redirect.h"
-#include "mod_wildcard.h"
 
 #define PROMPT "minishell$ "
 

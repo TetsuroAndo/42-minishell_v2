@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 23:12:50 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 08:49:38 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,9 @@ int						xpipe(int pipfds[], t_shell *shell);
 ** ============================================================================
 */
 int						is_quoted(const char *s);
-void						ms_put_ascii(t_shell *sh);
+void					ms_put_ascii(t_shell *sh);
 void					skip_spaces(const char *line, size_t *pos);
+void					skip_dollar_paren(const char *line, size_t *pos);
 char					*ms_strndup(const char *s, size_t n, t_shell *shell);
 char					*ms_strdup(const char *s, t_shell *shell);
 char					*ms_substr(char const *s, unsigned int start,
