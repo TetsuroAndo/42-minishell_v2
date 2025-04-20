@@ -85,7 +85,7 @@ static void fdbackup_exit(t_fdbackup *bk) {
 2. **FD 差し替え**: `FDBackup` を用いて `STDIN_FILENO` / `STDOUT_FILENO` を変更。
 3. **ビルトイン判定**: `is_builtin()` でチェック。
    - true → 親プロセスで直接 `builtin_launch()` を呼ぶ。
-   - false → `fork()` + `execvp()`.
+   - false → `fork()` + `execve()`.
 4. **子 wait** (外部コマンド時) → ステータス解析。
 5. **FD 復旧** & リソース開放。
 

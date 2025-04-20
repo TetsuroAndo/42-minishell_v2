@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mod_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 12:17:08 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 19:54:08 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ static int	prepare_cmd_args(t_ast *node, char ***argv, t_shell *sh)
 	return (0);
 }
 
-static void	setup_redirections(t_ast *node, t_fdbackup *bk_in, 
+static void	setup_redirections(t_ast *node, t_fdbackup *bk_in,
 							t_fdbackup *bk_out, t_shell *sh)
 {
 	*bk_in = (t_fdbackup){-1, STDIN_FILENO};
@@ -112,6 +112,7 @@ static int	execute_external_cmd(char **argv, t_ast *node, t_shell *sh)
 	int		wstatus;
 	int		status;
 	int		sig_held;
+	char	**env;
 
 	sig_held = 0;
 	sig_ignore_parent(&sig_held);
@@ -120,7 +121,10 @@ static int	execute_external_cmd(char **argv, t_ast *node, t_shell *sh)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
-		execvp(argv[0], argv);
+		env = ft_list_to_strs(sh->env_map);
+		if (!*env || !(*env)[0])
+		return (127);
+		execve(argv[0], argv, env);
 		perror(argv[0]);
 		exit(127);
 	}
