@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 19:54:08 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/20 20:10:58 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ static int	execute_external_cmd(char **argv, t_ast *node, t_shell *sh)
 		signal(SIGQUIT, SIG_DFL);
 		env = ft_list_to_strs(sh->env_map);
 		if (!*env || !(*env)[0])
-		return (127);
+		return (ft_strs_clear(env),127);
 		execve(argv[0], argv, env);
 		perror(argv[0]);
 		exit(127);
