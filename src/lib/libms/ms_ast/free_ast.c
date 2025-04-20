@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_ast.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:56:24 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/18 20:02:57 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 03:08:33 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,10 @@ static void	clear_args(t_args *args)
 		ft_lstclear(&args->argv, free_token);
 	if (args->redr)
 		ft_lstclear(&args->redr, free_token);
+	if (args->b_argv)
+		ft_lstclear(&args->b_argv, free_token);
+	if (args->b_redr)
+		ft_lstclear(&args->b_redr, free_token);
 	if (args->fds[0] > 2)
 		xclose(&args->fds[0]);
 	if (args->fds[1] > 2)

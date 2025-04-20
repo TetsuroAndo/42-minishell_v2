@@ -32,6 +32,8 @@ typedef struct s_args
 {
 	t_list *argv; // 引数リスト
 	t_list *redr; // リダイレクトリスト
+	t_list *b_argv; // 引数リスト（バックアップ）
+	t_list *b_redr; // リダイレクトリスト（バックアップ）
 	int				fds[2]; // IN[0], OUT[1]
 	pid_t			pid;
 }					t_args;

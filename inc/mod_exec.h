@@ -2,6 +2,7 @@
 # define MOD_EXEC_H
 
 # include "core.h"
+# include "mod_sem.h"
 
 typedef struct s_shell			t_shell;
 typedef struct s_lexical_token	t_lexical_token;

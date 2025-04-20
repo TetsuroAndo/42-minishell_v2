@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 08:23:28 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 08:23:43 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 02:53:09 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ typedef struct s_shell
 	t_list *env_map;    // 環境変数マップ
 	char *env_spc[128]; // 環境変数特殊文字
 	char cwd[PATH_MAX]; // 現在作業ディレクトリ
+	int env_updated;    // 環境変数変更フラグ
 	// リソース管理
 	int stdin_backup;  // 標準入力バックアップ
 	int stdout_backup; // 標準出力バックアップ

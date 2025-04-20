@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 20:10:58 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/21 03:47:12 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	sig_ignore_parent(int *enabled)
 	static struct sigaction	old_quit;
 	struct sigaction		ign;
 
-	if (*enabled)			/* restore */
+	if (*enabled) /* restore */
 	{
 		sigaction(SIGINT, &old_int, NULL);
 		sigaction(SIGQUIT, &old_quit, NULL);
@@ -90,7 +90,7 @@ static int	prepare_cmd_args(t_ast *node, char ***argv, t_shell *sh)
 }
 
 static void	setup_redirections(t_ast *node, t_fdbackup *bk_in,
-							t_fdbackup *bk_out, t_shell *sh)
+		t_fdbackup *bk_out, t_shell *sh)
 {
 	*bk_in = (t_fdbackup){-1, STDIN_FILENO};
 	*bk_out = (t_fdbackup){-1, STDOUT_FILENO};
@@ -123,7 +123,7 @@ static int	execute_external_cmd(char **argv, t_ast *node, t_shell *sh)
 		signal(SIGQUIT, SIG_DFL);
 		env = ft_list_to_strs(sh->env_map);
 		if (!*env || !(*env)[0])
-		return (ft_strs_clear(env),127);
+			return (ft_strs_clear(env), 127);
 		execve(argv[0], argv, env);
 		perror(argv[0]);
 		exit(127);
@@ -239,6 +239,11 @@ int	exe_bool(t_ast *node, t_shell *sh)
 	int	st_left;
 	int	run_right;
 
+	if (sh->env_updated)
+	{
+		mod_sem(sh);
+		sh->env_updated = 0;
+	}
 	st_left = exe_run(node->left, sh);
 	run_right = 0;
 	if (node->ntype == NT_AND && st_left == 0)
@@ -248,7 +253,11 @@ int	exe_bool(t_ast *node, t_shell *sh)
 	if (node->ntype == NT_LIST)
 		run_right = 1;
 	if (run_right)
+	{
+		mod_sem(sh);
+		sh->env_updated = 0;
 		return (exe_run(node->right, sh));
+	}
 	return (st_left);
 }
 
@@ -301,7 +310,8 @@ int	heredoc_into_fd(char *body, t_args *args, t_shell *sh)
 /*                    redirect 一括ハンドラ                    */
 /* ========================================================= */
 
-static int	handle_input_redirection(t_lexical_token *tok, t_args *args, t_shell *sh)
+static int	handle_input_redirection(t_lexical_token *tok, t_args *args,
+		t_shell *sh)
 {
 	if (ft_strchr(tok->value, '\n'))
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libms.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 08:49:38 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 02:34:46 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,9 +131,11 @@ char					*xstrjoin_free2(char const *s1, char const *s2,
 */
 void					*ms_listshift(t_list **list);
 int						ms_lstiter(t_list *lst, int (*f)(t_list **, void *, int,
-							t_shell *), t_shell *shell);
+								t_shell *), t_shell *shell);
 t_list					*xlstnew(void *data, t_shell *shell);
 t_list					*xlst_from_strs(char **strs, t_shell *shell);
 char					**xlst_to_strs(t_list *lst, t_shell *shell);
+t_list					*ms_lstcopy(t_list *lst, void (*del)(void *),
+							t_shell *shell);
 
 #endif

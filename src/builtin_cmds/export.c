@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 23:11:41 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 03:04:52 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 03:48:05 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin_cmds.h"
+#include "mod_sem.h"
 
 static t_status	__put_export(t_shell *sh)
 {
@@ -49,6 +50,7 @@ t_status	__export(int argc, char **argv, t_shell *sh)
 	{
 		if (ms_setenv(ft_strdup(argv[i]), sh) != E_NONE)
 			return (1);
+		sh->env_updated = 1;
 	}
 	return (0);
 }

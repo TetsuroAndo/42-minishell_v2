@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:44:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 03:04:03 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 02:54:41 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ t_status	__unset(int argc, char **argv, t_shell *sh)
 	{
 		if (ms_unset(argv[i], sh) != E_NONE)
 			return (1);
+		sh->env_updated = 1;
 	}
 	return (E_NONE);
 }

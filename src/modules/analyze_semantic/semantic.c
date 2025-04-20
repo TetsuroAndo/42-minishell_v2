@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 08:58:55 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 03:44:48 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ char	*handle_env(char *in, t_shell *sh)
 {
 	t_sem	s;
 	size_t	i;
-	size_t depth;
+	size_t	depth;
 
 	s.buf = ms_strdup("", sh);
 	s.quote_state = QS_NONE;
@@ -82,23 +82,23 @@ char	*handle_env(char *in, t_shell *sh)
 		s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, i, sh), sh);
 		in += i;
 		if (*in == '$' && in[1] == '(' && s.quote_state != QS_SINGLE)
-        {   /* $() はそのままコピーして対応 ) まで送る */
+		{
 			depth = 0;
-            s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, 1, sh), sh);
-            if (*in == '(')
+			s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, 1, sh), sh);
+			if (*in == '(')
 				++depth;
-            else if (*in == ')')
+			else if (*in == ')')
 				--depth;
-            ++in;
-            while (*in && depth)
-            {
-                s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, 1, sh), sh);
-                if (*in == '(')
+			++in;
+			while (*in && depth)
+			{
+				s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, 1, sh), sh);
+				if (*in == '(')
 					++depth;
-                else if (*in == ')')
+				else if (*in == ')')
 					--depth;
-                ++in;
-            }
+				++in;
+			}
 		}
 		else if (*in == '$' && s.quote_state != QS_SINGLE)
 			in += extract_varname(&s.buf, in + 1, sh) + 1;
@@ -345,7 +345,8 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 	}
 	if (!wc_exp)
 		return (1);
-	if (quoted || ft_strnstr(wc_exp, "$(", ft_strlen(wc_exp)) || !ft_strchr(wc_exp, ' '))
+	if (quoted || ft_strnstr(wc_exp, "$(", ft_strlen(wc_exp))
+		|| !ft_strchr(wc_exp, ' '))
 		return (process_simple_token(data, wc_exp, idx, sh));
 	space_count = ft_count_words(wc_exp, ' ');
 	if (process_split_token(list, wc_exp, idx, sh))
@@ -378,8 +379,8 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 		return (handle_heredoc(data, sh)); // heredoc は専用ルートで処理する
 	aft_env = handle_env(data->value, sh);
 	if (!aft_env || *aft_env == '\0')
-		return (ft_dprintf(2, "minishell: ambiguous redirect\n"), xfree((void **)&aft_env),
-			1);
+		return (ft_dprintf(2, "minishell: ambiguous redirect\n"),
+			xfree((void **)&aft_env), 1);
 	aft_wlc = handle_wildcard(aft_env, sh);
 	xfree((void **)&aft_env);
 	if (!aft_wlc)
@@ -425,11 +426,52 @@ int	ast2cmds(t_ast *ast, t_shell *shell)
 	return (status);
 }
 
+/**
+ * @brief 単一のASTノードのargs（argv, redr）をバックアップ・復元する
+ *
+ * @param ast バックアップするASTノード
+ * @param shell シェル情報
+ */
+static void	backup_node_args(t_ast *ast, t_shell *shell)
+{
+	t_args	*ast_args;
+
+	if (!ast || !ast->args)
+		return ;
+	ast_args = ast->args;
+	if (ast_args->b_argv == NULL)
+		ast_args->b_argv = ms_lstcopy(ast_args->argv, free_token, shell);
+	if (ast_args->b_redr == NULL)
+		ast_args->b_redr = ms_lstcopy(ast_args->redr, free_token, shell);
+	ft_lstclear(&ast_args->argv, free_token);
+	ft_lstclear(&ast_args->redr, free_token);
+	ast_args->argv = ms_lstcopy(ast_args->b_argv, free_token, shell);
+	ast_args->redr = ms_lstcopy(ast_args->b_redr, free_token, shell);
+}
+
+/**
+ * @brief AST全体を再帰的に走査して各ノードのバックアップを作成・復元する
+ *
+ * @param ast バックアップするAST
+ * @param shell シェル情報
+ */
+void	astlst_backup(t_ast *ast, t_shell *shell)
+{
+	if (!ast)
+		return ;
+	backup_node_args(ast, shell);
+	if (ast->left)
+		astlst_backup(ast->left, shell);
+	if (ast->right)
+		astlst_backup(ast->right, shell);
+}
+
 t_status	mod_sem(t_shell *shell)
 {
 	t_ast	*ast;
 
 	ast = shell->ast;
+	astlst_backup(ast, shell);
 	if (ast2cmds(ast, shell))
 	{
 		shell->status = 1;

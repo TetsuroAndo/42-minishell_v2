@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 22:41:46 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/21 03:32:46 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ t_args	*args_new(t_shell *shell)
 	args = (t_args *)xmalloc(sizeof(t_args), shell);
 	args->argv = NULL;
 	args->redr = NULL;
+	args->b_argv = NULL;
+	args->b_redr = NULL;
 	args->fds[0] = -1;
 	args->fds[1] = -1;
 	args->pid = -1;
