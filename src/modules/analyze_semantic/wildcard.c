@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 07:56:20 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 04:10:41 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,8 @@ int	wildcard_match(const char *p, const char *str, t_shell *shell)
 	if (is_invalid_input(p, str, ex))
 	{
 		if (ex)
-			return (xfree((void **)&ex->str), xfree((void **)&ex->map), xfree((void **)&ex), 0);
+			return (xfree((void **)&ex->str), xfree((void **)&ex->map),
+				xfree((void **)&ex), 0);
 		return (0);
 	}
 	m = ft_strlen(ex->str);
@@ -128,7 +129,8 @@ int	wildcard_match(const char *p, const char *str, t_shell *shell)
 	if (!prev || !curr)
 	{
 		if (ex)
-			return (xfree((void **)&ex->str), xfree((void **)&ex->map), xfree((void **)&ex), 0);
+			return (xfree((void **)&ex->str), xfree((void **)&ex->map),
+				xfree((void **)&ex), 0);
 		return (0);
 	}
 	prev[0] = 1;
@@ -219,13 +221,15 @@ static char	*process_directory_wildcard(char *in, t_shell *sh)
 
 	dir = opendir(sh->cwd);
 	if (!dir)
-		return (ms_strdup(in, sh));
+		return (in);
 	buf = collect_matches(dir, in, sh);
 	closedir(dir);
 	if (buf)
+	{
+		xfree((void **)&in);
 		return (buf);
-	else
-		return (ms_strdup(in, sh));
+	}
+	return (in);
 }
 
 char	*handle_wildcard(char *in, t_shell *sh)
