@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   line_init.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:43:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 12:33:26 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 01:04:52 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,6 @@ void	line_init(t_shell *sh)
 		free_ast(&sh->ast);
 	ft_lstclear(&sh->gcli, free);
 	xfree((void **)&sh->env_spc['?']);
-	if (WIFSIGNALED(sh->status))
-		sh->status = g_signal_status + 128;
-	else if (WIFEXITED(sh->status))
-		sh->status = WEXITSTATUS(sh->status);
 	sh->env_spc['?'] = xitoa(sh->status, sh);
 	g_signal_status = 0;
 	sh->status = 0;
