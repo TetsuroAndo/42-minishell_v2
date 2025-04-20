@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_main_loop.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:15 by teando            #+#    #+#             */
-/*   Updated: 2025/04/16 09:17:22 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/20 22:55:21 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ static int	parse_next_token(const char *line, size_t *pos, t_shell *shell)
 	if (parse_one_char_operator(line, pos, shell)) // 1文字演算子をチェック
 		return (1);
 	word = read_word(line, pos, shell); // いずれの演算子にも該当しない場合は通常単語扱い
-	if (!word && shell->status == E_SYNTAX)
+	if (ft_strchr(word, '\\') || (!word && shell->status == E_SYNTAX))// バックスラッシュの時にエラー
 		return (-1); // クォート不整合など
 	add_token(shell, create_token(TT_WORD, word, shell));
 	return (1);
