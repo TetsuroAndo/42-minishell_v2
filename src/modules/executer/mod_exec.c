@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 21:51:51 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/21 21:57:14 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,6 +283,7 @@ int	exe_sub(t_ast *node, t_shell *sh)
 	pid = xfork(sh);
 	if (pid == 0)
 	{
+		sh->interactive = 0;
 		st = exe_run(node->left, sh); /* subshell の AST は left に格納 */
 		exit(st);
 	}
