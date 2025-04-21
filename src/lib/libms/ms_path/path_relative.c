@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 02:11:59 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 20:50:48 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 07:08:06 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static void	__init_path(char path[], const char *src, t_shell *sh,
 	char	*dst;
 
 	(void)src;
-	ft_strlcpy(path, sh->cwd, PATH_MAX + 1);
+	ms_path_cleancpy(path, sh->cwd, PATH_MAX + 1);
 	dst = path + ft_strlen(path);
 	if (dst > path && dst[-1] != '/')
 		*dst++ = '/';
@@ -115,5 +115,6 @@ int	path_relative(char path[], const char *src, int mode, t_shell *sh)
 	if (dst > path + 1 && dst[-1] == '/')
 		dst--;
 	*dst = '\0';
+	printf("path: %s\n", path);
 	return (access(path, mode));
 }

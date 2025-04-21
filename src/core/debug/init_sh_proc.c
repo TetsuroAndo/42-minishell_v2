@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:24:52 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 07:16:33 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 21:56:36 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ static char	*put_debug_mode(t_shell *sh)
 		return ("EXEC");
 	else if (sh->debug == DEBUG_REDIRECT)
 		return ("REDIRECT");
-	else if (sh->debug == DEBUG_HEREDOC)
-		return ("HEREDOC");
+	else if (sh->debug == DEBUG_SIGNAL)
+		return ("SIGNAL");
 	else if (sh->debug == DEBUG_ALL)
 		return ("ALL");
 	else
@@ -44,4 +44,5 @@ void	put_sh_init(t_shell *sh)
 	ft_dprintf(STDERR_FILENO, "-----> [SHELL NAME]: %s\n", sh->bin_name);
 	ft_dprintf(STDERR_FILENO, "[PID]: %s\n", pid);
 	ft_dprintf(STDERR_FILENO, "[DEBUG_MODE]: %s\n", put_debug_mode(sh));
+	ft_dprintf(STDERR_FILENO, "[INTERACTIVE/TTY]: %d\n", sh->interactive);
 }

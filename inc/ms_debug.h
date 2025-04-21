@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 06:26:03 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 19:37:16 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 21:23:50 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ typedef struct s_shell	t_shell;
 # define DEBUG_ENV (1 << 4)      // 00010000
 # define DEBUG_EXEC (1 << 5)     // 00100000
 # define DEBUG_REDIRECT (1 << 6) // 01000000
-# define DEBUG_HEREDOC (1 << 7)  // 10000000
+# define DEBUG_SIGNAL (1 << 7)   // 10000000
 # define DEBUG_ALL (~DEBUG_NONE) // 全てのビットを立てる (~0 と同じ)
 
 void	put_sh_init(t_shell *sh);

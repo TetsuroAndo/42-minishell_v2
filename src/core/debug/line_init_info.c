@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 15:40:02 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 19:38:11 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 21:15:16 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,17 @@ void	put_line_after(t_shell *sh)
 
 void	put_line_before(t_shell *sh)
 {
-	ft_dprintf(STDERR_FILENO, "[sh->status]: %d\n", sh->status);
-	ft_dprintf(STDERR_FILENO, "[g_signal_status]: %d\n", g_signal_status);
+	if (!sh)
+		return ;
+	ft_dprintf(STDERR_FILENO, "\n");
 }
 
 void	put_line_info(t_shell *sh)
 {
-	ft_dprintf(STDERR_FILENO, "\n");
+	ft_dprintf(STDERR_FILENO, "[sh->status]: %d | ", sh->status);
+	ft_dprintf(STDERR_FILENO, "[g_signal_status]: %d | ", g_signal_status);
 	// env_spc[?] status
-	printf("EXIT[%s] | ", sh->env_spc['?']);
+	ft_dprintf(STDERR_FILENO, "[EXIT]: %s\n", sh->env_spc['?']);
 	// cwd
-	printf("%s\n", sh->cwd);
+	ft_dprintf(STDERR_FILENO, "%s\n", sh->cwd);
 }
