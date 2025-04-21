@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 02:11:59 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 07:08:06 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 07:54:51 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,5 @@ int	path_relative(char path[], const char *src, int mode, t_shell *sh)
 	if (dst > path + 1 && dst[-1] == '/')
 		dst--;
 	*dst = '\0';
-	printf("path: %s\n", path);
 	return (access(path, mode));
 }

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:09 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 08:54:18 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 07:56:58 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ char	*read_word(const char *line, size_t *pos, t_shell *shell)
 	start = *pos;
 	while (line[*pos])
 	{
-		if (line[*pos] == '\\' && line[*pos + 1]) // バックスラッシュによるエスケープ処理
+		if (line[*pos] == '\\' && line[*pos + 1])
 		{
 			(*pos) += 2;
 			continue;
@@ -125,11 +125,9 @@ char	*read_word(const char *line, size_t *pos, t_shell *shell)
 		}
 		if (line[*pos] == '#' || ft_isspace(line[*pos]) ||
 			get_two_char_op(&line[*pos], NULL) != TT_ERROR ||
-			/* $() は 1 語なので '(' を演算子扱いしないよう先に回避 */
 			(get_one_char_op(line[*pos]) != TT_ERROR &&
 			 !(line[*pos] == '(' && *pos > 0 && line[*pos - 1] == '$')))
 			break;
-		/* $() ネストをまとめて読む */
 		if (line[*pos] == '$' && line[*pos + 1] == '(')
 		{
 			skip_dollar_paren(line, pos);
