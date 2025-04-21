@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mod_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 20:12:33 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 21:57:14 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,6 +234,14 @@ int	exe_pipe(t_ast *node, t_shell *sh)
 /*                  NT_AND / NT_OR / NT_LIST                  */
 /* ========================================================= */
 
+static void	update_shell_status(int status, t_shell *sh)
+{
+	sh->status = status;
+	xfree((void **)&sh->env_spc['?']);
+	sh->env_spc['?'] = xitoa(status, sh);
+	mod_sem(sh);
+}
+
 int	exe_bool(t_ast *node, t_shell *sh)
 {
 	int	st_left;
@@ -245,6 +253,7 @@ int	exe_bool(t_ast *node, t_shell *sh)
 		sh->env_updated = 0;
 	}
 	st_left = exe_run(node->left, sh);
+	update_shell_status(st_left, sh);
 	run_right = 0;
 	if (node->ntype == NT_AND && st_left == 0)
 		run_right = 1;
@@ -274,6 +283,7 @@ int	exe_sub(t_ast *node, t_shell *sh)
 	pid = xfork(sh);
 	if (pid == 0)
 	{
+		sh->interactive = 0;
 		st = exe_run(node->left, sh); /* subshell の AST は left に格納 */
 		exit(st);
 	}

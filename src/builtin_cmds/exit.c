@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:43:58 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 20:30:33 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 21:56:45 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ t_status	__exit(int argc, char **argv, t_shell *sh)
 			code = 255;
 		}
 	}
-	printf("exit\n");
+	if (sh->interactive)
+		printf("exit\n");
 	shell_exit(sh, (int)(code & 0xFF));
 	return (42);
 }
