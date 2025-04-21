@@ -6,7 +6,7 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/20 08:03:58 by teando           ###   ########.fr        #
+#    Updated: 2025/04/21 13:32:46 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,10 +22,6 @@ SRC_DIR		:= $(ROOT_DIR)/src
 INC_DIR		:= $(ROOT_DIR)/inc
 OBJ_DIR		:= $(ROOT_DIR)/obj
 LIBFT_DIR	:= $(ROOT_DIR)/src/lib/libft
-LIBMS_DIR	:= $(ROOT_DIR)/src/lib/libms
-
-# ライブラリ設定
-LIBFT		:= $(LIBFT_DIR)/libft.a
 
 # インクルードフラグ
 IDFLAGS		:= -I$(INC_DIR) -I$(LIBFT_DIR)
@@ -33,10 +29,11 @@ IDFLAGS		:= -I$(INC_DIR) -I$(LIBFT_DIR)
 # 環境依存
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
+	LIBFT		:= $(LIBFT_DIR)/libft_mac.a
 	LFLAGS		:= -lreadline -L$(shell brew --prefix readline)/lib
 	IDFLAGS		+= -I$(shell brew --prefix readline)/include
-endif
-ifeq ($(UNAME_S),Linux)
+else
+	LIBFT		:= $(LIBFT_DIR)/libft.a
 	LFLAGS		:= -lreadline
 	IDFLAGS		+= -I/usr/include/readline
 endif
