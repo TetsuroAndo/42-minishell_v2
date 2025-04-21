@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:12:00 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 09:01:37 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 18:35:10 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "minishell.h"
 
@@ -23,7 +23,7 @@ static void	shell_loop(t_shell *sh, const char *prompt)
 			put_line_info(sh);
 		sh->source_line = launch_readline(prompt);
 		if (sh->source_line == NULL)
-			shell_exit(sh, sh->status);
+			continue ;
 		if (g_signal_status == SIGINT)
 		{
 			g_signal_status = 0;

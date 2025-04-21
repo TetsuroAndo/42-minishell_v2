@@ -6,7 +6,7 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/21 15:53:13 by teando           ###   ########.fr        #
+#    Updated: 2025/04/21 16:47:33 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -111,7 +111,7 @@ core: f $(NAME)
 
 debug: CFLAGS += -g -fsanitize=address -O1 -fno-omit-frame-pointer
 debug: DEFINE := -DDEBUG_MODE=DEBUG_ALL
-debug: r
+debug: f $(NAME)
 	@echo "====================="
 	@echo "== Build Complete! =="
 	@echo "====================="

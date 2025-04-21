@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   core.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 08:23:28 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 02:53:09 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/21 17:33:23 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #ifndef CORE_H
 # define CORE_H
@@ -17,6 +17,7 @@
 # include "libms.h"
 # include "ms_ast.h"
 # include "ms_debug.h"
+# include "ms_err.h"
 # include "ms_readline.h"
 # include "ms_signal.h"
 # include "ms_token.h"
@@ -37,29 +38,6 @@
 # endif
 
 extern volatile sig_atomic_t	g_signal_status;
-
-typedef enum e_status
-{
-	E_NONE = 0,
-	E_SYSTEM = 3,
-	E_ALLOCATE = 1,
-	E_ENV_KEY = 1,
-	E_SYNTAX = 1,
-	E_PIPE = 1,
-	E_FILE,
-	E_ARGUMENT,
-	E_NOT_BUITIN_CMD = -2,
-	E_IS_DIR = 126,
-	E_IS_FILE = 126,
-	E_NOT_DIR = 126,
-	E_NOT_FILE = 126,
-	E_PERMISSION_DENIED = 126,
-	E_NOT_EXECUTABLE = 126,
-	E_NOT_FOUND = 127,
-	E_COMMAND_NOT_FOUND = 127,
-	E_SIGINT = 130,
-	E_SIGQUIT = 131,
-}								t_status;
 
 typedef struct s_shell
 {
@@ -82,8 +60,8 @@ typedef struct s_shell
 	int stdout_backup; // 標準出力バックアップ
 	int stderr_backup; // 標準エラー出力バックアップ
 	// ガベージコレクション
-	t_list *gcsh;      // shellプロセスごとの自動解放対象のメモリリスト
-	t_list *gcli;      // Line ごとの自動解放対象のメモリリスト
+	t_list *gcsh; // shellプロセスごとの自動解放対象のメモリリスト
+	t_list *gcli; // Line ごとの自動解放対象のメモリリスト
 	// その他
 	int interactive; // インタラクティブモード
 	int debug;       // デバッグモード

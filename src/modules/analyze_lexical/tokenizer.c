@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:12 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 13:06:10 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 16:45:38 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "mod_lex.h"
 
@@ -31,13 +31,9 @@ t_status	mod_lex(t_shell *shell)
 	shell->token_list = NULL;
 	shell->status = E_NONE;
 	if (!shell->source_line)
-		return (shell->status);
+		return (E_SYNTAX);
 	if (ft_strchr(shell->source_line, '\\') || !tokenize_line(shell))
-	{
-		if (shell->status == E_NONE)
-			shell->status = E_SYNTAX;
-		return (shell->status);
-	}
+		return (E_SYNTAX);
 	// TODO: 連続したリダイレクト系やnewline表記のバリデーションを行う
 	if (shell->debug & DEBUG_LEX)
 		debug_print_token_list(shell->token_list);

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:25:22 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 13:05:09 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 17:30:46 by teando           ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -16,13 +16,13 @@ static void	init_env(char **env, char *bin_name, t_shell *sh)
 {
 	sh->env_map = xlst_from_strs(env, sh);
 	if (!sh->env_map)
-		shell_exit(sh, E_ALLOCATE);
+		shell_exit(sh, E_SYSTEM);
 	sh->env_spc['?'] = xitoa(0, sh);
 	if (!sh->env_spc['?'])
-		shell_exit(sh, E_ALLOCATE);
+		shell_exit(sh, E_SYSTEM);
 	sh->env_spc['\0'] = ms_strdup(bin_name, sh);
 	if (!sh->env_spc['\0'])
-		shell_exit(sh, E_ALLOCATE);
+		shell_exit(sh, E_SYSTEM);
 }
 
 static void	init_fd_backup(t_shell *sh)
@@ -47,7 +47,7 @@ t_shell	*shell_init(char **env, char *bin_name)
 
 	sh = ft_calloc(sizeof(t_shell), 1);
 	if (!sh)
-		shell_exit(NULL, E_ALLOCATE);
+		shell_exit(NULL, E_SYSTEM);
 	sh->bin_name = bin_name;
 	init_env(env, bin_name, sh);
 	init_fd_backup(sh);

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 14:52:19 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 18:45:03 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,7 +272,9 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 		t_shell *sh)
 {
 	char	*trimmed;
+	int		cmd_status;
 
+	cmd_status = 0;
 	if (sh->debug & DEBUG_SEM)
 		printf("[process_simple_token] value: %s\n", val);
 	trimmed = trim_valid_quotes(val, sh);
@@ -280,9 +282,9 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 		xfree((void **)&val);
 	xfree((void **)&data->value);
 	data->value = trimmed;
-	if (idx == 0 && path_resolve(&data->value, sh))
-		return (1);
-	return (0);
+	if (idx == 0)
+		cmd_status = path_resolve(&data->value, sh);
+	return (cmd_status);
 }
 
 /**
@@ -291,7 +293,7 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
  * @param list トークンリスト
  * @param data トークンデータ
  * @param value 処理する文字列
- * @param idx 引数の位置（0はコマン��）
+ * @param idx 引数���位置���0�����コマン���）
  * @param sh シェル情報
  * @return int 成功時0、失敗時1
  */
@@ -378,7 +380,7 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 		return (ft_dprintf(2, "minishell: ambiguous redirect\n"),
 			xfree((void **)&aft_env), 1);
 	aft_wlc = handle_wildcard(aft_env, sh);
-	if (aft_wlc != aft_env)        /* ポインタが別なら安全に free */
+	if (aft_wlc != aft_env) /* ポインタが別なら安全に free */
 		xfree((void **)&aft_env);
 	if (!aft_wlc)
 		return (ft_dprintf(2, "minishell: ambiguous redirect\n"), 1);
@@ -472,7 +474,7 @@ t_status	mod_sem(t_shell *shell)
 	astlst_backup(ast, shell);
 	if (ast2cmds(ast, shell))
 	{
-		shell->status = 1;
+		shell->status = E_SYNTAX;
 		return (E_SYNTAX);
 	}
 	if (shell->debug & DEBUG_SEM)
