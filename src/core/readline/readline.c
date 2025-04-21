@@ -53,7 +53,7 @@ static int	is_quotes_balanced(const char *line)
  * @param prompt 表示するプロンプト文字列
  * @return char* 入力された行、EOFまたはエラー時はNULL
  */
-static char	*read_command_line(const char *prompt)
+char	*read_command_line(const char *prompt)
 {
 	char	*line;
 
@@ -89,10 +89,10 @@ char	*launch_readline(const char *prompt)
 	while (!is_quotes_balanced(line))
 	{
 		if (g_signal_status == SIGINT)
-			return (xfree((void **)&line), NULL);
+			return (xfree((void **)&line), ft_strdup(""));
 		cont_line = read_command_line("> ");
 		if (!cont_line)
-			return (xfree((void **)&line), NULL);
+			return (xfree((void **)&line), ft_strdup(""));
 		tmp = ft_strjoin_free(line, "\n");
 		line = ft_strjoin_free2(tmp, cont_line);
 		if (!line)

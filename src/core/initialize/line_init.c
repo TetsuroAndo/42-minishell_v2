@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   line_init.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:43:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 01:04:52 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/21 19:44:48 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
  */
 void	line_init(t_shell *sh)
 {
+	if (sh->debug & DEBUG_CORE)
+		put_line_before(sh);
 	if (!sh)
 		shell_exit(NULL, 1);
 	xfree((void **)&sh->source_line);
@@ -28,9 +30,13 @@ void	line_init(t_shell *sh)
 		free_ast(&sh->ast);
 	ft_lstclear(&sh->gcli, free);
 	xfree((void **)&sh->env_spc['?']);
+	if (g_signal_status == SIGINT)
+		sh->status = E_SIGINT;
+	else if (g_signal_status == SIGQUIT)
+		sh->status = E_SIGQUIT;
 	sh->env_spc['?'] = xitoa(sh->status, sh);
 	g_signal_status = 0;
 	sh->status = 0;
 	if (sh->debug & DEBUG_CORE)
-		put_line_init(sh);
+		put_line_after(sh);
 }

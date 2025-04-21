@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 23:57:33 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 22:41:22 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 19:58:20 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,6 @@ char	*trim_valid_quotes(const char *s, t_shell *sh)
 		copy_or_skip_char(s, &i, out, &j, &quote, &prev);
 	out[j] = '\0';
 	if (quote)
-		return (ms_strdup(s, sh));
+		return (xfree((void **)&out), ms_strdup(s, sh));
 	return (out);
 }

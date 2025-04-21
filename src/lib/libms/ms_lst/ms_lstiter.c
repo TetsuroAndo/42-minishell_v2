@@ -15,17 +15,19 @@
 
 int	ms_lstiter(t_list *lst, int (*f)(t_list **, void *, int, t_shell *), t_shell *shell)
 {
-	int	i;
+	int	ret;
+	int	idx;
 
-	i = 0;
+	idx = 0;
 	if (!f)
-		return (1);
-	while (lst != NULL)
+		return (E_GENERAL);
+	while (lst)
 	{
-		if (f(&lst , lst->data, i, shell))
-			return (1);
+		ret = f(&lst, lst->data, idx, shell);
+		if (ret != E_NONE)
+			return (ret);
 		lst = lst->next;
-		i++;
+		idx++;
 	}
-	return (0);
+	return (E_NONE);
 }

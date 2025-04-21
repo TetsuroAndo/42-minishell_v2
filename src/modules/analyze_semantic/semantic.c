@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 18:53:30 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 20:16:12 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,10 @@ static char	*prepare_delimiter(char *delim_raw, int *quoted, t_shell *sh)
 	if (*quoted)
 		delim = delim_noq;
 	else
-		delim = handle_env(delim_noq, sh);
+	{
+		delim = handle_env(delim_noq, sh);        /* new buffer              */
+		xfree((void **)&delim_noq);               /* ✅ release the old one  */
+	}
 	return (delim);
 }
 
@@ -191,15 +194,18 @@ static char	*read_heredoc_body(char *delim, int quoted, t_shell *sh)
 	body = ms_strdup("", sh);
 	while (42)
 	{
-		line = readline("> ");
+		line = read_command_line("> ");
+		if (g_signal_status == SIGINT)
+		{
+			sh->status = E_SIGINT;
+			return (xfree((void **)&body), xfree((void **)&line), NULL);
+		}
 		if (!line || (delim[0] == '\0' && line[0] == '\0') || ft_strcmp(line,
 				delim) == 0)
-			if (!line || (delim[0] == '\0' && line[0] == '\0')
-				|| ft_strcmp(line, delim) == 0)
-			{
-				xfree((void **)&line);
-				break ;
-			}
+		{
+			xfree((void **)&line);
+			break ;
+		}
 		if (!quoted)
 			body = xstrjoin_free2(body, handle_env(line, sh), sh);
 		else
@@ -272,9 +278,7 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 		t_shell *sh)
 {
 	char	*trimmed;
-	int		cmd_status;
 
-	cmd_status = 0;
 	if (sh->debug & DEBUG_SEM)
 		printf("[process_simple_token] value: %s\n", val);
 	trimmed = trim_valid_quotes(val, sh);
@@ -283,8 +287,8 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 	xfree((void **)&data->value);
 	data->value = trimmed;
 	if (idx == 0)
-		cmd_status = path_resolve(&data->value, sh);
-	return (cmd_status);
+		return (path_resolve(&data->value, sh));
+	return (E_NONE);
 }
 
 /**
@@ -302,6 +306,7 @@ static int	process_split_token(t_list **list, char *value, int idx,
 {
 	char			**words;
 	t_lexical_token	*data;
+	int status;
 
 	if (!list || !*list)
 		return (xfree((void **)&value), 1);
@@ -317,8 +322,12 @@ static int	process_split_token(t_list **list, char *value, int idx,
 	data->value = ms_strdup(words[0], sh);
 	if (add_to_list(list, words, sh))
 		return (ft_strs_clear(words), 1);
-	if (idx == 0 && path_resolve(&data->value, sh))
-		return (ft_strs_clear(words), 1);
+	if (idx == 0)
+	{
+		status = path_resolve(&data->value, sh);
+		if (status != E_NONE)
+			return (ft_strs_clear(words), status);
+	}
 	ft_strs_clear(words);
 	return (0);
 }
@@ -413,15 +422,21 @@ int	ast2cmds(t_ast *ast, t_shell *shell)
 		return (0);
 	if (ast->ntype != NT_CMD)
 	{
-		status += ast2cmds(ast->left, shell);
-		status += ast2cmds(ast->right, shell);
+		status = ast2cmds(ast->left, shell);
+		if (status != E_NONE)
+			return (status);
+		status = ast2cmds(ast->right, shell);
+		if (status != E_NONE)
+			return (status);
 	}
 	else
 	{
-		if (ms_lstiter(ast->args->argv, (void *)proc_argv, shell))
-			return (1);
-		if (ms_lstiter(ast->args->redr, (void *)proc_redr, shell))
-			return (1);
+		status = ms_lstiter(ast->args->argv, (void *)proc_argv, shell);
+		if (status != E_NONE)
+			return (status);
+		status = ms_lstiter(ast->args->redr, (void *)proc_redr, shell);
+		if (status != E_NONE)
+			return (status);
 	}
 	return (status);
 }
@@ -468,14 +483,16 @@ void	astlst_backup(t_ast *ast, t_shell *shell)
 
 t_status	mod_sem(t_shell *shell)
 {
-	t_ast	*ast;
+	t_ast		*ast;
+	t_status	status;
 
 	ast = shell->ast;
 	astlst_backup(ast, shell);
-	if (ast2cmds(ast, shell))
+	status = ast2cmds(ast, shell);
+	if (status != E_NONE)
 	{
-		shell->status = E_SYNTAX;
-		return (E_SYNTAX);
+		shell->status = status;
+		return (status);
 	}
 	if (shell->debug & DEBUG_SEM)
 		debug_print_sem(ast, shell);

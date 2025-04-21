@@ -2,9 +2,9 @@
 # define MOD_SEM_H
 
 # include "core.h"
+# include "ms_readline.h"
 # include <dirent.h>
 # include <fcntl.h>
-# include <readline/readline.h>
 # include <unistd.h>
 
 typedef struct s_lexical_token	t_lexical_token;

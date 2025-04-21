@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   mod_exec.c                                         :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 18:05:31 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 20:12:33 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "mod_exec.h"
 
@@ -313,7 +313,7 @@ int	heredoc_into_fd(char *body, t_args *args, t_shell *sh)
 static int	handle_input_redirection(t_lexical_token *tok, t_args *args,
 		t_shell *sh)
 {
-	if (ft_strchr(tok->value, '\n'))
+	if (tok->value && ft_strchr(tok->value, '\n'))
 	{
 		if (heredoc_into_fd(tok->value, args, sh))
 			return (1);

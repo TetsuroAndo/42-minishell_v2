@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 06:26:03 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 20:46:34 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 19:37:16 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ typedef struct s_shell	t_shell;
 # define DEBUG_ALL (~DEBUG_NONE) // 全てのビットを立てる (~0 と同じ)
 
 void	put_sh_init(t_shell *sh);
-void	put_line_init(t_shell *sh);
 void	put_line_info(t_shell *sh);
+void	put_line_after(t_shell *sh);
+void	put_line_before(t_shell *sh);
 
 #endif

@@ -6,5 +6,6 @@
 # include <readline/readline.h>
 
 char	*launch_readline(const char *prompt);
+char	*read_command_line(const char *prompt);
 
 #endif
