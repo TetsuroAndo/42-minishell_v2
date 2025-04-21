@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 13:06:11 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 14:52:19 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -378,11 +378,13 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 		return (ft_dprintf(2, "minishell: ambiguous redirect\n"),
 			xfree((void **)&aft_env), 1);
 	aft_wlc = handle_wildcard(aft_env, sh);
-	xfree((void **)&aft_env);
+	if (aft_wlc != aft_env)        /* ポインタが別なら安全に free */
+		xfree((void **)&aft_env);
 	if (!aft_wlc)
 		return (ft_dprintf(2, "minishell: ambiguous redirect\n"), 1);
 	aft_unq = replace_with_unquoted(aft_wlc, sh);
-	xfree((void **)&aft_wlc);
+	if (aft_unq != aft_wlc)
+		xfree((void **)&aft_wlc);
 	if (!aft_unq || *aft_unq == '\0' || ft_strchr(aft_unq, ' '))
 		return (ft_dprintf(2, "minishell: %s: ambiguous redirect\n",
 				aft_unq ? aft_unq : ""), xfree((void **)&aft_unq), 1);
