@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 14:52:19 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/21 17:05:38 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -391,7 +391,7 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 	xfree((void **)&data->value);
 	data->value = aft_unq;
 	if (valid_redir(data, sh))
-		return (xfree((void **)&aft_unq), 1);
+		return (1);
 	return (0);
 }
 
