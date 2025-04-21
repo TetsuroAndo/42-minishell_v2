@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libms.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 02:34:46 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/21 13:06:07 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,15 @@ typedef struct s_ast	t_ast;
 
 void					*xmalloc_gcshell(size_t size, t_shell *shell);
 void					*xmalloc_gcline(size_t size, t_shell *shell);
+char					*ms_strndup_gcline(const char *s, size_t n,
+							t_shell *sh);
+char					*ms_strdup_gcline(const char *s, t_shell *sh);
+char					*ms_substr_gcline(char const *s, unsigned int start,
+							size_t len, t_shell *sh);
+char					*ms_substr_r_gcline(char const *s, char delimiter,
+							t_shell *sh);
+char					*ms_substr_l_gcline(const char *s, char delimiter,
+							t_shell *sh);
 
 /*
 ** ============================================================================

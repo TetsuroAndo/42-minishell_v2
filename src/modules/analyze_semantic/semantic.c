@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 03:44:48 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/21 13:06:11 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,7 +291,7 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
  * @param list トークンリスト
  * @param data トークンデータ
  * @param value 処理する文字列
- * @param idx 引数の位置（0はコマンド）
+ * @param idx 引数の位置（0はコマン��）
  * @param sh シェル情報
  * @return int 成功時0、失敗時1
  */
@@ -338,11 +338,7 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 	if (quoted)
 		wc_exp = env_exp;
 	else
-	{
 		wc_exp = handle_wildcard(env_exp, sh);
-		if (env_exp != wc_exp)
-			xfree((void **)&env_exp);
-	}
 	if (!wc_exp)
 		return (1);
 	if (quoted || ft_strnstr(wc_exp, "$(", ft_strlen(wc_exp))
