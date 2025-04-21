@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mod_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 21:57:14 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/22 07:42:17 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,16 +108,14 @@ static void	setup_redirections(t_ast *node, t_fdbackup *bk_in,
 
 static int	execute_external_cmd(char **argv, t_ast *node, t_shell *sh)
 {
-	pid_t	pid;
 	int		wstatus;
-	int		status;
 	int		sig_held;
 	char	**env;
 
 	sig_held = 0;
 	sig_ignore_parent(&sig_held);
-	pid = xfork(sh);
-	if (pid == 0)
+	node->args->pid = xfork(sh);
+	if (node->args->pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
@@ -128,14 +126,11 @@ static int	execute_external_cmd(char **argv, t_ast *node, t_shell *sh)
 		perror(argv[0]);
 		exit(127);
 	}
-	node->args->pid = pid;
-	waitpid(pid, &wstatus, 0);
+	waitpid(node->args->pid, &wstatus, 0);
 	sig_ignore_parent(&sig_held);
 	if (WIFEXITED(wstatus))
-		status = WEXITSTATUS(wstatus);
-	else
-		status = 128 + WTERMSIG(wstatus);
-	return (status);
+		return (WEXITSTATUS(wstatus));
+	return (128 + WTERMSIG(wstatus));
 }
 
 int	exe_cmd(t_ast *node, t_shell *sh)
