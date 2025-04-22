@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libms.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 09:14:23 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 20:27:01 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ char					*ms_substr_l_gcshell(const char *s, char delimiter,
 ** ============================================================================
 */
 void					free_token(void *token);
+void					*copy_token(void *data, t_shell *sh);
 
 /*
 ** ============================================================================
@@ -52,8 +53,8 @@ void					free_token(void *token);
 */
 // key
 int						ms_isactivekey(const char *key);
-t_status				ms_partenvarg(char *key, const char *arg, int *is_append,
-						size_t *eq_pos);
+t_status				ms_partenvarg(char *key, const char *arg,
+							int *is_append, size_t *eq_pos);
 
 // value
 int						ms_isactivevalue(const char *value);
@@ -125,9 +126,10 @@ char					*ms_substr_l(char const *s, char delimiter,
 char					*trim_valid_quotes(const char *s, t_shell *sh);
 char					*xitoa(int n, t_shell *shell);
 char					**xsplit(char *str, char sep, t_shell *shell);
-char						*xstrjoin(char const *s1, char const *s2,
+char					*xstrjoin(char const *s1, char const *s2,
 							t_shell *shell);
-size_t					ms_path_cleancpy(char *dst, const char *src, size_t siz);
+size_t					ms_path_cleancpy(char *dst, const char *src,
+							size_t siz);
 size_t					ms_path_cleancat(char *dst, const char *s, size_t siz);
 char					*xstrjoin3(char const *s1, char const *s2,
 							char const *s3, t_shell *shell);
