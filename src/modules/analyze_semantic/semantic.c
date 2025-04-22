@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 20:16:12 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 18:40:40 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,9 +246,12 @@ static int	handle_heredoc(t_lexical_token *tok, t_shell *sh)
 int	add_to_list(t_list **list, char **words, t_shell *sh)
 {
 	t_list			*new;
+	t_list			*next;
 	t_lexical_token	*tok;
 	size_t			i;
 
+	next = (*list)->next;
+	(*list)->next = NULL;
 	i = 1;
 	while (words[i])
 	{
@@ -262,6 +265,7 @@ int	add_to_list(t_list **list, char **words, t_shell *sh)
 			return (1);
 		ft_lstadd_back(list, new);
 	}
+	ft_lstadd_back(list, next);
 	return (0);
 }
 
@@ -338,22 +342,20 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 	char	*env_exp;
 	char	*wc_exp;
 	int		space_count;
-	int		quoted;
+	// int		quoted;
 
 	if (!data || !data->value)
 		return (1);
-	quoted = is_quoted(data->value);
 	env_exp = handle_env(data->value, sh);
+	// quoted = is_quoted2(data->value);
 	if (!env_exp)
 		return (1);
-	if (quoted)
-		wc_exp = env_exp;
-	else
-		wc_exp = handle_wildcard(env_exp, sh);
+		// wc_exp = 
+	wc_exp = handle_wildcard(env_exp, sh);
 	if (!wc_exp)
 		return (1);
-	if (quoted || ft_strnstr(wc_exp, "$(", ft_strlen(wc_exp))
-		|| !ft_strchr(wc_exp, ' '))
+	// if (quoted ||!ft_strchr(wc_exp, ' '))
+	if (!ft_strchr(wc_exp, ' '))
 		return (process_simple_token(data, wc_exp, idx, sh));
 	space_count = ft_count_words(wc_exp, ' ');
 	if (process_split_token(list, wc_exp, idx, sh))
