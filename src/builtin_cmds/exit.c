@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:43:58 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 10:44:52 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 10:47:52 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "builtin_cmds.h"
 
@@ -26,7 +26,8 @@ t_status	__exit(int argc, char **argv, t_shell *sh)
 		code = ft_strtoll(argv[1], &end, 10);
 		if (end != argv[1] + ft_strlen(argv[1]) || errno == ERANGE)
 		{
-			ft_dprintf(2, "minishell: exit: %s: numeric argument required\n", argv[1]);
+			ft_dprintf(2, "minishell: exit: %s: numeric argument required\n",
+				argv[1]);
 			code = E_NUMERIC;
 		}
 		else if (code > 255 || code < 0)
