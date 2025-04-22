@@ -13,6 +13,10 @@ t_token_type	get_one_char_op(int c);
 t_token_type	get_two_char_op(const char *s, size_t *len);
 char			*read_word(const char *line, size_t *pos, t_shell *shell);
 
+// Redirect validation functions
+int				validate_special_chars(const char *line, size_t *pos);
+int				validate_redirect_missing_arg(const char *line, size_t *pos);
+
 // Debugging functions
 void			debug_print_token_list(t_list *list);
 

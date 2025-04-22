@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 15:18:18 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/22 17:00:57 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,16 +218,12 @@ t_ast	*ast_pipeline(t_list **tok_lst, t_shell *shell)
 	{
 		if (node == NULL)
 		{
-			ft_dprintf(STDERR_FILENO,
-				"minishell: syntax error near unexpected token `|'\n");
 			return (NULL);
 		}
 		ms_listshift(tok_lst);
 		node = ast_new(NT_PIPE, node, ast_primary(tok_lst, shell), shell);
 		if (node->right == NULL)
 		{
-			ft_dprintf(STDERR_FILENO,
-				"minishell: syntax error near unexpected token `|'\n");
 			return (free_ast(&node), NULL);
 		}
 		tok = curr_token(tok_lst);

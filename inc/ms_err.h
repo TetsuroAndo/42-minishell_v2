@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/21 17:20:21 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 14:41:28 by tomsato          ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2025/04/22 17:00:33 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef MS_ES_H
 # define MS_ES_H
@@ -30,9 +31,9 @@
 /*--------------------------------------------------------------------------*/
 /*  Message literals (LANG=C originals)                                     */
 /*--------------------------------------------------------------------------*/
-# define ES_TOKEN "minishell: syntax error near unexpected token %s\n"
-# define ES_NEWLINE "syntax error near unexpected token 'newline'"
-# define ES_UNEXPECTED_EOF "unexpected EOF while looking for matching quote"
+# define ES_TOKEN "minishell: minishell: syntax error near unexpected token\n"
+# define ES_NEWLINE "minishell: syntax error near unexpected token 'newline'\n"
+# define ES_UNEXPECTED_EOF "minishell: unexpected EOF while looking for matching quote\n"
 # define ES_PERMISSION "minishell: %s: permission denied\n"
 # define ES_NO_SUCH_FOD "minishell: %s: No such file or directory\n"
 # define ES_IS_DIR "minishell: %s: Is a directory\n"

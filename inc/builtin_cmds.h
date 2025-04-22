@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:59:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 02:51:36 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 15:57:38 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ t_status		__unset(int argc, char **argv, t_shell *sh);
 t_status		__env(int argc, char **argv, t_shell *sh);
 t_status		__echo(int argc, char **argv, t_shell *sh);
 t_status		__exit(int argc, char **argv, t_shell *sh);
+t_status		__true(int argc, char **argv, t_shell *sh);
 
 /* dispatcher */
 int				path_launcher(char path[], const char *src, int mode, t_shell *sh);
