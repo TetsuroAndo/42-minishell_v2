@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 19:26:37 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/22 19:49:16 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ char	*handle_env(char *in, t_shell *sh)
 {
 	t_sem	s;
 	size_t	i;
-	size_t	depth;
 
 	s.buf = ms_strdup("", sh);
 	s.quote_state = QS_NONE;
@@ -83,22 +82,8 @@ char	*handle_env(char *in, t_shell *sh)
 		in += i;
 		if (*in == '$' && in[1] == '(' && s.quote_state != QS_SINGLE)
 		{
-			depth = 0;
-			s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, 1, sh), sh);
-			if (*in == '(')
-				++depth;
-			else if (*in == ')')
-				--depth;
-			++in;
-			while (*in && depth)
-			{
-				s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, 1, sh), sh);
-				if (*in == '(')
-					++depth;
-				else if (*in == ')')
-					--depth;
-				++in;
-			}
+			s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, 2, sh), sh);
+			in += 2;
 		}
 		else if (*in == '$' && s.quote_state != QS_SINGLE)
 			in += extract_varname(&s.buf, in + 1, sh) + 1;
