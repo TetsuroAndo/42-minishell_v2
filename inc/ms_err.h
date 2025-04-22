@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 17:20:21 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 14:25:21 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/22 14:41:28 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 /*--------------------------------------------------------------------------*/
 /*  Message literals (LANG=C originals)                                     */
 /*--------------------------------------------------------------------------*/
-# define ES_TOKEN "syntax error near unexpected token"
+# define ES_TOKEN "minishell: syntax error near unexpected token %s\n"
 # define ES_NEWLINE "syntax error near unexpected token 'newline'"
 # define ES_UNEXPECTED_EOF "unexpected EOF while looking for matching quote"
 # define ES_PERMISSION "minishell: %s: permission denied\n"
