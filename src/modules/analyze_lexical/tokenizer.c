@@ -6,16 +6,16 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:12 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 13:59:42 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 14:32:20 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_lex.h"
 
 /**
- * @brief 入力行内のリダイレクト記号とその引数の検証を行う
+ * @brief 入力行内の記号とその引数の検証を行う
  * 
- * @param shell 現在のシステム情報を保持するt_info構造体へのポインタ
+ * @param shell 現在のシステム情報を保持するt_shell構造体へのポインタ
  * @return 検証に成功した場合は1、エラーが発生した場合は0
  */
 static int	validate_redirects(t_shell *shell)
@@ -29,12 +29,14 @@ static int	validate_redirects(t_shell *shell)
 	pos = 0;
 	while (line[pos])
 	{
-		if (validate_redirect_special_chars(line, &pos, shell))
+		if (validate_special_chars(line, &pos))
 		{
+			shell->status = E_SYNTAX;
 			return (0);
 		}
-		if (validate_redirect_missing_arg(line, &pos, shell))
+		if (validate_redirect_missing_arg(line, &pos))
 		{
+			shell->status = E_SYNTAX;
 			return (0);
 		}
 		pos++;

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:28:57 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 13:43:08 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 14:42:21 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static const char	*get_redir_in_token_str(int count)
 
 static const char	*get_redir_out_token_str(int count)
 {
-	if (count == 2)
+	if (count == 0 || count == 2)
 		return ("newline");
 	else if (count == 3)
 		return (">");
@@ -36,10 +36,12 @@ static const char	*get_redir_out_token_str(int count)
 
 static const char	*get_pipe_token_str(int count)
 {
-	if (count == 3)
+	if (count == 2)
 		return ("|");
-	else
+	else if (count >= 3)
 		return ("||");
+	else
+		return ("newline");
 }
 
 static const char	*get_paren_semicolon_token_str(int count, int r, int l)
@@ -53,7 +55,7 @@ static const char	*get_paren_semicolon_token_str(int count, int r, int l)
 	return (";;");
 }
 
-void	print_error_message(t_token_type token_type, int count)
+int	print_lex_err(t_token_type token_type, int count)
 {
 	const char	*token_str;
 
@@ -75,4 +77,5 @@ void	print_error_message(t_token_type token_type, int count)
 		STDERR_FILENO);
 	ft_putstr_fd((char *)token_str, STDERR_FILENO);
 	ft_putstr_fd("'\n", STDERR_FILENO);
+	return (1);
 }

@@ -1,0 +1,145 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   validate_special_chars.c                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/22 12:38:31 by teando            #+#    #+#             */
+/*   Updated: 2025/04/22 14:40:26 by teando           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "mod_lex.h"
+
+/**
+ * @brief 連続したリダイレクト記号の数をカウントする
+ *
+ * @param line 入力行
+ * @param pos 現在の位置
+ * @param symbol カウントする記号
+ * @return int 連続した記号の数
+ */
+static int	cnt_symbols(const char *line, size_t pos, char symbol)
+{
+	int	count;
+
+	count = 0;
+	while (line[pos] && line[pos] == symbol)
+	{
+		count++;
+		pos++;
+	}
+	return (count);
+}
+
+/**
+ * @brief リダイレクト後の記号のエラーチェック
+ *
+ * @param line 入力行
+ * @param pos 現在の位置
+ * @return int 0: エラーなし, 1: エラーあり
+ */
+static int	check_redirect_symbol_error(const char *line, size_t *pos)
+{
+	size_t			temp_pos;
+
+	temp_pos = *pos + 1;
+	skip_spaces(line, &temp_pos);
+	if (line[temp_pos] == '|')
+	{
+		if (cnt_symbols(line, temp_pos, line[temp_pos]) > 1)
+			return (print_lex_err(TT_OR_OR, cnt_symbols(line, temp_pos, line[temp_pos])));
+		else
+			return (print_lex_err(TT_PIPE, cnt_symbols(line, temp_pos, line[temp_pos])));
+	}
+	else if (line[temp_pos] == '&')
+		return (print_lex_err(TT_AND_AND, cnt_symbols(line, temp_pos, line[temp_pos])));
+	else if (line[temp_pos] == ';')
+		return (print_lex_err(TT_SEMICOLON, cnt_symbols(line, temp_pos, line[temp_pos])));
+	else if (line[temp_pos] == '(' || line[temp_pos] == ')')
+	{
+		if (line[temp_pos] == '(')
+			return (print_lex_err(TT_LPAREN, 1));
+		return (print_lex_err(TT_RPAREN, 1));
+	}
+	return (0);
+}
+
+/**
+ * @brief 過剰なリダイレクト記号のエラーチェック
+ *
+ * @param symbol リダイレクト記号
+ * @param count 連続する記号の数
+ * @param pos 現在の位置へのポインタ
+ * @return int 0: エラーなし, 1: エラーあり
+ */
+static int	check_excessive_redirect(char symbol, int count, size_t *pos)
+{
+	t_token_type	op;
+
+	op = get_one_char_op(symbol);
+	if ((symbol == '<' && count > 2) || (symbol == '>' && count > 2) || 
+		(symbol == '|' && count > 2))
+	{
+		*pos += count;
+		return (print_lex_err(op, count));
+	}
+	return (0);
+}
+
+/**
+ * @brief セミコロンと括弧のエラーチェック
+ *
+ * @param line 入力行
+ * @param pos 現在の位置
+ * @return int 0: エラーなし, 1: エラーあり
+ */
+static int	validate_semicolon_paren(const char *line, size_t *pos)
+{
+	t_token_type	op;
+	int			count;
+	char		symbol;
+
+	op = get_one_char_op(line[*pos]);
+	if (op != TT_SEMICOLON && op != TT_LPAREN && op != TT_RPAREN)
+		return (0);
+	symbol = line[*pos];
+	count = cnt_symbols(line, *pos, symbol);
+	*pos += count;
+	if (symbol == ';')
+		return (print_lex_err(op, count));
+	else if (symbol == '(' || symbol == ')')
+		return (print_lex_err(op, 1));
+	return (0);
+}
+
+/**
+ * @brief 記号の後に特殊文字が続く場合のエラーチェック
+ *
+ * @param line 入力行
+ * @param pos 現在の位置
+ * @return int 0: エラーなし, 1: エラーあり
+ */
+int	validate_special_chars(const char *line, size_t *pos)
+{
+	t_token_type	op;
+	int				count;
+	char			symbol;
+
+	if (validate_semicolon_paren(line, pos))
+		return (1);
+	op = get_one_char_op(line[*pos]);
+	if (op != TT_REDIR_IN && op != TT_REDIR_OUT && op != TT_PIPE)
+		return (0);
+	symbol = line[*pos];
+	count = cnt_symbols(line, *pos, symbol);
+	if ((symbol == '>' && count == 1 && line[*pos + 1] == '|') ||
+		(symbol == '>' && count == 2 && line[*pos + 2] == '|'))
+		return (print_lex_err(TT_PIPE, count));
+	if (symbol == '>' && count == 1 && line[*pos + 1] == '&')
+		return (print_lex_err(TT_AND_AND, 0));
+	if ((symbol == '>' || symbol == '<') && count == 1 && check_redirect_symbol_error(line, pos))
+		return (1);
+	return (check_excessive_redirect(symbol, count, pos));
+}

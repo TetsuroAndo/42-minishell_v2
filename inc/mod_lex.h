@@ -14,9 +14,9 @@ t_token_type	get_two_char_op(const char *s, size_t *len);
 char			*read_word(const char *line, size_t *pos, t_shell *shell);
 
 // Redirect validation functions
-void			print_error_message(t_token_type token_type, int count);
-int				validate_redirect_special_chars(const char *line, size_t *pos, t_shell *shell);
-int				validate_redirect_missing_arg(const char *line, size_t *pos, t_shell *shell);
+int				print_lex_err(t_token_type token_type, int count);
+int				validate_special_chars(const char *line, size_t *pos);
+int				validate_redirect_missing_arg(const char *line, size_t *pos);
 
 // Debugging functions
 void			debug_print_token_list(t_list *list);
