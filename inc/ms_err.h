@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   ms_err.h                                           :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 17:20:21 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 18:19:28 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 12:44:31 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #ifndef MS_ES_H
 # define MS_ES_H
@@ -30,9 +30,9 @@
 /*--------------------------------------------------------------------------*/
 /*  Message literals (LANG=C originals)                                     */
 /*--------------------------------------------------------------------------*/
-# define ES_TOKEN "syntax error near unexpected token"
-# define ES_NEWLINE "syntax error near unexpected token 'newline'"
-# define ES_UNEXPECTED_EOF "unexpected EOF while looking for matching quote"
+# define ES_TOKEN "minishell: syntax error near unexpected token \n"
+# define ES_NEWLINE "minishell: syntax error near unexpected token 'newline'\n"
+# define ES_UNEXPECTED_EOF "minishell: unexpected EOF while looking for matching quote\n"
 # define ES_PERMISSION "permission denied"
 # define ES_NO_SUCH_FOD "minishell: %s: No such file or directory\n"
 # define ES_IS_DIR "Is a directory"
