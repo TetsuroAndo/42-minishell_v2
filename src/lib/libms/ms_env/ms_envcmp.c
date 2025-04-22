@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 22:21:37 by teando            #+#    #+#             */
-/*   Updated: 2025/04/14 00:32:25 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 09:55:37 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,14 @@
 
 int	ms_envcmp(void *data, void *key)
 {
-	char	ref[PATH_MAX];
+	const char		*env_str = (char *)data;
+	const size_t	key_len = ft_strlen((char *)key);
+	size_t			env_key_len;
 
-	ft_strlcpy(ref, (char *)key, PATH_MAX);
-    ft_strlcat(ref, "=", PATH_MAX);
-	return (ft_strncmp((char *)data, ref, ft_strlen(ref)));
+	env_key_len = 0;
+	while (env_str[env_key_len] && env_str[env_key_len] != '=')
+		env_key_len++;
+	if (key_len != env_key_len)
+		return (1);
+	return (ft_strncmp(env_str, (char *)key, key_len));
 }

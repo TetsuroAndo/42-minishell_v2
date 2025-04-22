@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 07:02:48 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 09:14:23 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ void					free_token(void *token);
 */
 // key
 int						ms_isactivekey(const char *key);
-t_status				ms_partenvarg(char *key, const char *arg);
+t_status				ms_partenvarg(char *key, const char *arg, int *is_append,
+						size_t *eq_pos);
 
 // value
 int						ms_isactivevalue(const char *value);

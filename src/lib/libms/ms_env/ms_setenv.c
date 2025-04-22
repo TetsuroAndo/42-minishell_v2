@@ -6,53 +6,97 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 22:13:52 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 07:56:20 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 10:05:06 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
 
-static char *ms_validate_value(const char *arg, t_shell *shell)
+static char	*ms_validate_value(const char *arg, t_shell *sh)
 {
-    char *value;
+	char	*value;
 
-    value = ms_substr_r(arg, '=', shell);
-    if (!ms_isactivevalue(value)) // $とその他の特殊記号が含まれている場合は$をエスケープ
-        value = ms_escapevalue(value, shell);
-    if (!value)
-        return (ms_strdup("", shell));
-    return (value);
+	value = ms_substr_r(arg, '=', sh);
+	if (!ms_isactivevalue(value))
+		value = ms_escapevalue(value, sh);
+	if (!value)
+		return (ms_strdup("", sh));
+	return (value);
 }
 
-
-t_status    ms_setenv(char *entry, t_shell *shell)
+static char	*ms_handle_append_env(const char *key, const char *arg,
+		size_t eq_pos, t_shell *sh)
 {
-    t_list *lst;
-    char key[PATH_MAX];
-    char *value;
-    
-    if (ms_partenvarg(key, entry) != E_NONE)
-        return (E_ENV_KEY);
-    value = ms_validate_value(entry, shell);
-    xfree((void **)&entry);
-    entry = xstrjoin3(key, "=", value, shell);
-    xfree((void **)&value);
-    lst = ft_list_find(shell->env_map, (void *)key, ms_envcmp);
-    if (lst)
-    {
-        xfree((void **)&lst->data);
-        lst->data = entry;
-        return (E_NONE);
-    }
-    lst = xlstnew(entry, shell);
-	ft_lstadd_back(&shell->env_map, lst);
-    return (E_NONE);
+	char	*exist_value;
+	char	*new_value;
+	char	*joined;
+	char	*new_entry;
+
+	(void)eq_pos;
+	exist_value = ms_getenv(key, sh);
+	new_value = ms_validate_value(arg, sh);
+	joined = xstrjoin_free2(exist_value, new_value, sh);
+	new_entry = xstrjoin3(key, "=", joined, sh);
+	xfree((void **)&joined);
+	return (new_entry);
 }
 
-t_status    ms_setenv_item(const char *key, const char *value, t_shell *shell)
+static char	*ms_handle_normal_env(const char *key, const char *arg,
+		size_t eq_pos, t_shell *sh)
 {
-    char *entry;
-    
-    entry = xstrjoin3(key, "=", value, shell);
-    return (ms_setenv(entry, shell));
+	char	*value;
+	char	*new_entry;
+
+	if (eq_pos == 0)
+	{
+		return (ms_strdup(key, sh));
+	}
+	else if (arg[eq_pos] == '\0')
+	{
+		value = ms_strdup("", sh);
+	}
+	else
+	{
+		value = ms_validate_value(arg, sh);
+	}
+	new_entry = xstrjoin3(key, "=", value, sh);
+	xfree((void **)&value);
+	return (new_entry);
+}
+
+t_status	ms_setenv(char *entry, t_shell *sh)
+{
+	t_list	*lst;
+	char	key[PATH_MAX];
+	char	*new_entry;
+	int		is_append;
+	size_t	eq_pos;
+
+	is_append = 0;
+	eq_pos = 0;
+	if (ms_partenvarg(key, entry, &is_append, &eq_pos) != E_NONE)
+		return (xfree((void **)&entry), E_ENV_KEY);
+	if (is_append)
+		new_entry = ms_handle_append_env(key, entry, eq_pos, sh);
+	else
+		new_entry = ms_handle_normal_env(key, entry, eq_pos, sh);
+	xfree((void **)&entry);
+	lst = ft_list_find(sh->env_map, (void *)key, ms_envcmp);
+	if (lst)
+	{
+		xfree((void **)&lst->data);
+		lst->data = new_entry;
+		return (E_NONE);
+	}
+	lst = xlstnew(new_entry, sh);
+	ft_lstadd_back(&sh->env_map, lst);
+	return (E_NONE);
+}
+
+t_status	ms_setenv_item(const char *key, const char *value, t_shell *sh)
+{
+	char	*entry;
+
+	entry = xstrjoin3(key, "=", value, sh);
+	return (ms_setenv(entry, sh));
 }
