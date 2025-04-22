@@ -1,28 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   is_builtin.c                                       :+:      :+:    :+:   */
+/*   true.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/17 16:20:12 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 15:56:09 by teando           ###   ########.fr       */
+/*   Created: 2025/04/22 15:56:51 by teando            #+#    #+#             */
+/*   Updated: 2025/04/22 15:58:10 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libms.h"
+#include "builtin_cmds.h"
 
-int	is_builtin(char *cmd)
+t_status	__true(int argc, char **argv, t_shell *sh)
 {
-	static const char	*tbl[] = {"echo", "cd", "pwd", "export", "unset", "env",
-			"exit", "true", NULL};
-	size_t				i;
-
-	i = 0;
-	while (tbl[i])
-	{
-		if (!ft_strcmp(cmd, tbl[i++]))
-			return (1);
-	}
-	return (0);
+	(void) argc;
+	(void) argv;
+	(void) sh;
+	return (E_NONE);
 }

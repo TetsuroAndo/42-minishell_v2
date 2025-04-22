@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:59:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 23:52:46 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 15:55:03 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int	builtin_launch(char **argv, t_shell *sh)
 		{"env", __env},
 		{"echo", __echo},
 		{"exit", __exit},
+		{"true", __true},
 		{NULL, NULL}
 	};
 	size_t							i;
