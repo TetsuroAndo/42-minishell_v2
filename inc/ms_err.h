@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   ms_err.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 17:20:21 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 18:19:28 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 14:25:21 by tomsato          ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #ifndef MS_ES_H
 # define MS_ES_H
@@ -33,9 +33,9 @@
 # define ES_TOKEN "syntax error near unexpected token"
 # define ES_NEWLINE "syntax error near unexpected token 'newline'"
 # define ES_UNEXPECTED_EOF "unexpected EOF while looking for matching quote"
-# define ES_PERMISSION "permission denied"
+# define ES_PERMISSION "minishell: %s: permission denied\n"
 # define ES_NO_SUCH_FOD "minishell: %s: No such file or directory\n"
-# define ES_IS_DIR "Is a directory"
+# define ES_IS_DIR "minishell: %s: Is a directory\n"
 # define ES_IS_FILE "Is a regular file"
 # define ES_NOT_DIR "Not a directory"
 # define ES_NOT_EXEC_FILE "cannot execute binary file: Exec format error"
