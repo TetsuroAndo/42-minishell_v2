@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 20:16:12 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 19:21:52 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ char	*handle_env(char *in, t_shell *sh)
 {
 	t_sem	s;
 	size_t	i;
-	size_t	depth;
 
 	s.buf = ms_strdup("", sh);
 	s.quote_state = QS_NONE;
@@ -83,22 +82,8 @@ char	*handle_env(char *in, t_shell *sh)
 		in += i;
 		if (*in == '$' && in[1] == '(' && s.quote_state != QS_SINGLE)
 		{
-			depth = 0;
-			s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, 1, sh), sh);
-			if (*in == '(')
-				++depth;
-			else if (*in == ')')
-				--depth;
-			++in;
-			while (*in && depth)
-			{
-				s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, 1, sh), sh);
-				if (*in == '(')
-					++depth;
-				else if (*in == ')')
-					--depth;
-				++in;
-			}
+			s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, 2, sh), sh);
+			in += 2;
 		}
 		else if (*in == '$' && s.quote_state != QS_SINGLE)
 			in += extract_varname(&s.buf, in + 1, sh) + 1;
@@ -352,8 +337,7 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 		wc_exp = handle_wildcard(env_exp, sh);
 	if (!wc_exp)
 		return (1);
-	if (quoted || ft_strnstr(wc_exp, "$(", ft_strlen(wc_exp))
-		|| !ft_strchr(wc_exp, ' '))
+	if (quoted || !ft_strchr(wc_exp, ' '))
 		return (process_simple_token(data, wc_exp, idx, sh));
 	space_count = ft_count_words(wc_exp, ' ');
 	if (process_split_token(list, wc_exp, idx, sh))

@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   validate_special.c                                 :+:      :+:    :+:   */
+/*   validate_special_chars.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 12:38:31 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 14:51:14 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 17:59:59 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "mod_lex.h"
 
@@ -31,30 +31,6 @@ static int	cnt_symbols(const char *line, size_t pos, char symbol)
 		pos++;
 	}
 	return (count);
-}
-
-/**
- * @brief セミコロンと括弧のエラーチェック
- *
- * @param line 入力行
- * @param pos 現在の位置
- * @return int 0: エラーなし, 1: エラーあり
- */
-static int	validate_semicolon_paren(const char *line, size_t *pos)
-{
-	t_token_type	op;
-	int				count;
-	char			symbol;
-
-	op = get_one_char_op(line[*pos]);
-	if (op != TT_SEMICOLON && op != TT_LPAREN && op != TT_RPAREN)
-		return (0);
-	symbol = line[*pos];
-	count = cnt_symbols(line, *pos, symbol);
-	*pos += count;
-	if (symbol == ';' || symbol == '(' || symbol == ')')
-		return (ft_putstr_fd(ES_TOKEN, STDERR_FILENO), 1);
-	return (0);
 }
 
 /**
@@ -108,8 +84,6 @@ int	validate_special_chars(const char *line, size_t *pos)
 	int				count;
 	char			symbol;
 
-	if (validate_semicolon_paren(line, pos))
-		return (1);
 	op = get_one_char_op(line[*pos]);
 	if (op != TT_REDIR_IN && op != TT_REDIR_OUT && op != TT_PIPE)
 		return (0);
