@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 14:11:19 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 17:00:57 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ simple_cmd redirections?
 */
 t_ast	*ast_cmd(t_list **tok_lst, t_shell *shell)
 {
-	t_ast			*node;
+	t_ast	*node;
 
 	node = ast_new(NT_CMD, NULL, NULL, shell);
 	node->args = args_new(shell);
@@ -269,10 +269,10 @@ t_ast	*ast_and_or(t_list **tok_lst, t_shell *shell)
 */
 t_ast	*ast_list(t_list **tok_lst, t_shell *shell)
 {
-	t_ast			*node;
+	t_ast	*node;
+
 	// t_ast			*right;
 	// t_lexical_token	*tok;
-
 	node = ast_and_or(tok_lst, shell);
 	if (!node)
 		return (NULL);
@@ -300,8 +300,6 @@ t_ast	*ast_list(t_list **tok_lst, t_shell *shell)
 
 const char	*tt_to_symbol(t_lexical_token token)
 {
-	if (token.type == TT_WORD)
-		return (token.value);
 	if (token.type == TT_REDIR_IN)
 		return (" `<'");
 	if (token.type == TT_APPEND)
@@ -342,9 +340,8 @@ t_status	mod_syn(t_shell *shell)
 		if (tok->type == TT_EOF)
 			return (E_NONE);
 		if ((tok->type & 0xFF00) != TM_REDIR)
-			ft_dprintf(STDERR_FILENO,
-				"minishell: syntax error near unexpected token%s\n",
-				tt_to_symbol(*tok));
+			ft_dprintf(STDERR_FILENO, ES_TOKEN, tt_to_symbol(*tok));
+		shell->status = E_SYNTAX;
 		return (free_ast(&ast), E_SYNTAX);
 	}
 	shell->ast = ast;

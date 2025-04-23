@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 09:39:13 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:44:19 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,8 +157,8 @@ static char	*prepare_delimiter(char *delim_raw, int *quoted, t_shell *sh)
 		delim = delim_noq;
 	else
 	{
-		delim = handle_env(delim_noq, sh);        /* new buffer              */
-		xfree((void **)&delim_noq);               /* ✅ release the old one  */
+		delim = handle_env(delim_noq, sh); /* new buffer              */
+		xfree((void **)&delim_noq);        /* ✅ release the old one  */
 	}
 	return (delim);
 }
@@ -231,9 +231,12 @@ static int	handle_heredoc(t_lexical_token *tok, t_shell *sh)
 int	add_to_list(t_list **list, char **words, t_shell *sh)
 {
 	t_list			*new;
+	t_list			*next;
 	t_lexical_token	*tok;
 	size_t			i;
 
+	next = (*list)->next;
+	(*list)->next = NULL;
 	i = 1;
 	while (words[i])
 	{
@@ -247,7 +250,29 @@ int	add_to_list(t_list **list, char **words, t_shell *sh)
 			return (1);
 		ft_lstadd_back(list, new);
 	}
+	if (next)
+		ft_lstadd_back(list, next);
 	return (0);
+}
+
+/**
+ * @brief トークンの値をクォート処理して更新する
+ *
+ * @param data トークンデータ
+ * @param val 処理する文字列
+ * @param sh シェル情報
+ * @return char* 処理後の文字列
+ */
+static char	*update_token_value(t_lexical_token *data, char *val, t_shell *sh)
+{
+	char	*trimmed;
+
+	trimmed = trim_valid_quotes(val, sh);
+	if (trimmed != val)
+		xfree((void **)&val);
+	xfree((void **)&data->value);
+	data->value = trimmed;
+	return (trimmed);
 }
 
 /**
@@ -262,15 +287,9 @@ int	add_to_list(t_list **list, char **words, t_shell *sh)
 static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 		t_shell *sh)
 {
-	char	*trimmed;
-
 	if (sh->debug & DEBUG_SEM)
 		printf("[process_simple_token] value: %s\n", val);
-	trimmed = trim_valid_quotes(val, sh);
-	if (trimmed != val)
-		xfree((void **)&val);
-	xfree((void **)&data->value);
-	data->value = trimmed;
+	update_token_value(data, val, sh);
 	if (idx == 0)
 		return (path_resolve(&data->value, sh));
 	return (E_NONE);
@@ -291,7 +310,7 @@ static int	process_split_token(t_list **list, char *value, int idx,
 {
 	char			**words;
 	t_lexical_token	*data;
-	int status;
+	int				status;
 
 	if (!list || !*list)
 		return (xfree((void **)&value), 1);
@@ -317,32 +336,103 @@ static int	process_split_token(t_list **list, char *value, int idx,
 	return (0);
 }
 
+/**
+ * @brief 入力文字列に含まれるトークン（単語）の数を数える
+ *
+ * - 空白（スペース・タブ・改行など）で区切られた非空白シーケンスを１トークンとする
+ * - シングルクォート(')またはダブルクォート(")で囲まれた部分は、
+ *   中の空白を含めて１トークンと扱う
+ *
+ * @param s 入力文字列（NULL終端）
+ * @return size_t トークンの数
+ */
+static size_t	count_aft_wc_tok(char *s)
+{
+	size_t	count;
+	char	*p;
+	char	q;
+
+	count = 0;
+	p = s;
+	while (*p)
+	{
+		while (*p && isspace((unsigned char)*p))
+			p++;
+		if (!*p)
+			break ;
+		if (*p == '"' || *p == '\'')
+		{
+			q = *p++;
+			while (*p && *p != q)
+				p++;
+			if (*p == q)
+				p++;
+			count++;
+		}
+		else
+		{
+			count++;
+			while (*p && !ft_isspace((unsigned char)*p) && *p != '"'
+				&& *p != '\'')
+				p++;
+		}
+	}
+	return (count);
+}
+
+static char	*shift_or_true(t_list **list, int idx, t_shell *sh)
+{
+	t_lexical_token	*tok;
+	char			*buf;
+	t_list			*to_del;
+
+	while (42)
+	{
+		tok = (t_lexical_token *)(*list)->data;
+		buf = handle_env(tok->value, sh);
+		if (!buf || *buf != '\0')
+			break ;
+		xfree((void **)&buf);
+		if ((*list)->next)
+		{
+			to_del = (*list)->next;
+			(*list)->data = copy_token(to_del->data, sh);
+			(*list)->next = to_del->next;
+			ft_lstdelone(to_del, free_token);
+		}
+		else
+		{
+			if (idx == 0)
+				buf = ms_strdup("true", sh);
+			else
+				buf = ms_strdup("", sh);
+			break ;
+		}
+	}
+	return (buf);
+}
+
 /* ===== 4. public: argv 用メイン関数 ============================ */
 int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 {
 	char	*env_exp;
 	char	*wc_exp;
 	int		space_count;
-	int		quoted;
 
 	if (!data || !data->value)
 		return (1);
-	quoted = is_quoted(data->value);
-	env_exp = handle_env(data->value, sh);
+	env_exp = shift_or_true(list, idx, sh);
 	if (!env_exp)
 		return (1);
-	if (quoted)
-		wc_exp = env_exp;
-	else
-		wc_exp = handle_wildcard(env_exp, sh);
+	wc_exp = handle_wildcard(env_exp, sh);
 	if (!wc_exp)
 		return (1);
-	if (quoted || !ft_strchr(wc_exp, ' '))
-		return (process_simple_token(data, wc_exp, idx, sh));
-	space_count = ft_count_words(wc_exp, ' ');
+	if (!ft_strchr(wc_exp, ' '))
+		return (process_simple_token((*list)->data, wc_exp, idx, sh));
+	space_count = count_aft_wc_tok(wc_exp);
 	if (process_split_token(list, wc_exp, idx, sh))
 		return (1);
-	while (space_count-- > 0 && *list && (*list)->next)
+	while (space_count-- > 1 && *list && (*list)->next)
 		*list = (*list)->next;
 	return (0);
 }
@@ -390,6 +480,31 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 	return (0);
 }
 
+static void	del_nul_node(t_list **list)
+{
+	t_list			*prev;
+	t_list			*cur;
+	t_lexical_token	*tok;
+
+	prev = NULL;
+	cur = *list;
+	while (cur)
+	{
+		tok = (t_lexical_token *)cur->data;
+		if (tok->value && tok->value[0] == '\0')
+			break ;
+		prev = cur;
+		cur = cur->next;
+	}
+	if (!cur)
+		return ;
+	if (prev)
+		prev->next = cur->next;
+	else
+		*list = cur->next;
+	ft_lstdelone(cur, free_token);
+}
+
 /**
  * @brief 抽象構文木からコマンドを生成する
  *
@@ -418,6 +533,7 @@ int	ast2cmds(t_ast *ast, t_shell *shell)
 		status = ms_lstiter(ast->args->argv, (void *)proc_argv, shell);
 		if (status != E_NONE)
 			return (status);
+		del_nul_node(&ast->args->argv);
 		status = ms_lstiter(ast->args->redr, (void *)proc_redr, shell);
 		if (status != E_NONE)
 			return (status);
