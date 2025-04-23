@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 09:14:23 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/22 20:12:10 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ typedef struct s_ast	t_ast;
 
 void					*xmalloc_gcshell(size_t size, t_shell *shell);
 void					*xmalloc_gcline(size_t size, t_shell *shell);
+char					*ms_strjoin_gcli(char const *s1, char const *s2, t_shell *sh);
+char					*ms_strjoin_gcli_f2(char const *s1, char const *s2, t_shell *sh);
 char					*ms_strndup_gcshell(const char *s, size_t n,
 							t_shell *sh);
 char					*ms_strdup_gcshell(const char *s, t_shell *sh);
