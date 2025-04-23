@@ -1,33 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   xmalloc_gc.c                                       :+:      :+:    :+:   */
+/*   ms_strdup_gcshell.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/19 22:53:41 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:19:37 by teando           ###   ########.fr       */
+/*   Created: 2025/04/23 15:46:13 by teando            #+#    #+#             */
+/*   Updated: 2025/04/23 16:16:11 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "core.h"
+#include "libms.h"
 
-void	*xmalloc_gcshell(size_t size, t_shell *shell)
+char	*ms_strndup_gcshell(const char *s, size_t n, t_shell *sh)
 {
-	void	*p;
+	char	*r;
+	size_t	len;
 
-	p = ft_gc_malloc(shell->gcsh, size);
-	if (!p)
-		shell_exit(shell, E_SYSTEM);
-	return (p);
+	if (!s)
+		return (NULL);
+	r = (char *)xmalloc_gcshell((n + 1) * sizeof(char), sh);
+	if (!r)
+		shell_exit(sh, E_SYSTEM);
+	len = ft_strnlen(s, n);
+	r[len] = '\0';
+	return (ft_memcpy(r, s, len));
 }
 
-void	*xmalloc_gcline(size_t size, t_shell *shell)
+char	*ms_strdup_gcshell(const char *s, t_shell *sh)
 {
-	void	*p;
-
-	p = ft_gc_malloc(shell->gcli, size);
-	if (!p)
-		shell_exit(shell, E_SYSTEM);
-	return (p);
+	return (ms_strndup_gcshell(s, ft_strlen(s), sh));
 }

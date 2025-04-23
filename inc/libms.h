@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 15:44:34 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/23 16:34:59 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,19 @@ void					*xmalloc_gcshell(size_t size, t_shell *shell);
 void					*xmalloc_gcline(size_t size, t_shell *shell);
 char					*ms_strjoin_gcli(char const *s1, char const *s2, t_shell *sh);
 char					*ms_strjoin_gcli_f2(char const *s1, char const *s2, t_shell *sh);
-char					*ms_strndup_gcshell(const char *s, size_t n,
+char					*ms_strjoin_gcshell(char const *s1, char const *s2, t_shell *sh);
+char					*ms_strjoin_gcshell_f2(char const *s1, char const *s2, t_shell *sh);
+char					*ms_strndup_gcli(const char *s, size_t n,
 							t_shell *sh);
+char					*ms_strdup_gcli(const char *s, t_shell *sh);
+char					*ms_strndup_gcshell(const char *s, size_t n, t_shell *sh);
 char					*ms_strdup_gcshell(const char *s, t_shell *sh);
+char					*ms_substr_gcli(char const *s, unsigned int start,
+							size_t len, t_shell *sh);
+char					*ms_substr_r_gcli(char const *s, char delimiter,
+							t_shell *sh);
+char					*ms_substr_l_gcli(const char *s, char delimiter,
+							t_shell *sh);
 char					*ms_substr_gcshell(char const *s, unsigned int start,
 							size_t len, t_shell *sh);
 char					*ms_substr_r_gcshell(char const *s, char delimiter,

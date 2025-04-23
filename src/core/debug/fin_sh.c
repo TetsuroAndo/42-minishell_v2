@@ -1,33 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   xmalloc_gc.c                                       :+:      :+:    :+:   */
+/*   fin_sh.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/19 22:53:41 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:19:37 by teando           ###   ########.fr       */
+/*   Created: 2025/04/23 16:23:34 by teando            #+#    #+#             */
+/*   Updated: 2025/04/23 16:25:00 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "core.h"
 
-void	*xmalloc_gcshell(size_t size, t_shell *shell)
+void	put_sh_final(t_shell *sh)
 {
-	void	*p;
-
-	p = ft_gc_malloc(shell->gcsh, size);
-	if (!p)
-		shell_exit(shell, E_SYSTEM);
-	return (p);
-}
-
-void	*xmalloc_gcline(size_t size, t_shell *shell)
-{
-	void	*p;
-
-	p = ft_gc_malloc(shell->gcli, size);
-	if (!p)
-		shell_exit(shell, E_SYSTEM);
-	return (p);
+	if (!sh)
+		return ;
+	ft_dprintf(STDERR_FILENO, "\n");
+	ft_dprintf(STDERR_FILENO, "[GC SHELL FREE]: %d | ", ft_gc_free_info(sh->gcsh));
+	ft_dprintf(STDERR_FILENO, "[GC LINE FREE]: %d\n", ft_gc_free_info(sh->gcsh));
 }
