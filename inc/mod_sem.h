@@ -38,6 +38,9 @@ t_status						mod_sem(t_shell *shell);
 void							debug_print_sem(t_ast *ast, t_shell *sh);
 
 char							*handle_wildcard(char *in, t_shell *sh);
+int								proc_redr_errs(t_lexical_token *data,
+									t_shell *sh);
+size_t							count_aft_wc_tok(char *s);
 
 // helper
 t_quote_state					is_quote_type(int c);
@@ -47,5 +50,8 @@ int								check_qs(int c, t_sem *sem);
 t_extract						*convert_ex(char *str, t_shell *shell);
 char							*replace_with_unquoted(char *str_ptr,
 									t_shell *shell);
+
+// split_with_quote
+char							**split_with_quote(char *str, t_shell *sh);
 
 #endif

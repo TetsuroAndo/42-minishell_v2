@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/24 01:11:41 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/24 02:33:01 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,10 @@ size_t	extract_varname(char **buf, char *in, t_shell *sh)
 	if (key && key[0] && key[1] == '\0')
 		*buf = xstrjoin_free(*buf, val, sh);
 	else
-		*buf = xstrjoin_free2(*buf, val, sh);
+	{
+		*buf = xstrjoin_free(*buf, val, sh);
+		xfree((void **)&val);
+	}
 	xfree((void **)&key);
 	return (klen);
 }
@@ -303,6 +306,7 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 	return (E_NONE);
 }
 
+
 /**
  * @brief 空白を含む文字列を分割して処理する
  *
@@ -327,7 +331,7 @@ static int	process_split_token(t_list **list, char *value, int idx,
 		return (xfree((void **)&value), 1);
 	if (sh->debug & DEBUG_SEM)
 		printf("[process_split_token] value: %s\n", value);
-	words = xsplit(value, ' ', sh);
+	words = split_with_quote(value, sh);
 	if (!words || !words[0])
 		return (xfree((void **)&value), ft_strs_clear(words), 1);
 	xfree((void **)&data->value);
@@ -354,7 +358,7 @@ static int	process_split_token(t_list **list, char *value, int idx,
  * @param s 入力文字列（NULL終端）
  * @return size_t トークンの数
  */
-static size_t	count_aft_wc_tok(char *s)
+size_t	count_aft_wc_tok(char *s)
 {
 	size_t	count;
 	char	*p;
@@ -445,6 +449,20 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 	return (0);
 }
 
+int	proc_redr_errs(t_lexical_token *data, t_shell *shell)
+{
+	if (!data->value)
+		return (E_SYSTEM);
+	if (!ft_strchr(data->value, '\n'))
+		return (E_NONE);
+	if (*data->value == '\0' || ft_strchr(data->value, ' '))
+		return (ft_dprintf(2, "minishell: ambiguous redirect\n"),
+			E_AMBIGUOUS_REDIR);
+	if (valid_redir(data, shell))
+		return (ft_dprintf(2, ES_PERMISSION, data->value), E_PERMISSION_DENIED);
+	return (E_NONE);
+}
+
 /**
  * @brief リダイレクトトー���ンを処理する
  *
@@ -464,21 +482,18 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 	(void)list;
 	aft_env = handle_env(data->value, sh);
 	if (!aft_env || *aft_env == '\0')
-		return (ft_dprintf(2, "minishell: ambiguous redirect\n"),
-			xfree((void **)&aft_env), 1);
+		return (0);
 	aft_wlc = handle_wildcard(aft_env, sh);
 	if (!aft_wlc)
-		return (ft_dprintf(2, "minishell: ambiguous redirect\n"), 1);
+		return (0);
 	aft_unq = replace_with_unquoted(aft_wlc, sh);
 	if (aft_unq != aft_wlc)
 		xfree((void **)&aft_wlc);
-	if (!ft_strchr(aft_unq, '\n') && (!aft_unq || *aft_unq == '\0' || ft_strchr(aft_unq, ' ')))
-		return (ft_dprintf(2, "minishell: %s: ambiguous redirect\n",
-				aft_unq ? aft_unq : ""), xfree((void **)&aft_unq), 1);
+	if (!ft_strchr(aft_unq, '\n') && (!aft_unq || *aft_unq == '\0'
+			|| ft_strchr(aft_unq, ' ')))
+		return (0);
 	xfree((void **)&data->value);
 	data->value = aft_unq;
-	if (valid_redir(data, sh))
-		return (1);
 	return (0);
 }
 

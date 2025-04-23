@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 19:22:35 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/24 02:00:59 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,12 @@ int	exe_run(t_ast *node, t_shell *sh)
 static int	prepare_cmd_args(t_ast *node, char ***argv, int *flag, t_shell *sh)
 {
 	struct stat	sb;
+	t_status status;
 
 	*flag = 0;
-	if (handle_redr(node->args, sh))
-		return (1);
+	status = handle_redr(node->args, sh);
+	if (status)
+		return (status);
 	*argv = toklist_to_argv(node->args->argv, sh);
 	if (!*argv)
 	{
@@ -258,10 +260,8 @@ int	exe_bool(t_ast *node, t_shell *sh)
 	int	run_right;
 
 	if (sh->env_updated)
-	{
 		mod_sem(sh);
-		sh->env_updated = 0;
-	}
+	sh->env_updated = 0;
 	st_left = exe_run(node->left, sh);
 	update_shell_status(st_left, sh);
 	run_right = 0;
@@ -273,7 +273,8 @@ int	exe_bool(t_ast *node, t_shell *sh)
 		run_right = 1;
 	if (run_right)
 	{
-		mod_sem(sh);
+		if (sh->env_updated)
+			mod_sem(sh);
 		sh->env_updated = 0;
 		return (exe_run(node->right, sh));
 	}
@@ -384,6 +385,9 @@ int	handle_redr(t_args *args, t_shell *sh)
 	while (lst)
 	{
 		tok = lst->data;
+		result = proc_redr_errs(tok, sh);
+		if (result)
+			return (result);
 		if (tok->type == TT_REDIR_IN)
 			result = handle_input_redirection(tok, args, sh);
 		else if (tok->type == TT_REDIR_OUT)
