@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:53:22 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/23 19:22:35 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -312,17 +312,14 @@ int	heredoc_into_fd(char *body, t_args *args, t_shell *sh)
 
 	if (xpipe(hd, sh))
 		return (1);
-	/* write() は短い本文なら一括送信で十分。失敗時はシェルごと死ぬ想定。*/
 	if (write(hd[1], body, ft_strlen(body)) == -1 || close(hd[1]) == -1)
 	{
-		perror("heredoc write");
 		close(hd[0]);
 		return (1);
 	}
-	/* 直近の < や << が勝つ POSIX 仕様を踏襲。 */
 	if (args->fds[0] > 2)
 		xclose(&args->fds[0]);
-	args->fds[0] = hd[0]; /* read end を stdin 置換候補に */
+	args->fds[0] = hd[0];
 	return (0);
 }
 
@@ -337,6 +334,14 @@ static int	handle_input_redirection(t_lexical_token *tok, t_args *args,
 	{
 		if (heredoc_into_fd(tok->value, args, sh))
 			return (1);
+	}
+	else if (tok->value && tok->value[0] == '\0')
+	{
+		if (args->fds[0] > 2)
+			xclose(&args->fds[0]);
+		args->fds[0] = open("/dev/null", O_RDONLY);
+		if (args->fds[0] == -1)
+			return (perror("/dev/null"), 1);
 	}
 	else
 	{
