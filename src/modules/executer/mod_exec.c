@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mod_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 07:42:17 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/23 16:00:36 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,10 @@ static int	execute_external_cmd(char **argv, t_ast *node, t_shell *sh)
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		env = ft_list_to_strs(sh->env_map);
-		if (!*env || !(*env)[0])
-			return (ft_strs_clear(env), 127);
+		if (!*env)
+			return (ft_strs_clear(env), E_SYSTEM);
+		if (!(*env)[0])
+			return (ft_strs_clear(env), E_NONE);
 		execve(argv[0], argv, env);
 		perror(argv[0]);
 		exit(127);
