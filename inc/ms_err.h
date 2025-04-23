@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/23 22:41:42 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/23 22:46:53 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@
 # define ES_NOT_EXEC_FILE "cannot execute binary file: Exec format error"
 # define ES_TEXT_BUSY "Text file busy"
 # define ES_CMD_NOT_FOUND "minishell: %s: command not found\n"
-# define ES_AMBIGUOUS "minishell: ambiguous redirect\n"
+# define ES_AMBIGUOUS "ambiguous redirect"
 # define ES_NUMERIC "numeric argument required"
 # define ES_TOO_MANY_ARGS "too many arguments"
 # define ES_NAVI "not a valid identifier"
