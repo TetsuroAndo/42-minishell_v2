@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 16:23:34 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:25:00 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/23 19:44:24 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,6 @@ void	put_sh_final(t_shell *sh)
 	if (!sh)
 		return ;
 	ft_dprintf(STDERR_FILENO, "\n");
-	ft_dprintf(STDERR_FILENO, "[GC SHELL FREE]: %d | ", ft_gc_free_info(sh->gcsh));
-	ft_dprintf(STDERR_FILENO, "[GC LINE FREE]: %d\n", ft_gc_free_info(sh->gcsh));
+	ft_dprintf(STDERR_FILENO, "[GC SH NODE]: %d | [GC LINE NODE]: %d\n", ft_lstsize(sh->gcsh), ft_lstsize(sh->gcli));
+	ft_dprintf(STDERR_FILENO, "[GC SH FREE]: %d | [GC LINE FREE]: %d\n", ft_gc_free_info(sh->gcsh), ft_gc_free_info(sh->gcli));
 }

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 15:44:19 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/23 21:45:28 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ size_t	extract_varname(char **buf, char *in, t_shell *sh)
 	char	*val;
 
 	klen = 1;
+	if (sh->debug & DEBUG_SEM)
+		ft_dprintf(STDERR_FILENO, "[EXPAND_VAR]: %s [POINTER]: %p\n", in, in);
 	while (ft_isalnum_under(in[klen]))
 		++klen;
 	key = ms_substr(in, 0, klen, sh);
@@ -89,9 +91,10 @@ char	*handle_env(char *in, t_shell *sh)
 			in += extract_varname(&s.buf, in + 1, sh) + 1;
 		else if (ft_isbackslash(*in) && s.quote_state != QS_SINGLE)
 		{
-			if (ft_isbackslash(in[1]) || (in[1] == '*') || (in[1] == '\'')
-					|| (in[1] == '"'))
+			if (in[1] == '\''|| in[1] == '"')
+			{
 				s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, 2, sh), sh);
+			}
 			else
 			{
 				s.buf = xstrjoin_free2(s.buf, ms_substr(in + 1, 0, 1, sh), sh);
@@ -255,41 +258,18 @@ int	add_to_list(t_list **list, char **words, t_shell *sh)
 	return (0);
 }
 
-/**
- * @brief トークンの値をクォート処理して更新する
- *
- * @param data トークンデータ
- * @param val 処理する文字列
- * @param sh シェル情報
- * @return char* 処理後の文字列
- */
-static char	*update_token_value(t_lexical_token *data, char *val, t_shell *sh)
+static int	process_simple_token(t_lexical_token *data, char *val, int idx,
+		t_shell *sh)
 {
 	char	*trimmed;
 
+	if (sh->debug & DEBUG_SEM)
+		ft_dprintf(STDERR_FILENO, "[proc_simple_token]: %s [POINTER]: %p\n", val, val);
 	trimmed = trim_valid_quotes(val, sh);
 	if (trimmed != val)
 		xfree((void **)&val);
 	xfree((void **)&data->value);
 	data->value = trimmed;
-	return (trimmed);
-}
-
-/**
- * @brief 空白を含まない文字列を処理する
- *
- * @param data トークンデータ
- * @param value 処理する文字列
- * @param idx 引数の位置（0はコマンド）
- * @param sh シェル情報
- * @return int 成功時0、失敗時1
- */
-static int	process_simple_token(t_lexical_token *data, char *val, int idx,
-		t_shell *sh)
-{
-	if (sh->debug & DEBUG_SEM)
-		printf("[process_simple_token] value: %s\n", val);
-	update_token_value(data, val, sh);
 	if (idx == 0)
 		return (path_resolve(&data->value, sh));
 	return (E_NONE);
@@ -305,7 +285,7 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
  * @param sh シェル情報
  * @return int 成功時0、失敗時1
  */
-static int	process_split_token(t_list **list, char *value, int idx,
+static int	process_split_token(t_list **list, char *val, int idx,
 		t_shell *sh)
 {
 	char			**words;
@@ -313,15 +293,13 @@ static int	process_split_token(t_list **list, char *value, int idx,
 	int				status;
 
 	if (!list || !*list)
-		return (xfree((void **)&value), 1);
+		return (xfree((void **)&val), 1);
 	data = (t_lexical_token *)(*list)->data;
 	if (!data)
-		return (xfree((void **)&value), 1);
+		return (xfree((void **)&val), 1);
 	if (sh->debug & DEBUG_SEM)
-		printf("[process_split_token] value: %s\n", value);
-	words = xsplit(value, ' ', sh);
-	if (!words || !words[0])
-		return (xfree((void **)&value), ft_strs_clear(words), 1);
+		ft_dprintf(STDERR_FILENO, "[PROC_SPLIT_TOKEN]: %s [POINTER]: %p\n", val, val);
+	words = xsplit(val, ' ', sh);
 	xfree((void **)&data->value);
 	data->value = ms_strdup(words[0], sh);
 	if (add_to_list(list, words, sh))
@@ -332,8 +310,7 @@ static int	process_split_token(t_list **list, char *value, int idx,
 		if (status != E_NONE)
 			return (ft_strs_clear(words), status);
 	}
-	ft_strs_clear(words);
-	return (0);
+	return (ft_strs_clear(words), 0);
 }
 
 /**

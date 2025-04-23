@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:25:22 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:01:05 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/23 17:49:36 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ t_shell	*shell_init(char **env, char *bin_name)
 		shell_exit(sh, E_SYSTEM);
 	}
 	sh->env_updated = 0;
-	sh->gcsh = NULL;
-	sh->gcli = NULL;
+	sh->gcsh = xlstnew(NULL, sh);
+	sh->gcli = xlstnew(NULL, sh);
 	sh->status = E_NONE;
 	sh->exit_flag = 0;
 	sh->interactive = isatty(STDIN_FILENO);

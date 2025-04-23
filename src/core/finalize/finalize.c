@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:10 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:25:15 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/23 16:53:55 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ static void	free_env_spc(char **env_spc)
  */
 void	shell_cleanup(t_shell *shell)
 {
+	if (shell->debug & DEBUG_CORE)
+		put_sh_final(shell);
 	if (!shell)
 		return ;
 	line_init(shell);
@@ -56,8 +58,6 @@ void	shell_cleanup(t_shell *shell)
 		xclose(&shell->stdout_backup);
 	if (shell->stderr_backup != -1)
 		xclose(&shell->stderr_backup);
-	if (shell->debug & DEBUG_CORE)
-		put_sh_final(shell);
 }
 
 /**

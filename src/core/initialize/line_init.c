@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:43:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:39:40 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/23 19:31:58 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	line_init(t_shell *sh)
 		ft_lstclear(&sh->token_list, free_token);
 	if (sh->ast)
 		free_ast(&sh->ast);
-	ft_lstclear(&sh->gcli, free);
+	ft_gc_free_data(sh->gcsh);
 	xfree((void **)&sh->env_spc['?']);
 	if (g_signal_status == SIGINT)
 		sh->status = E_SIGINT;
