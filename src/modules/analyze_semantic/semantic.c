@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 21:40:04 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/23 16:39:06 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -463,8 +463,6 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 		return (ft_dprintf(2, "minishell: ambiguous redirect\n"),
 			xfree((void **)&aft_env), 1);
 	aft_wlc = handle_wildcard(aft_env, sh);
-	if (aft_wlc != aft_env) /* ポインタが別なら安全に free */
-		xfree((void **)&aft_env);
 	if (!aft_wlc)
 		return (ft_dprintf(2, "minishell: ambiguous redirect\n"), 1);
 	aft_unq = replace_with_unquoted(aft_wlc, sh);

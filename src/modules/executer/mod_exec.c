@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:00:36 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/23 16:53:22 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,15 +75,25 @@ int	exe_run(t_ast *node, t_shell *sh)
 /*                        NT_CMD                             */
 /* ========================================================= */
 
-static int	prepare_cmd_args(t_ast *node, char ***argv, t_shell *sh)
+static int	prepare_cmd_args(t_ast *node, char ***argv, int *flag, t_shell *sh)
 {
 	struct stat	sb;
 
+	*flag = 0;
 	if (handle_redr(node->args, sh))
 		return (1);
 	*argv = toklist_to_argv(node->args->argv, sh);
-	if (!*argv || !(*argv)[0])
-		return (127);
+	if (!*argv)
+	{
+		*flag = 1;
+		return (E_SYSTEM);
+	}
+	if (!(*argv)[0])
+	{
+		*flag = 1;
+		return (E_NONE);
+	}
+	return (E_NONE);
 	if (stat((*argv)[0], &sb) == 0 && S_ISDIR(sb.st_mode))
 		return (E_IS_DIR);
 	return (0);
@@ -141,11 +151,14 @@ int	exe_cmd(t_ast *node, t_shell *sh)
 	t_fdbackup	bk_in;
 	t_fdbackup	bk_out;
 	int			status;
+	int			flag;
 
+	flag = 0;
+	argv = NULL;
 	if (!node || node->ntype != NT_CMD)
 		return (1);
-	status = prepare_cmd_args(node, &argv, sh);
-	if (status)
+	status = prepare_cmd_args(node, &argv, &flag, sh);
+	if (flag)
 		return (status);
 	setup_redirections(node, &bk_in, &bk_out, sh);
 	if (is_builtin(argv[0]))
