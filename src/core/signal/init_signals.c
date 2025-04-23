@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_signals.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:45:12 by teando            #+#    #+#             */
-/*   Updated: 2025/04/10 23:17:23 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/24 01:33:55 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,14 @@ static void sigint_handler(int signum)
  *
  * @param signum シグナル番号
  */
-static void sigquit_handler(int signum)
-{
-    if (signum == SIGQUIT)
-    {
-        g_signal_status = SIGQUIT;
-        rl_done = 1;
-    }
-}
+// static void sigquit_handler(int signum)
+// {
+//     if (signum == SIGQUIT)
+//     {
+//         g_signal_status = SIGQUIT;
+//         rl_done = 1;
+//     }
+// }
 
 /**
  * @brief シグナルハンドラーの初期化
@@ -61,7 +61,7 @@ int init_signals(void)
     sigemptyset(&sa_int.sa_mask);
     if (sigaction(SIGINT, &sa_int, NULL) == -1)
         return (-1);
-    sa_quit.sa_handler = sigquit_handler;
+    sa_quit.sa_handler = SIG_IGN;
     sa_quit.sa_flags = SA_RESTART;
     sigemptyset(&sa_quit.sa_mask);
     if (sigaction(SIGQUIT, &sa_quit, NULL) == -1)
