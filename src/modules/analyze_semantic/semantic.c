@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:39:06 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/23 19:25:09 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,18 +148,10 @@ int	valid_redir(t_lexical_token *d, t_shell *sh)
  */
 static char	*prepare_delimiter(char *delim_raw, int *quoted, t_shell *sh)
 {
-	char	*delim_noq;
 	char	*delim;
 
 	*quoted = is_quoted(delim_raw);
-	delim_noq = trim_valid_quotes(delim_raw, sh);
-	if (*quoted)
-		delim = delim_noq;
-	else
-	{
-		delim = handle_env(delim_noq, sh); /* new buffer              */
-		xfree((void **)&delim_noq);        /* ✅ release the old one  */
-	}
+	delim = trim_valid_quotes(delim_raw, sh);
 	return (delim);
 }
 
@@ -180,6 +172,14 @@ static char	*read_heredoc_body(char *delim, int quoted, t_shell *sh)
 	while (42)
 	{
 		line = read_command_line("> ");
+		if (!line)
+		{
+			if (g_signal_status != SIGINT)
+				ft_dprintf(STDERR_FILENO,
+					"minishell: warning: here-document delimited by end-of-file\n");
+			xfree((void **)&line);
+			break ;
+		}
 		if (g_signal_status == SIGINT)
 		{
 			sh->status = E_SIGINT;
@@ -217,8 +217,8 @@ static int	handle_heredoc(t_lexical_token *tok, t_shell *sh)
 	delim_raw = tok->value;
 	delim = prepare_delimiter(delim_raw, &quoted, sh);
 	body = read_heredoc_body(delim, quoted, sh);
-	if (!quoted)
-		xfree((void **)&delim);
+	if (!body)
+		body = ms_strdup("", sh);
 	tok->value = body;
 	tok->type = TT_REDIR_IN;
 	return (0);
