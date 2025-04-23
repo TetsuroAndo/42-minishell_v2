@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   finalize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:10 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 12:25:58 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/23 21:54:43 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void	shell_cleanup(t_shell *shell)
 		xclose(&shell->stdout_backup);
 	if (shell->stderr_backup != -1)
 		xclose(&shell->stderr_backup);
+	rl_clear_history();
 }
 
 /**
