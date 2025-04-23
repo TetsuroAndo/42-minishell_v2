@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_err.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/22 17:00:33 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/23 15:34:55 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 /*--------------------------------------------------------------------------*/
 /*  Message literals (LANG=C originals)                                     */
 /*--------------------------------------------------------------------------*/
-# define ES_TOKEN "minishell: minishell: syntax error near unexpected token\n"
+# define ES_TOKEN "minishell: syntax error near unexpected token\n"
 # define ES_NEWLINE "minishell: syntax error near unexpected token 'newline'\n"
 # define ES_UNEXPECTED_EOF "minishell: unexpected EOF while looking for matching quote\n"
 # define ES_PERMISSION "minishell: %s: permission denied\n"
