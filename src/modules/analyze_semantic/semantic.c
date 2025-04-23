@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 19:25:09 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/23 23:36:33 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,7 @@ static char	*prepare_delimiter(char *delim_raw, int *quoted, t_shell *sh)
 
 	*quoted = is_quoted(delim_raw);
 	delim = trim_valid_quotes(delim_raw, sh);
+	xfree((void **)&delim_raw);
 	return (delim);
 }
 
@@ -219,6 +220,7 @@ static int	handle_heredoc(t_lexical_token *tok, t_shell *sh)
 	body = read_heredoc_body(delim, quoted, sh);
 	if (!body)
 		body = ms_strdup("", sh);
+	xfree((void **)&delim);
 	tok->value = body;
 	tok->type = TT_REDIR_IN;
 	return (0);

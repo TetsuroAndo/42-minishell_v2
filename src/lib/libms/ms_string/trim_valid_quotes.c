@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   trim_valid_quotes.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 23:57:33 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 19:58:20 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/23 23:34:56 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,8 @@ char	*trim_valid_quotes(const char *s, t_shell *sh)
 
 	i = 0;
 	j = 0;
-	quote = 0;   /* いま内側で効いているクォート種別 ('"`) */
-	prev = '\0'; /* 直前文字、エスケープ判定用            */
+	quote = 0;
+	prev = '\0';
 	if (!s)
 		return (ms_strdup("", sh));
 	out = xmalloc(ft_strlen(s) + 1, sh);
