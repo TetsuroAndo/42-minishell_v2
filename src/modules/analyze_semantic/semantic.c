@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/24 02:33:01 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/24 17:58:39 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -334,6 +334,7 @@ static int	process_split_token(t_list **list, char *value, int idx,
 	words = split_with_quote(value, sh);
 	if (!words || !words[0])
 		return (xfree((void **)&value), ft_strs_clear(words), 1);
+	xfree((void **)&value);
 	xfree((void **)&data->value);
 	data->value = ms_strdup(words[0], sh);
 	if (add_to_list(list, words, sh))
