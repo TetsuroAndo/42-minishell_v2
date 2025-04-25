@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 06:26:03 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:25:29 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/25 13:00:17 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,6 @@ void	put_sh_init(t_shell *sh);
 void	put_line_info(t_shell *sh);
 void	put_line_after(t_shell *sh);
 void	put_line_before(t_shell *sh);
-void	put_sh_final(t_shell *sh);
+void	put_sh_final(t_shell *sh, int status);
 
 #endif

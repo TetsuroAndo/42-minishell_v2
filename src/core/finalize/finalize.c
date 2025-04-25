@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:10 by teando            #+#    #+#             */
-/*   Updated: 2025/04/25 11:04:14 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/25 13:00:00 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ static void	free_env_spc(char **env_spc)
  */
 void	shell_cleanup(t_shell *shell)
 {
-	if (shell->debug & DEBUG_CORE)
-		put_sh_final(shell);
 	if (!shell)
 		return ;
 	line_init(shell);
@@ -69,7 +67,7 @@ void	shell_cleanup(t_shell *shell)
 void	shell_exit(t_shell *shell, int status)
 {
 	if (shell->debug & DEBUG_CORE)
-		ft_dprintf(STDERR_FILENO, "[SHELL_EXIT_STATUS]: %d\n", status);
+		put_sh_final(shell, status);
 	/*statusによっては終了までする必要ないときがある気がする*/
 	shell_cleanup(shell);
 	xfree((void **)&shell);
