@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:10 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:53:55 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/25 09:50:27 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ void	shell_cleanup(t_shell *shell)
 		xclose(&shell->stdout_backup);
 	if (shell->stderr_backup != -1)
 		xclose(&shell->stderr_backup);
+	rl_clear_history();
 }
 
 /**

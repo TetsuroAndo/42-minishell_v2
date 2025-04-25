@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 21:45:28 by teando           ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2025/04/25 09:49:46 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "mod_sem.h"
 
@@ -55,7 +56,10 @@ size_t	extract_varname(char **buf, char *in, t_shell *sh)
 	if (key && key[0] && key[1] == '\0')
 		*buf = xstrjoin_free(*buf, val, sh);
 	else
-		*buf = xstrjoin_free2(*buf, val, sh);
+	{
+		*buf = xstrjoin_free(*buf, val, sh);
+		xfree((void **)&val);
+	}
 	xfree((void **)&key);
 	return (klen);
 }
@@ -123,6 +127,8 @@ int	valid_redir(t_lexical_token *d, t_shell *sh)
 	int	fd;
 
 	(void)sh;
+	if (d->type == TT_REDIR_IN && ft_strchr(d->value, '\n'))
+		return (0);
 	if (d->type == TT_REDIR_IN)
 		fd = open(d->value, O_RDONLY);
 	else if (d->type == TT_REDIR_OUT)
@@ -151,18 +157,11 @@ int	valid_redir(t_lexical_token *d, t_shell *sh)
  */
 static char	*prepare_delimiter(char *delim_raw, int *quoted, t_shell *sh)
 {
-	char	*delim_noq;
 	char	*delim;
 
 	*quoted = is_quoted(delim_raw);
-	delim_noq = trim_valid_quotes(delim_raw, sh);
-	if (*quoted)
-		delim = delim_noq;
-	else
-	{
-		delim = handle_env(delim_noq, sh); /* new buffer              */
-		xfree((void **)&delim_noq);        /* ✅ release the old one  */
-	}
+	delim = trim_valid_quotes(delim_raw, sh);
+	xfree((void **)&delim_raw);
 	return (delim);
 }
 
@@ -178,11 +177,21 @@ static char	*read_heredoc_body(char *delim, int quoted, t_shell *sh)
 {
 	char	*body;
 	char	*line;
+	char	*q_body;
 
+	q_body = NULL;
 	body = ms_strdup("", sh);
 	while (42)
 	{
 		line = read_command_line("> ");
+		if (!line)
+		{
+			if (g_signal_status != SIGINT)
+				ft_dprintf(STDERR_FILENO,
+					"minishell: warning: here-document delimited by end-of-file\n");
+			xfree((void **)&line);
+			break ;
+		}
 		if (g_signal_status == SIGINT)
 		{
 			sh->status = E_SIGINT;
@@ -194,11 +203,13 @@ static char	*read_heredoc_body(char *delim, int quoted, t_shell *sh)
 			xfree((void **)&line);
 			break ;
 		}
-		if (!quoted)
-			body = xstrjoin_free2(body, handle_env(line, sh), sh);
-		else
-			body = xstrjoin_free2(body, line, sh);
+		body = xstrjoin_free2(body, line, sh);
 		body = xstrjoin_free(body, "\n", sh);
+	}
+	if (quoted)
+	{
+		q_body = ft_strjoin3("\'", body, "\'");
+		return (xfree((void **)&body), q_body);
 	}
 	return (body);
 }
@@ -220,8 +231,9 @@ static int	handle_heredoc(t_lexical_token *tok, t_shell *sh)
 	delim_raw = tok->value;
 	delim = prepare_delimiter(delim_raw, &quoted, sh);
 	body = read_heredoc_body(delim, quoted, sh);
-	if (!quoted)
-		xfree((void **)&delim);
+	if (!body)
+		body = ms_strdup("", sh);
+	xfree((void **)&delim);
 	tok->value = body;
 	tok->type = TT_REDIR_IN;
 	return (0);
@@ -275,6 +287,7 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 	return (E_NONE);
 }
 
+
 /**
  * @brief 空白を含む文字列を分割して処理する
  *
@@ -299,7 +312,9 @@ static int	process_split_token(t_list **list, char *val, int idx,
 		return (xfree((void **)&val), 1);
 	if (sh->debug & DEBUG_SEM)
 		ft_dprintf(STDERR_FILENO, "[PROC_SPLIT_TOKEN]: %s [POINTER]: %p\n", val, val);
-	words = xsplit(val, ' ', sh);
+	words = split_with_quote(val, sh);
+	if (!words || !words[0])
+		return (xfree((void **)&val), ft_strs_clear(words), 1);
 	xfree((void **)&data->value);
 	data->value = ms_strdup(words[0], sh);
 	if (add_to_list(list, words, sh))
@@ -323,7 +338,7 @@ static int	process_split_token(t_list **list, char *val, int idx,
  * @param s 入力文字列（NULL終端）
  * @return size_t トークンの数
  */
-static size_t	count_aft_wc_tok(char *s)
+size_t	count_aft_wc_tok(char *s)
 {
 	size_t	count;
 	char	*p;
@@ -414,6 +429,20 @@ int	proc_argv(t_list **list, t_lexical_token *data, int idx, t_shell *sh)
 	return (0);
 }
 
+int	proc_redr_errs(t_lexical_token *data, t_shell *shell)
+{
+	if (!data->value)
+		return (E_SYSTEM);
+	if (!ft_strchr(data->value, '\n'))
+		return (E_NONE);
+	if (*data->value == '\0' || ft_strchr(data->value, ' '))
+		return (ft_dprintf(2, "minishell: ambiguous redirect\n"),
+			E_AMBIGUOUS_REDIR);
+	if (valid_redir(data, shell))
+		return (ft_dprintf(2, ES_PERMISSION, data->value), E_PERMISSION_DENIED);
+	return (E_NONE);
+}
+
 /**
  * @brief リダイレクトトー���ンを処理する
  *
@@ -431,29 +460,20 @@ int	proc_redr(t_list **list, t_lexical_token *data, int count, t_shell *sh)
 
 	(void)count;
 	(void)list;
-	if (!data || !data->value)
-		return (1);
-	if (data->type == TT_HEREDOC)
-		return (handle_heredoc(data, sh)); // heredoc は専用ルートで処理する
 	aft_env = handle_env(data->value, sh);
 	if (!aft_env || *aft_env == '\0')
-		return (ft_dprintf(2, "minishell: ambiguous redirect\n"),
-			xfree((void **)&aft_env), 1);
+		return (0);
 	aft_wlc = handle_wildcard(aft_env, sh);
-	if (aft_wlc != aft_env) /* ポインタが別なら安全に free */
-		xfree((void **)&aft_env);
 	if (!aft_wlc)
-		return (ft_dprintf(2, "minishell: ambiguous redirect\n"), 1);
+		return (0);
 	aft_unq = replace_with_unquoted(aft_wlc, sh);
 	if (aft_unq != aft_wlc)
 		xfree((void **)&aft_wlc);
-	if (!aft_unq || *aft_unq == '\0' || ft_strchr(aft_unq, ' '))
-		return (ft_dprintf(2, "minishell: %s: ambiguous redirect\n",
-				aft_unq ? aft_unq : ""), xfree((void **)&aft_unq), 1);
+	if (!ft_strchr(aft_unq, '\n') && (!aft_unq || *aft_unq == '\0'
+			|| ft_strchr(aft_unq, ' ')))
+		return (0);
 	xfree((void **)&data->value);
 	data->value = aft_unq;
-	if (valid_redir(data, sh))
-		return (1);
 	return (0);
 }
 
@@ -519,6 +539,27 @@ int	ast2cmds(t_ast *ast, t_shell *shell)
 }
 
 /**
+ * @brief redrのHEREDOCだけ先に処理し切る
+ */
+static int	proc_all_heredocs(t_list *redr, t_shell *shell)
+{
+	t_list			*p_redr;
+	t_lexical_token	*tok;
+
+	p_redr = redr;
+	while (p_redr && p_redr->data)
+	{
+		tok = (t_lexical_token *)(p_redr)->data;
+		if (tok->type == TT_HEREDOC)
+		{
+			if (!tok->value || handle_heredoc(tok, shell))
+				return (1);
+		}
+		p_redr = p_redr->next;
+	}
+	return (0);
+}
+/**
  * @brief 単一のASTノードのargs（argv, redr）をバックアップ・復元する
  *
  * @param ast バックアップするASTノード
@@ -534,7 +575,10 @@ static void	backup_node_args(t_ast *ast, t_shell *shell)
 	if (ast_args->b_argv == NULL)
 		ast_args->b_argv = ms_lstcopy(ast_args->argv, free_token, shell);
 	if (ast_args->b_redr == NULL)
+	{
+		proc_all_heredocs(ast_args->redr, shell);
 		ast_args->b_redr = ms_lstcopy(ast_args->redr, free_token, shell);
+	}
 	ft_lstclear(&ast_args->argv, free_token);
 	ft_lstclear(&ast_args->redr, free_token);
 	ast_args->argv = ms_lstcopy(ast_args->b_argv, free_token, shell);

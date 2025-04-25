@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mod_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 07:42:17 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/24 02:00:59 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,15 +75,27 @@ int	exe_run(t_ast *node, t_shell *sh)
 /*                        NT_CMD                             */
 /* ========================================================= */
 
-static int	prepare_cmd_args(t_ast *node, char ***argv, t_shell *sh)
+static int	prepare_cmd_args(t_ast *node, char ***argv, int *flag, t_shell *sh)
 {
 	struct stat	sb;
+	t_status status;
 
-	if (handle_redr(node->args, sh))
-		return (1);
+	*flag = 0;
+	status = handle_redr(node->args, sh);
+	if (status)
+		return (status);
 	*argv = toklist_to_argv(node->args->argv, sh);
-	if (!*argv || !(*argv)[0])
-		return (127);
+	if (!*argv)
+	{
+		*flag = 1;
+		return (E_SYSTEM);
+	}
+	if (!(*argv)[0])
+	{
+		*flag = 1;
+		return (E_NONE);
+	}
+	return (E_NONE);
 	if (stat((*argv)[0], &sb) == 0 && S_ISDIR(sb.st_mode))
 		return (E_IS_DIR);
 	return (0);
@@ -120,8 +132,10 @@ static int	execute_external_cmd(char **argv, t_ast *node, t_shell *sh)
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		env = ft_list_to_strs(sh->env_map);
-		if (!*env || !(*env)[0])
-			return (ft_strs_clear(env), 127);
+		if (!*env)
+			return (ft_strs_clear(env), E_SYSTEM);
+		if (!(*env)[0])
+			return (ft_strs_clear(env), E_NONE);
 		execve(argv[0], argv, env);
 		perror(argv[0]);
 		exit(127);
@@ -139,11 +153,14 @@ int	exe_cmd(t_ast *node, t_shell *sh)
 	t_fdbackup	bk_in;
 	t_fdbackup	bk_out;
 	int			status;
+	int			flag;
 
+	flag = 0;
+	argv = NULL;
 	if (!node || node->ntype != NT_CMD)
 		return (1);
-	status = prepare_cmd_args(node, &argv, sh);
-	if (status)
+	status = prepare_cmd_args(node, &argv, &flag, sh);
+	if (flag)
 		return (status);
 	setup_redirections(node, &bk_in, &bk_out, sh);
 	if (is_builtin(argv[0]))
@@ -243,10 +260,8 @@ int	exe_bool(t_ast *node, t_shell *sh)
 	int	run_right;
 
 	if (sh->env_updated)
-	{
 		mod_sem(sh);
-		sh->env_updated = 0;
-	}
+	sh->env_updated = 0;
 	st_left = exe_run(node->left, sh);
 	update_shell_status(st_left, sh);
 	run_right = 0;
@@ -258,7 +273,8 @@ int	exe_bool(t_ast *node, t_shell *sh)
 		run_right = 1;
 	if (run_right)
 	{
-		mod_sem(sh);
+		if (sh->env_updated)
+			mod_sem(sh);
 		sh->env_updated = 0;
 		return (exe_run(node->right, sh));
 	}
@@ -297,17 +313,14 @@ int	heredoc_into_fd(char *body, t_args *args, t_shell *sh)
 
 	if (xpipe(hd, sh))
 		return (1);
-	/* write() は短い本文なら一括送信で十分。失敗時はシェルごと死ぬ想定。*/
 	if (write(hd[1], body, ft_strlen(body)) == -1 || close(hd[1]) == -1)
 	{
-		perror("heredoc write");
 		close(hd[0]);
 		return (1);
 	}
-	/* 直近の < や << が勝つ POSIX 仕様を踏襲。 */
 	if (args->fds[0] > 2)
 		xclose(&args->fds[0]);
-	args->fds[0] = hd[0]; /* read end を stdin 置換候補に */
+	args->fds[0] = hd[0];
 	return (0);
 }
 
@@ -322,6 +335,14 @@ static int	handle_input_redirection(t_lexical_token *tok, t_args *args,
 	{
 		if (heredoc_into_fd(tok->value, args, sh))
 			return (1);
+	}
+	else if (tok->value && tok->value[0] == '\0')
+	{
+		if (args->fds[0] > 2)
+			xclose(&args->fds[0]);
+		args->fds[0] = open("/dev/null", O_RDONLY);
+		if (args->fds[0] == -1)
+			return (perror("/dev/null"), 1);
 	}
 	else
 	{
@@ -364,6 +385,9 @@ int	handle_redr(t_args *args, t_shell *sh)
 	while (lst)
 	{
 		tok = lst->data;
+		result = proc_redr_errs(tok, sh);
+		if (result)
+			return (result);
 		if (tok->type == TT_REDIR_IN)
 			result = handle_input_redirection(tok, args, sh);
 		else if (tok->type == TT_REDIR_OUT)
