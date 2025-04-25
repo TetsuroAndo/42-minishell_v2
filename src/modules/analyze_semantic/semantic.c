@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 20:18:15 by teando            #+#    #+#             */
-/*   Updated: 2025/04/25 22:14:53 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/25 22:24:48 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	proc_quote(void)
 {
 }
 
-int	ast2cmds(t_ast *ast, ,t_shell *shell)
+int	ast2cmds(t_ast *ast, t_shell *shell)
 {
 	int	status;
 
