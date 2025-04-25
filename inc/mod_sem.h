@@ -28,11 +28,11 @@ typedef struct s_extract
 	char						*map;
 }								t_extract;
 
-typedef struct s_eenv
+typedef struct s_expenv
 {
 	char						*buf;
 	t_quote_state				quote_state;
-}								t_eenv;
+}								t_expenv;
 
 t_status						mod_sem(t_shell *shell);
 void							debug_print_sem(t_ast *ast, t_shell *sh);
