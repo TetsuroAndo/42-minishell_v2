@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 08:23:28 by teando            #+#    #+#             */
-/*   Updated: 2025/04/25 10:35:28 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/25 12:37:23 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ typedef struct s_shell
 	t_list *token_list; // トークンリスト
 	t_list						*token_list_syn;
 	t_ast *ast; // 構文木
-	t_ast *exe; // 実行用構文木
 	// status
 	t_status status; // 終了ステータス
 	int exit_flag;   // 終了フラグ

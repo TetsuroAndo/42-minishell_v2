@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/25 11:01:25 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/25 12:43:08 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,8 @@ char	*handle_env(char *in, t_shell *sh)
 	while (*in)
 	{
 		i = 0;
-		while (check_qs(in[i], &s) && (((in[i] == '$' && in[i + 1] == '(') || in[i] != '$')
-				|| s.quote_state == QS_SINGLE))
+		while (check_qs(in[i], &s) && (((in[i] == '$' && in[i + 1] == '(')
+					|| in[i] != '$') || s.quote_state == QS_SINGLE))
 			++i;
 		s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, i, sh), sh);
 		in += i;
@@ -253,7 +253,8 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 	char	*trimmed;
 
 	if (sh->debug & DEBUG_SEM)
-		ft_dprintf(STDERR_FILENO, "[proc_simple_token]: %s [POINTER]: %p\n", val, val);
+		ft_dprintf(STDERR_FILENO, "[proc_simple_token]: %s [POINTER]: %p\n",
+			val, val);
 	trimmed = trim_valid_quotes(val, sh);
 	if (trimmed != val)
 		xfree((void **)&val);
@@ -264,11 +265,11 @@ static int	process_simple_token(t_lexical_token *data, char *val, int idx,
 	return (E_NONE);
 }
 
-static int	process_split_token(t_list **list, char *val, int idx,
-		t_shell *sh)
+static int	process_split_token(t_list **list, char *val, int idx, t_shell *sh)
 {
 	char			**words;
 	t_lexical_token	*data;
+	int				status;
 
 	if (!list || !*list)
 		return (xfree((void **)&val), 1);
@@ -277,14 +278,22 @@ static int	process_split_token(t_list **list, char *val, int idx,
 	if (!data)
 		return (xfree((void **)&val), 1);
 	if (sh->debug & DEBUG_SEM)
-		ft_dprintf(STDERR_FILENO, "[PROC_SPLIT_TOKEN]: %s [POINTER]: %p\n", val, val);
+		ft_dprintf(STDERR_FILENO, "[PROC_SPLIT_TOKEN]: %s [POINTER]: %p\n", val,
+			val);
 	words = split_with_quote(val, sh);
+	xfree((void **)&val);
 	if (!words || !words[0])
-		return (xfree((void **)&val), ft_strs_clear(words), 1);
+		return (ft_strs_clear(words), 1);
 	xfree((void **)&data->value);
 	data->value = ms_strdup(words[0], sh);
 	if (add_to_list(list, words, sh))
 		return (ft_strs_clear(words), 1);
+	if (idx == 0)
+	{
+		status = path_resolve(&data->value, sh);
+		if (status != E_NONE)
+			return (ft_strs_clear(words), status);
+	}
 	return (ft_strs_clear(words), 0);
 }
 
