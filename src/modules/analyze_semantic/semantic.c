@@ -3,17 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 20:18:15 by teando            #+#    #+#             */
-/*   Updated: 2025/04/25 21:10:24 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/25 22:14:53 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_sem.h"
 
-int	astlst_backup(t_ast *ast, t_shell *sh)
+int			del_nul_node()
 {
+
 }
 
 int	proc_env(void)
@@ -32,7 +33,7 @@ int	proc_quote(void)
 {
 }
 
-int	ast2cmds(t_ast *ast, t_shell *shell)
+int	ast2cmds(t_ast *ast, ,t_shell *shell)
 {
 	int	status;
 
@@ -42,21 +43,13 @@ int	ast2cmds(t_ast *ast, t_shell *shell)
 	if (ast->ntype != NT_CMD)
 	{
 		status = ast2cmds(ast->left, shell);
-		if (status != E_NONE)
-			return (status);
 		status = ast2cmds(ast->right, shell);
-		if (status != E_NONE)
-			return (status);
 	}
 	else
 	{
 		status = ms_lstiter(ast->args->argv, (void *)proc_argv, shell);
-		if (status != E_NONE)
-			return (status);
 		del_nul_node(&ast->args->argv);
 		status = ms_lstiter(ast->args->redr, (void *)proc_redr, shell);
-		if (status != E_NONE)
-			return (status);
 	}
 	return (status);
 }
@@ -67,7 +60,7 @@ t_status	mod_sem(t_shell *shell, int isinit)
 	t_status	status;
 
 	ast = shell->ast;
-	astlst_backup(ast, shell);
+	astlst_backup(ast, shell, isinit);
 	status = ast2cmds(ast, shell);
 	if (status != E_NONE)
 	{

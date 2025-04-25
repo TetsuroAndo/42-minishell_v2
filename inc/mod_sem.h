@@ -34,4 +34,8 @@ typedef struct s_expenv
 	t_quote_state				quote_state;
 }								t_expenv;
 
+t_status						mod_sem(t_shell *shell, int isinit);
+void							astlst_backup(t_ast *ast, t_shell *shell,
+									int isinit);
+
 #endif

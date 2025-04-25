@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_lstcopy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 01:59:22 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/22 20:26:29 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/25 21:50:25 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ void	*copy_token(void *data, t_shell *sh)
 	t_lexical_token	*src;
 	t_lexical_token	*new;
 
-	src = data;
-	if (!src)
+	if (!data)
 		return (NULL);
+	src = data;
 	new = xmalloc(sizeof(t_lexical_token), sh);
 	if (!new)
 		return (NULL);
