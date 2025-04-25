@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 10:11:39 by teando            #+#    #+#             */
-/*   Updated: 2025/04/24 17:58:39 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/25 13:09:53 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,12 @@ char	*handle_env(char *in, t_shell *sh)
 	while (*in)
 	{
 		i = 0;
-		while (check_qs(in[i], &s) && (((in[i] == '$' && in[i + 1] == '(')
-					|| in[i] != '$') || s.quote_state == QS_SINGLE))
+		while (check_qs(in[i], &s) && ((in[i] == '$' && in[i + 1] == '(')
+				|| in[i] != '$' || s.quote_state == QS_SINGLE))
 			++i;
 		s.buf = xstrjoin_free2(s.buf, ms_substr(in, 0, i, sh), sh);
 		in += i;
-		if (*in == '$' && s.quote_state != QS_SINGLE)
+		if (*in == '$')
 			in += extract_varname(&s.buf, in + 1, sh) + 1;
 	}
 	return (s.buf);
