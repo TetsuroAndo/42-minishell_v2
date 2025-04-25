@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:55:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 04:10:41 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/25 10:23:21 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ static char	*append_match(char *buf, const char *name, t_shell *sh)
 
 	if (!buf)
 		return (ms_strdup(name, sh));
-	new_buf = ft_strjoin3(buf, " ", name);
+	new_buf = xstrjoin3(buf, " ", name, sh);
 	xfree((void **)&buf);
 	return (new_buf);
 }
@@ -205,7 +205,7 @@ static char	*process_split_wildcard(char **split, t_shell *sh)
 			buf = ms_strdup(tmp, sh);
 		else
 		{
-			joined = ft_strjoin3(buf, " ", tmp);
+			joined = xstrjoin3(buf, " ", tmp, sh);
 			xfree((void **)&buf);
 			buf = joined;
 		}

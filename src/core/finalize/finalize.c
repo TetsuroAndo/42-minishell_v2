@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:10 by teando            #+#    #+#             */
-/*   Updated: 2025/04/25 09:50:27 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/25 11:04:14 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void	shell_cleanup(t_shell *shell)
 		return ;
 	line_init(shell);
 	ft_lstclear(&shell->env_map, free);
-	ft_gc_destroy(&shell->gcsh);
 	ft_gc_destroy(&shell->gcli);
 	free_env_spc(shell->env_spc);
 	if (shell->stdin_backup != -1)
