@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_err.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/23 22:46:53 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/26 19:02:25 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@
 # define ES_BROKEN_PIPE "Broken pipe"
 # define ES_EVENT_NOT_FOUND "event not found"
 # define ES_WRITE_BROKEN_PIPE "write error: Broken pipe"
+# define ES_HEREDOC "minishell: warning: here-document delimited by end-of-file\n"
 
 /*
 **--------------------------------------------------------------------------

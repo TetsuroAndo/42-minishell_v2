@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mod_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/25 22:20:32 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/26 18:59:03 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -331,7 +331,7 @@ int	heredoc_into_fd(char *body, t_args *args, t_shell *sh)
 static int	handle_input_redirection(t_lexical_token *tok, t_args *args,
 		t_shell *sh)
 {
-	if (tok->value && ft_strchr(tok->value, '\n'))
+	if (tok->type == TT_HEREDOC)
 	{
 		if (heredoc_into_fd(tok->value, args, sh))
 			return (1);
