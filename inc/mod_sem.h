@@ -43,5 +43,5 @@ t_extract						*convert_ex(char *str, t_shell *shell);
 void							free_exstract(t_extract *ex, t_shell *shell);
 int								proc_split(t_list **lst, int index,
 									t_shell *sh);
-
+void							del_nul_node(t_list **list);
 #endif

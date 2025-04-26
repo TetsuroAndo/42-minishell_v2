@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 20:18:15 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 19:57:25 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/26 19:59:19 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,6 @@ int			del_nul_node()
 }
 
 int	proc_env(void)
-{
-}
-
-int	proc_split(void)
 {
 }
 
