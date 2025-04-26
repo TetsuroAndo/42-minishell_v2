@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:07 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 07:56:20 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/26 19:18:16 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ t_lexical_token	*create_token(t_token_type type, char *value, t_shell *shell)
 
 /*
  * 新規トークンをリストに追加する。
+ * ヒアドキュメントトークンの場合はhandle_heredocを呼び出して処理する。
  * 成功: 1, 失敗: 0
  */
 int	add_token(t_shell *shell, t_lexical_token *new_token)
@@ -37,13 +38,12 @@ int	add_token(t_shell *shell, t_lexical_token *new_token)
 
 	if (!new_token)
 		return (0);
-	new_node = xlstnew((void *)new_token, shell);
-	if (!new_node)
+	if (new_token->type == TT_HEREDOC)
 	{
-		xfree((void **)&new_token->value);
-		xfree((void **)&new_token);
-		return (0);
+		if (handle_heredoc(new_token, shell) != 0)
+			return (0);
 	}
+	new_node = xlstnew((void *)new_token, shell);
 	if (!shell->token_list)
 		shell->token_list = new_node;
 	else
