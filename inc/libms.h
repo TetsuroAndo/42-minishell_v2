@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 20:43:00 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/27 08:27:21 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ char					*ms_escapevalue(const char *value, t_shell *shell);
 
 int						ms_envcmp(void *data, void *key);
 char					*ms_getenv(const char *key, t_shell *shell);
-char					*ms_getenv_gcli(const char *key, t_shell *shell);
 t_status				ms_setenv(char *arg, t_shell *shell);
 t_status				ms_setenv_item(const char *key, const char *value,
 							t_shell *shell);
