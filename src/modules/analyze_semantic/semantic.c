@@ -21,10 +21,6 @@ int	proc_env(void)
 {
 }
 
-int	proc_wildcard(void)
-{
-}
-
 int	proc_split(void)
 {
 }
