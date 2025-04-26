@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:07 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 19:18:16 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/26 23:19:58 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,16 +37,16 @@ int	add_token(t_shell *shell, t_lexical_token *new_token)
 	t_list	*new_node;
 
 	if (!new_token)
-		return (0);
+		return (1);
 	if (new_token->type == TT_HEREDOC)
-	{
-		if (handle_heredoc(new_token, shell) != 0)
-			return (0);
-	}
-	new_node = xlstnew((void *)new_token, shell);
+		new_node = handle_heredoc(new_token, shell);
+	else
+		new_node = xlstnew(new_token, shell);
+	if (!new_node)
+		return (1);
 	if (!shell->token_list)
 		shell->token_list = new_node;
 	else
 		ft_lstadd_back(&shell->token_list, new_node);
-	return (1);
+	return (0);
 }

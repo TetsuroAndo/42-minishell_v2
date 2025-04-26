@@ -18,7 +18,7 @@ int				validate_special_chars(const char *line, size_t *pos);
 int				validate_redirect_missing_arg(const char *line, size_t *pos);
 
 // Heredoc functions
-int				handle_heredoc(t_lexical_token *tok, t_shell *sh);
+t_list			*handle_heredoc(t_lexical_token *tok, t_shell *sh);
 
 // Debugging functions
 void			debug_print_token_list(t_list *list);

@@ -1,34 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc_loop.c                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/26 17:08:24 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 19:21:42 by teando           ###   ########.fr       */
+/*   heredoc_loop.c                                     ::      ::    ::   */
+/*                                                    : :         :     */
+/*   By: teando <teando@student.42tokyo.jp>         #  :       #        */
+/*                                                #####   #           */
+/*   Created: 2025/04/26 17:08:24 by teando            ##    ##             */
+/*   Updated: 2025/04/26 23:08:00 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_lex.h"
-
-/**
- * @brief デリミタを準備する
- *
- * @param delim_raw 生のデリミタ文字列
- * @param quoted クォートされているかの情報を格納する変数へのポインタ
- * @param sh シェル情報
- * @return char* 処理済みのデリミタ
- */
-static char	*prepare_delimiter(char *delim_raw, int *quoted, t_shell *sh)
-{
-	char	*delim;
-
-	*quoted = is_quoted(delim_raw);
-	delim = trim_valid_quotes(delim_raw, sh);
-	xfree((void **)&delim_raw);
-	return (delim);
-}
 
 /**
  * @brief ヒアドキュメントの本文を読み込む
@@ -53,8 +35,7 @@ static char	*read_heredoc_body(char *delim, int quoted, t_shell *sh)
 		{
 			if (g_signal_status != SIGINT)
 				ft_dprintf(STDERR_FILENO, ES_HEREDOC);
-			xfree((void **)&line);
-			break ;
+			return (xfree((void **)&body), NULL);
 		}
 		if (g_signal_status == SIGINT)
 		{
@@ -82,19 +63,24 @@ static char	*read_heredoc_body(char *delim, int quoted, t_shell *sh)
  *
  * @param tok 処理するトークン
  * @param sh シェル情報
- * @return int 成功時0、失敗時1
+ * @return char* 読み込んだヒアドキュメントの本文
+ *
+ *  operator トークン (tok) をリストに残しつつ、
+ *  tok->value に “heredoc 本文” を詰め直して返す
  */
-int	handle_heredoc(t_lexical_token *tok, t_shell *sh)
+t_list  *handle_heredoc(t_lexical_token *tok, t_shell *sh)
 {
-	int		quoted;
-	char	*delim;
-	char	*body;
+    int     quoted;
+    char    *delim;
+    char    *body;
 
-	delim = prepare_delimiter(tok->value, &quoted, sh);
-	body = read_heredoc_body(delim, quoted, sh);
-	if (!body)
+	quoted = is_quoted(tok->value);
+	delim = trim_valid_quotes(tok->value, sh);
+    body  = read_heredoc_body(delim, quoted, sh);
+    if (!body)                               /* ^C 等で NULL が戻った場合 */
 		body = ms_strdup("", sh);
-	xfree((void **)&delim);
-	tok->value = body;
-	return (0);
+    xfree((void **)&delim);                  /* delimiter 用バッファ開放 */
+	xfree((void **)&tok->value);
+    tok->value = body;                       /* ここで本文に差し替え */
+    return (xlstnew(tok, sh));
 }
