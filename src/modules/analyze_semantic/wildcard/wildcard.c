@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 13:08:37 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/26 21:58:24 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/26 22:10:39 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,8 +190,8 @@ int	proc_wildcard(t_list **lst, int index, t_shell *sh)
 	tmp = ms_strdup_gcli(tok->value, sh);
 	if (strchr(tok->value, '*'))
 		tmp = handle_wildcard(tmp, sh);
+	ft_gc_untrack(sh->gcli, tmp);
 	xfree((void **)&tok->value);
 	tok->value = tmp;
-	ft_gc_untrack(sh->gcli, tok->value);
 	return (0);
 }

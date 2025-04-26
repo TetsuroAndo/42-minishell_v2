@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_with_quote.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 02:27:41 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/26 21:03:46 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/26 22:19:24 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ static int	set_first_token(t_lexical_token *token, char **split_tokens,
 {
 	if (!split_tokens || !split_tokens[0])
 		return (1);
-	xfree_gc((void **)&token->value, sh);
+	xfree((void **)&token->value);
 	token->value = ms_strdup(split_tokens[0], sh);
 	return (0);
 }
@@ -165,7 +165,8 @@ static t_list	*insert_new_token(t_list *current, const char *value, int type,
 		shell_exit(sh, E_SYSTEM);
 	new_node->next = current->next;
 	current->next = new_node;
-	ft_gc_untrack(sh->gcli, (void **)&new_node->data);
+	ft_gc_untrack(sh->gcli, new_token->value);
+	ft_gc_untrack(sh->gcli, new_node->data);
 	return (new_node);
 }
 
