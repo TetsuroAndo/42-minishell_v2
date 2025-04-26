@@ -37,5 +37,9 @@ typedef struct s_expenv
 t_status						mod_sem(t_shell *shell, int isinit);
 void							astlst_backup(t_ast *ast, t_shell *shell,
 									int isinit);
+int								proc_wildcard(t_list **lst, int index,
+									t_shell *sh);
+t_extract						*convert_ex(char *str, t_shell *shell);
+void							free_exstract(t_extract *ex, t_shell *shell);
 
 #endif

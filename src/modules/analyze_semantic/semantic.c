@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 20:18:15 by teando            #+#    #+#             */
-/*   Updated: 2025/04/25 22:24:48 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/26 19:27:15 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,6 @@ int			del_nul_node()
 }
 
 int	proc_env(void)
-{
-}
-
-int	proc_wildcard(void)
 {
 }
 
