@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 20:18:15 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 19:27:15 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/26 20:13:12 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,6 @@ int			del_nul_node()
 }
 
 int	proc_env(void)
-{
-}
-
-int	proc_split(void)
 {
 }
 
@@ -43,9 +39,17 @@ int	ast2cmds(t_ast *ast, t_shell *shell)
 	}
 	else
 	{
-		status = ms_lstiter(ast->args->argv, (void *)proc_argv, shell);
+		/*argv*/
+		status = ms_lstiter(ast->args->argv, proc_env, shell);
 		del_nul_node(&ast->args->argv);
-		status = ms_lstiter(ast->args->redr, (void *)proc_redr, shell);
+		status = ms_lstiter(ast->args->argv, proc_split, shell);
+		status = ms_lstiter(ast->args->argv, proc_wildcard, shell);
+		status = ms_lstiter(ast->args->argv, proc_split, shell);
+		status = ms_lstiter(ast->args->argv, proc_quote, shell);
+		/*redr*/
+		status = ms_lstiter(ast->args->redr, proc_env, shell);
+		status = ms_lstiter(ast->args->redr, proc_wildcard, shell);
+		status = ms_lstiter(ast->args->argv, proc_quote, shell);
 	}
 	return (status);
 }
