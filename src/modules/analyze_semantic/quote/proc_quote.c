@@ -1,38 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   del_nul_node.c                                     :+:      :+:    :+:   */
+/*   proc_quote.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/26 20:00:28 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/26 20:04:56 by tomsato          ###   ########.fr       */
+/*   Created: 2025/04/26 20:03:19 by tomsato           #+#    #+#             */
+/*   Updated: 2025/04/26 20:09:08 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_sem.h"
 
-void	del_nul_node(t_list **list)
+int	proc_quote(t_list **lst, int index, t_shell *sh)
 {
-	t_list			*prev;
-	t_list			*cur;
-	t_lexical_token	*tok;
+	t_lexical_token *tok;
+	char *tmp;
 
-	prev = NULL;
-	cur = *list;
-	while (cur)
-	{
-		tok = (t_lexical_token *)cur->data;
-		if (tok->value && tok->value[0] == '\0')
-			break ;
-		prev = cur;
-		cur = cur->next;
-	}
-	if (!cur)
-		return ;
-	if (prev)
-		prev->next = cur->next;
-	else
-		*list = cur->next;
-	ft_lstdelone(cur, free_token);
+	tok = *lst->data;
+	tmp = replace_with_unquoted(tok->value, sh);
+	xfree((void **)&tok->value);
+	tok->value = tmp;
+	ft_gc_untrack(sh->gcli, tok->value);
+	return (0);
 }

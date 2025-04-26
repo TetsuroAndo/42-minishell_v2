@@ -44,4 +44,9 @@ void							free_exstract(t_extract *ex, t_shell *shell);
 int								proc_split(t_list **lst, int index,
 									t_shell *sh);
 void							del_nul_node(t_list **list);
+int								proc_quote(t_list **lst, int index,
+									t_shell *sh);
+char							*replace_with_unquoted(char *str,
+									t_shell *shell);
+
 #endif
