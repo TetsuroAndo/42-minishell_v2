@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:43:38 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/26 16:39:52 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:46:14 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,8 @@ t_extract	*convert_ex(char *str, t_shell *shell)
 	char		*map;
 	size_t		len;
 
+	if (!str)
+		return (NULL);
 	len = ft_strlen(str);
 	map = (char *)xmalloc_gcline(len + 1, shell);
 	init_map(map, len);

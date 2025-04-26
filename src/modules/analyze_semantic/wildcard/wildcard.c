@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 13:08:37 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/26 20:24:44 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:58:24 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ int	wildcard_match(const char *p, const char *str, t_shell *shell)
 	int			result;
 	t_extract	*ex;
 
+	if (!p || !str)
+		return (0);
 	n = ft_strlen(str);
 	ex = convert_ex((char *)p, shell);
 	if (is_invalid_input(p, str, ex))
@@ -128,7 +130,7 @@ static char	*append_match(char *buf, const char *name, t_shell *sh)
 
 	if (!buf)
 		return (ms_strdup_gcli(name, sh));
-	new_buf = ft_strjoin3_gc(sh->gcli,buf, " ", name);
+	new_buf = ms_strjoin3_gcli(buf, " ", name,sh);
 	ft_gc_free(sh->gcli, (void **)&buf);
 	return (new_buf);
 }
@@ -138,18 +140,22 @@ static char	*collect_matches(DIR *dir, const char *pattern, t_shell *sh)
 	struct dirent	*entry;
 	char			*buf;
 
+	if (!dir || !pattern)
+		return (NULL);
 	buf = NULL;
-	entry = readdir(dir);
-	while (entry)
+	while ((entry = readdir(dir)))
 	{
-		if (ft_strncmp(entry->d_name, ".", 1) != 0 && ft_strncmp(entry->d_name,
-				"..", 2) != 0 && wildcard_match(pattern, entry->d_name, sh))
-			buf = append_match(buf, entry->d_name, sh);
+		if (entry->d_name[0] != '.')
+		{
+			if (wildcard_match(pattern, entry->d_name, sh))
+				buf = append_match(buf, entry->d_name, sh);
+		}
 		else if ((ft_strcmp(entry->d_name, ".") == 0 || ft_strcmp(entry->d_name,
 					"..") == 0) && pattern[0] == '.' && wildcard_match(pattern,
 				entry->d_name, sh))
+		{
 			buf = append_match(buf, entry->d_name, sh);
-		entry = readdir(dir);
+		}
 	}
 	return (buf);
 }
@@ -160,18 +166,17 @@ static char	*handle_wildcard(char *in, t_shell *sh)
 	char	*buf;
 	char	*tmp;
 
+	if (!in)
+		return (NULL);
 	tmp = ms_strdup_gcli(in, sh);
 	ft_gc_free(sh->gcli, (void **)&in);
 	dir = opendir(sh->cwd);
 	if (!dir)
 		return (tmp);
-	buf = collect_matches(dir, in, sh);
+	buf = collect_matches(dir, tmp, sh);
 	closedir(dir);
 	if (buf)
-	{
-		ft_gc_free(sh->gcli, (void **)&tmp);
 		return (buf);
-	}
 	return (tmp);
 }
 
@@ -187,5 +192,6 @@ int	proc_wildcard(t_list **lst, int index, t_shell *sh)
 		tmp = handle_wildcard(tmp, sh);
 	xfree((void **)&tok->value);
 	tok->value = tmp;
+	ft_gc_untrack(sh->gcli, tok->value);
 	return (0);
 }
