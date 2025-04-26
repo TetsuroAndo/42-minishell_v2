@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 21:10:46 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/26 13:59:14 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/26 20:33:01 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ static void	backup_node_args(t_ast *ast, t_shell *sh, int isinit)
 	ast_args = ast->args;
 	if (isinit)
 	{
-		ast_args->b_argv = ms_lstcopy(ast_args->argv, free_token, shell);
-		ast_args->b_redr = ms_lstcopy(ast_args->redr, free_token, shell);
+		ast_args->b_argv = ms_lstcopy(ast_args->argv, free_token, sh);
+		ast_args->b_redr = ms_lstcopy(ast_args->redr, free_token, sh);
 	}
 	ft_lstclear(&ast_args->argv, free_token);
 	ast_args->argv = ms_lstcopy(ast_args->b_argv, free_token, sh);
@@ -36,9 +36,9 @@ void	astlst_backup(t_ast *ast, t_shell *shell, int isinit)
 		return ;
 	backup_node_args(ast, shell, isinit);
 	if (ast->left)
-		astlst_backup(ast->left, shell);
+		astlst_backup(ast->left, shell, isinit);
 	if (ast->right)
-		astlst_backup(ast->right, shell);
+		astlst_backup(ast->right, shell, isinit);
 }
 /*
 void	backup_node_args(t_ast *ast, t_shell *shell)

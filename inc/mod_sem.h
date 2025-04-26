@@ -49,5 +49,11 @@ int								proc_quote(t_list **lst, int index,
 									t_shell *sh);
 char							*replace_with_unquoted(char *str,
 									t_shell *shell);
+void							debug_print_sem(t_ast *ast, t_shell *sh);
+int								check_qs(int c, t_expenv *sem);
+t_quote_state					is_quote_type(int c);
+int								proc_redr_errs(t_lexical_token *data,
+									t_shell *shell);
+int								valid_redir(t_lexical_token *d, t_shell *sh);
 
 #endif

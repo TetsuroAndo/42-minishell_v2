@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   proc_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 21:12:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 20:08:50 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/26 20:26:54 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static size_t	extract_varname(char **buf, char *in, t_shell *sh)
 	if (key && key[0] && key[1] == '\0')
 	{
 		*buf = ms_strjoin_gcli(*buf, val, sh);
-		ft_gc_untrack(val, sh->gcli);
+		ft_gc_untrack(sh->gcli, (void **)&val);
 	}
 	else
 		*buf = ms_strjoin_gcli(*buf, val, sh);
@@ -110,7 +110,7 @@ t_status	proc_env(t_list **list, int idx, t_shell *sh)
 {
 	t_lexical_token *token;
 	char 			*expanded_value;
-	
+
 	if (!list || !*list)
 		return (E_SYSTEM);
 	token = (t_lexical_token *)(*list)->data;

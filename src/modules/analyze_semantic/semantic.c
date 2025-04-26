@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 20:18:15 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 20:14:50 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/26 20:37:24 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,10 @@ int	ast2cmds(t_ast *ast, t_shell *shell)
 	{
 		/*argv*/
 		status = ms_lstiter(ast->args->argv, proc_env, shell);
+		if (shell->debug & DEBUG_SEM)
+		{
+			debug_print_sem(ast, shell);
+		}
 		del_nul_node(&ast->args->argv);
 		status = ms_lstiter(ast->args->argv, proc_split, shell);
 		status = ms_lstiter(ast->args->argv, proc_wildcard, shell);

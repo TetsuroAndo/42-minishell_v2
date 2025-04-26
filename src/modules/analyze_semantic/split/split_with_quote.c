@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 02:27:41 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/26 19:50:02 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/26 20:17:32 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,40 @@ void	free_split_result(char **result, t_shell *sh)
 		i++;
 	}
 	ft_gc_free(sh->gcli, (void **)&result);
+}
+
+size_t	count_aft_wc_tok(char *s)
+{
+	size_t	count;
+	char	*p;
+	char	q;
+
+	count = 0;
+	p = s;
+	while (*p)
+	{
+		while (*p && isspace((unsigned char)*p))
+			p++;
+		if (!*p)
+			break ;
+		if (*p == '"' || *p == '\'')
+		{
+			q = *p++;
+			while (*p && *p != q)
+				p++;
+			if (*p == q)
+				p++;
+			count++;
+		}
+		else
+		{
+			count++;
+			while (*p && !ft_isspace((unsigned char)*p) && *p != '"'
+				&& *p != '\'')
+				p++;
+		}
+	}
+	return (count);
 }
 
 /**

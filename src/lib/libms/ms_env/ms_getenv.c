@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_getenv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 21:24:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 10:05:05 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/26 20:32:00 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,4 +22,13 @@ char	*ms_getenv(const char *key, t_shell *shell)
 	if (!lst)
 		return (ms_strdup("", shell));
 	return (ms_substr_r(lst->data, '=', shell));
+}
+
+char	*ms_getenv_gcli(const char *key, t_shell *shell)
+{
+	char	*tmp;
+
+	tmp = ms_getenv(key, shell);
+	ft_gc_track(shell->gcli, tmp);
+	return (tmp);
 }

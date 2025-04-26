@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libms.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 20:20:52 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/26 20:32:22 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ void					xfree_gc(void **p, t_shell *sh);
 void					*xmalloc_gcline(size_t size, t_shell *shell);
 char					*ms_strjoin_gcli(char const *s1, char const *s2,
 							t_shell *sh);
-char					*ms_strjoin3_gcli(char const *s1, char const *s2, char const *s3, t_shell *sh);
+char					*ms_strjoin3_gcli(char const *s1, char const *s2,
+							char const *s3, t_shell *sh);
 char					*ms_strjoin_gcli_f2(char const *s1, char const *s2,
 							t_shell *sh);
 char					*ms_strndup_gcli(const char *s, size_t n, t_shell *sh);
@@ -66,6 +67,7 @@ char					*ms_escapevalue(const char *value, t_shell *shell);
 
 int						ms_envcmp(void *data, void *key);
 char					*ms_getenv(const char *key, t_shell *shell);
+char					*ms_getenv_gcli(const char *key, t_shell *shell);
 t_status				ms_setenv(char *arg, t_shell *shell);
 t_status				ms_setenv_item(const char *key, const char *value,
 							t_shell *shell);
@@ -148,7 +150,7 @@ char					*xstrjoin_free2(char const *s1, char const *s2,
 ** ============================================================================
 */
 void					*ms_listshift(t_list **list);
-int						ms_lstiter(t_list *lst, int (*f)(t_list **, void *, int,
+int						ms_lstiter(t_list *lst, int (*f)(t_list **, int,
 								t_shell *), t_shell *shell);
 t_list					*xlstnew(void *data, t_shell *shell);
 t_list					*xlst_from_strs(char **strs, t_shell *shell);

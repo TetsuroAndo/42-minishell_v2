@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quote_helper.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 12:57:56 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 23:58:36 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/26 20:28:21 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ t_quote_state	is_quote_type(int c)
 	return (QS_NONE);
 }
 
-int	check_qs(int c, t_sem *sem)
+int	check_qs(int c, t_expenv *sem)
 {
 	if (sem->quote_state == QS_NONE)
 		sem->quote_state = is_quote_type(c);

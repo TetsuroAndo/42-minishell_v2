@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 13:08:37 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/26 19:01:19 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/26 20:24:44 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,8 +107,8 @@ int	wildcard_match(const char *p, const char *str, t_shell *shell)
 	ex = convert_ex((char *)p, shell);
 	if (is_invalid_input(p, str, ex))
 		return (free_exstract(ex, shell), 0);
-	prev = init_dp_row(n);
-	curr = init_dp_row(n);
+	prev = init_dp_row(n, shell);
+	curr = init_dp_row(n, shell);
 	prev[0] = 1;
 	update_dp_row(ex->str, str, prev, curr, ex);
 	if (ft_strlen(ex->str) % 2 == 0)
@@ -128,7 +128,7 @@ static char	*append_match(char *buf, const char *name, t_shell *sh)
 
 	if (!buf)
 		return (ms_strdup_gcli(name, sh));
-	new_buf = ft_strjoin3_gc(buf, " ", name, sh);
+	new_buf = ft_strjoin3_gc(sh->gcli,buf, " ", name);
 	ft_gc_free(sh->gcli, (void **)&buf);
 	return (new_buf);
 }
@@ -180,7 +180,8 @@ int	proc_wildcard(t_list **lst, int index, t_shell *sh)
 	t_lexical_token	*tok;
 	char			*tmp;
 
-	tok = *lst->data;
+	(void)index;
+	tok = (*lst)->data;
 	tmp = ms_strdup_gcli(tok->value, sh);
 	if (strchr(tok->value, '*'))
 		tmp = handle_wildcard(tmp, sh);
