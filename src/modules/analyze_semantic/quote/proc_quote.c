@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   proc_quote.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 20:03:19 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/26 20:26:02 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:21:45 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	proc_quote(t_list **lst, int index, t_shell *sh)
 	tok = (*lst)->data;
 	tmp = replace_with_unquoted(tok->value, sh);
 	xfree((void **)&tok->value);
-	tok->value = tmp;
-	ft_gc_untrack(sh->gcli, tok->value);
+	tok->value = ms_strdup(tmp, sh);
+	// ft_gc_untrack(sh->gcli, (void **)&tok->value);
 	return (0);
 }

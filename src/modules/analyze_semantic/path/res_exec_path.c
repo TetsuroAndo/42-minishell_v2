@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 20:53:52 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 21:08:46 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/26 21:33:48 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int proc_exec_path(t_list **lst, int idx, t_shell *sh)
 {
 	t_lexical_token	*data;
+	char			*val;
 	char			*trimmed;
 
 	data = (t_lexical_token *)(*lst)->data;
@@ -23,7 +24,9 @@ int proc_exec_path(t_list **lst, int idx, t_shell *sh)
 			data->value, data->value);
 	if (idx == 0)
 	{
-		trimmed = trim_valid_quotes(data->value, sh);
+		val = ms_strdup_gcli(data->value, sh);
+		xfree((void **)&data->value);
+		trimmed = trim_valid_quotes(val, sh);
 		data->value = trimmed;
 		return (path_resolve(&data->value, sh));
 	}
