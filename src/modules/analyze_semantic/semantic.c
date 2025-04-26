@@ -6,28 +6,11 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 20:18:15 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 19:27:15 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/26 20:11:03 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_sem.h"
-
-int			del_nul_node()
-{
-
-}
-
-int	proc_env(void)
-{
-}
-
-int	proc_split(void)
-{
-}
-
-int	proc_quote(void)
-{
-}
 
 int	ast2cmds(t_ast *ast, t_shell *shell)
 {
