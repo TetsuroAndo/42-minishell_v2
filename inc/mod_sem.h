@@ -55,5 +55,7 @@ t_quote_state					is_quote_type(int c);
 int								proc_redr_errs(t_lexical_token *data,
 									t_shell *shell);
 int								valid_redir(t_lexical_token *d, t_shell *sh);
+int								proc_exec_path(t_list **lst, int idx,
+									t_shell *sh);
 
 #endif

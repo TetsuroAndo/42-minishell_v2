@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_with_quote.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 02:27:41 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/26 20:17:32 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:03:46 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ static int	set_first_token(t_lexical_token *token, char **split_tokens,
 {
 	if (!split_tokens || !split_tokens[0])
 		return (1);
-	xfree((void **)&token->value);
+	xfree_gc((void **)&token->value, sh);
 	token->value = ms_strdup(split_tokens[0], sh);
 	return (0);
 }
