@@ -3,27 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 20:18:15 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 19:59:19 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/26 20:11:03 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_sem.h"
-
-int			del_nul_node()
-{
-
-}
-
-int	proc_env(void)
-{
-}
-
-int	proc_quote(void)
-{
-}
 
 int	ast2cmds(t_ast *ast, t_shell *shell)
 {
