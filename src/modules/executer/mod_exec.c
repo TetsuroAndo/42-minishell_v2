@@ -388,7 +388,7 @@ int	handle_redr(t_args *args, t_shell *sh)
 		result = proc_redr_errs(tok, sh);
 		if (result)
 			return (result);
-		if (tok->type == TT_REDIR_IN)
+		if (tok->type == TT_REDIR_IN || tok->type == TT_HEREDOC)
 			result = handle_input_redirection(tok, args, sh);
 		else if (tok->type == TT_REDIR_OUT)
 			result = handle_output_redirection(tok, args);
