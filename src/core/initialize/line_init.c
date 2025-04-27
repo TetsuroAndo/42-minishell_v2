@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:43:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/27 13:45:41 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/27 18:23:52 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	line_init(t_shell *sh)
 	if (sh->debug & DEBUG_CORE)
 	{
 		put_line_before(sh);
-		ft_gc_dump(sh->gcli, 2);
+		// ft_gc_dump(sh->gcli, 2);
 	}
 	if (!sh)
 		shell_exit(NULL, 1);
