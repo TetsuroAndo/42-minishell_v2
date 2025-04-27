@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_getenv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 21:24:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/27 08:27:26 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/27 21:24:35 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char	*ms_getenv(const char *key, t_shell *shell)
 	t_list	*lst;
 
 	if (key[0] && key[1] == '\0' && shell->env_spc[(unsigned char)*key])
-		return (shell->env_spc[(unsigned char)*key]);
+		return (ms_strdup(shell->env_spc[(unsigned char)*key], shell));
 	lst = ft_list_find(shell->env_map, (void *)key, ms_envcmp);
 	if (!lst)
 		return (ms_strdup("", shell));
