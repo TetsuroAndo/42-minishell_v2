@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:45:55 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 22:31:01 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/27 10:12:14 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static void	print_ast_rec(t_ast *ast, int depth)
 	if (ast->ntype == NT_CMD)
 	{
 		print_toklst(ast->args->argv, "argv", depth + 1);
-		print_toklst(ast->args->redr, "redir", depth + 1);
+		print_toklst(ast->args->redr, "redr", depth + 1);
 	}
 	print_ast_rec(ast->left, depth + 1);
 	print_ast_rec(ast->right, depth + 1);

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/27 09:36:37 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/27 10:34:56 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,12 @@ static t_lexical_token	*alloc_l_tok(t_list **tok_lst, t_shell *sh)
 	tok = curr_token(tok_lst);
 	if (!tok)
 		return (NULL);
-	if (tok->type == TT_HEREDOC || tok->type == TT_REDIR_IN)
+	if ((tok->type & 0xFF00) == TM_REDIR)
 		res_val = xmalloc_gcline(sizeof(t_lexical_token), sh);
 	else
 		res_val = xmalloc(sizeof(t_lexical_token), sh);
 	ft_memcpy(res_val, tok, sizeof(t_lexical_token));
-	if (tok->value && (tok->type == TT_HEREDOC || tok->type == TT_REDIR_IN))
+	if (tok->value && (tok->type & 0xFF00) == TM_REDIR)
 	{
 		res_val->value = ms_strdup_gcli(tok->value, sh);
 	}
