@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:59:45 by teando            #+#    #+#             */
-/*   Updated: 2025/04/27 21:32:06 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/27 21:37:16 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ t_status	__cd(int argc, char **argv, t_shell *sh)
 			2);
 	}
 	else if (path_launcher(mv_dir, argv[1], F_OK, sh) == -1)
-		return (ft_dprintf(2, "minishell: cd: no such file or directory: %s\n",
+		return (ft_dprintf(2, "minishell: cd: %s:no such file or directory\n",
 				argv[1]), 1);
 	if (chdir(mv_dir) == -1 || access(mv_dir, F_OK))
 		return (ft_dprintf(2, "cd: %s: %s\n", mv_dir, strerror(errno)), 1);
