@@ -3,14 +3,53 @@
 /*                                                        :::      ::::::::   */
 /*   semantic.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 20:18:15 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 21:00:33 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/27 17:26:56 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_sem.h"
+
+static int	process_command_args(t_args *args, t_shell *shell)
+{
+	int	status;
+
+	status = ms_lstiter(args->argv, proc_env, shell);
+	if (status != E_NONE)
+		return (status);
+	del_nul_node(&args->argv);
+	status = ms_lstiter(args->argv, proc_split, shell);
+	if (status != E_NONE)
+		return (status);
+	status = ms_lstiter(args->argv, proc_wildcard, shell);
+	if (status != E_NONE)
+		return (status);
+	status = ms_lstiter(args->argv, proc_split, shell);
+	if (status != E_NONE)
+		return (status);
+	status = ms_lstiter(args->argv, proc_quote, shell);
+	if (status != E_NONE)
+		return (status);
+	return (E_NONE);
+}
+
+static int	process_redirections(t_args *args, t_shell *shell)
+{
+	int	status;
+
+	status = ms_lstiter(args->redr, proc_env, shell);
+	if (status != E_NONE)
+		return (status);
+	status = ms_lstiter(args->redr, proc_wildcard, shell);
+	if (status != E_NONE)
+		return (status);
+	status = ms_lstiter(args->redr, proc_quote, shell);
+	if (status != E_NONE)
+		return (status);
+	return (E_NONE);
+}
 
 int	ast2cmds(t_ast *ast, t_shell *shell)
 {
@@ -22,22 +61,17 @@ int	ast2cmds(t_ast *ast, t_shell *shell)
 	if (ast->ntype != NT_CMD)
 	{
 		status = ast2cmds(ast->left, shell);
+		if (status != E_NONE)
+			return (status);
 		status = ast2cmds(ast->right, shell);
+		return (status);
 	}
-	else
-	{
-		status = ms_lstiter(ast->args->argv, proc_env, shell);
-		del_nul_node(&ast->args->argv);
-		status = ms_lstiter(ast->args->argv, proc_split, shell);
-		status = ms_lstiter(ast->args->argv, proc_wildcard, shell);
-		status = ms_lstiter(ast->args->argv, proc_split, shell);
-		status = ms_lstiter(ast->args->argv, proc_quote, shell);
-		status = ms_lstiter(ast->args->redr, proc_env, shell);
-		status = ms_lstiter(ast->args->redr, proc_wildcard, shell);
-		status = ms_lstiter(ast->args->redr, proc_quote, shell);
-
-		status = ms_lstiter(ast->args->argv, proc_exec_path, shell);
-	}
+	status = process_command_args(ast->args, shell);
+	if (status != E_NONE)
+		return (status);
+	status = process_redirections(ast->args, shell);
+	if (status != E_NONE)
+		return (status);
 	return (status);
 }
 

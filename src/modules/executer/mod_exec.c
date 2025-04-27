@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mod_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 18:59:03 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/27 17:31:20 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,11 @@ int	exe_cmd(t_ast *node, t_shell *sh)
 	argv = NULL;
 	if (!node || node->ntype != NT_CMD)
 		return (1);
+	status = ms_lstiter(node->args->argv, proc_exec_path, sh);
+	if (status)
+		return (status);
+	if (sh->debug & DEBUG_SEM)
+		debug_print_sem(node, sh);
 	status = prepare_cmd_args(node, &argv, &flag, sh);
 	if (flag)
 		return (status);
