@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:43:58 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 10:56:09 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/27 22:01:13 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ t_status	__exit(int argc, char **argv, t_shell *sh)
 	long long	code;
 	char		*end;
 
-	code = sh->status;
+	code = (long long)ft_atoi(sh->env_spc['?']);
 	if (sh->interactive)
 		ft_dprintf(STDERR_FILENO, "exit\n");
 	if (argc >= 2)
