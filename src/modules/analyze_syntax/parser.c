@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 17:00:57 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/27 09:36:37 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,24 +48,29 @@ t_lexical_token	*curr_token(t_list **token_list)
 	return ((t_lexical_token *)(*token_list)->data);
 }
 
-static t_lexical_token	*alloc_l_tok(t_list **tok_lst, t_shell *shell)
+static t_lexical_token	*alloc_l_tok(t_list **tok_lst, t_shell *sh)
 {
 	t_lexical_token	*tok;
-	t_lexical_token	*return_value;
+	t_lexical_token	*res_val;
 
 	tok = curr_token(tok_lst);
 	if (!tok)
 		return (NULL);
-	return_value = (t_lexical_token *)xmalloc(sizeof(t_lexical_token), shell);
-	ft_memcpy(return_value, tok, sizeof(t_lexical_token));
-	if (tok->value)
+	if (tok->type == TT_HEREDOC || tok->type == TT_REDIR_IN)
+		res_val = xmalloc_gcline(sizeof(t_lexical_token), sh);
+	else
+		res_val = xmalloc(sizeof(t_lexical_token), sh);
+	ft_memcpy(res_val, tok, sizeof(t_lexical_token));
+	if (tok->value && (tok->type == TT_HEREDOC || tok->type == TT_REDIR_IN))
 	{
-		return_value->value = ms_strdup(tok->value, shell);
-		if (!return_value->value)
-			return (NULL);
+		res_val->value = ms_strdup_gcli(tok->value, sh);
+	}
+	else if (tok->value)
+	{
+		res_val->value = ms_strdup(tok->value, sh);
 	}
 	ms_listshift(tok_lst);
-	return (return_value);
+	return (res_val);
 }
 
 /*
@@ -93,23 +98,26 @@ redir
 */
 int	ast_redir(t_list **tok_lst, t_ast *node, t_shell *shell)
 {
-	t_lexical_token	*tok;
+	t_lexical_token	*new_tok;
+	t_list			*new_node;
 
-	tok = curr_token(tok_lst);
-	if (!tok)
+	if (!curr_token(tok_lst))
 		return (1);
-	if (*tok->value == '\0')
+	if (*curr_token(tok_lst)->value == '\0')
 	{
 		ft_dprintf(STDERR_FILENO,
 			"minishell: syntax error near unexpected token `%s'\n",
-			redir_token_to_symbol(tok->type));
+			redir_token_to_symbol(curr_token(tok_lst)->type));
 		return (1);
 	}
+	new_tok = alloc_l_tok(tok_lst, shell);
+	if (!new_tok)
+		return (1);
+	new_node = xlstnew_gcli(new_tok, shell);
 	if (!node->args->redr)
-		node->args->redr = xlstnew(alloc_l_tok(tok_lst, shell), shell);
+		node->args->redr = new_node;
 	else
-		ft_lstadd_back(&node->args->redr, xlstnew(alloc_l_tok(tok_lst, shell),
-				shell));
+		ft_lstadd_back(&node->args->redr, new_node);
 	return (0);
 }
 
@@ -117,18 +125,14 @@ int	ast_redir(t_list **tok_lst, t_ast *node, t_shell *shell)
 複数のリダイレクトをしまう
 redir redirections*
 */
-t_ast	*ast_redirections(t_list **tok_lst, t_ast *node, t_shell *shell)
+int	ast_redirections(t_list **tok_lst, t_ast *node, t_shell *sh)
 {
 	t_lexical_token	*tok;
 
-	if (!shell || (!tok_lst || !*tok_lst))
-		return (NULL);
 	while ((tok = curr_token(tok_lst)) && (tok->type & 0xFF00) == TM_REDIR)
-	{
-		if (ast_redir(tok_lst, node, shell))
-			return (NULL);
-	}
-	return (node);
+		if (ast_redir(tok_lst, node, sh)) /* エラー時は 1 を返すだけ */
+			return (1);
+	return (0);
 }
 
 /* コマンドとオプションにするところ
@@ -154,15 +158,17 @@ t_ast	*ast_simple_cmd(t_list **tok_lst, t_ast *node, t_shell *shell)
 コマンドとリダイレクト
 simple_cmd redirections?
 */
-t_ast	*ast_cmd(t_list **tok_lst, t_shell *shell)
+t_ast	*ast_cmd(t_list **tok_lst, t_shell *sh)
 {
 	t_ast	*node;
 
-	node = ast_new(NT_CMD, NULL, NULL, shell);
-	node->args = args_new(shell);
-	node = ast_redirections(tok_lst, node, shell);
-	node = ast_simple_cmd(tok_lst, node, shell);
-	node = ast_redirections(tok_lst, node, shell);
+	node = ast_new(NT_CMD, NULL, NULL, sh);
+	node->args = args_new(sh);
+	if (ast_redirections(tok_lst, node, sh))
+		return (free_ast(&node), NULL);
+	ast_simple_cmd(tok_lst, node, sh);
+	if (ast_redirections(tok_lst, node, sh))
+		return (free_ast(&node), NULL);
 	return (node);
 }
 
