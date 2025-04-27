@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 23:57:33 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 23:34:56 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/27 22:12:04 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,9 @@
  */
 static char	update_quote_state(char c, char quote, char prev)
 {
+	(void)prev;
 	if (!quote && (c == '\'' || c == '"' || c == '`'))
 		return (c);
-	else if (quote && c == quote && prev != '\\')
-		return (0);
 	return (quote);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   skip_dollar_paren.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 08:48:51 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 07:54:19 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/27 22:10:53 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,6 @@ void	skip_dollar_paren(const char *line, size_t *pos)
 	depth = 1;
 	while (line[*pos] && depth)
 	{
-		/* バックスラッシュでエスケープされた 1 文字を丸ごとスキップ */
-		if (line[*pos] == '\\' && line[*pos + 1])
-		{
-			(*pos) += 2;
-			continue ;
-		}
 		if (line[*pos] == '(')
 			depth++;
 		else if (line[*pos] == ')')

@@ -28,11 +28,6 @@ static int	is_quotes_balanced(const char *line)
 	{
 		if (line[pos] == '#' && !single_open && !double_open)
 			break ;
-		if (line[pos] == '\\' && line[pos + 1])
-		{
-			pos += 2;
-			continue ;
-		}
 		if (line[pos] == '\'' && !double_open)
 			single_open = !single_open;
 		else if (line[pos] == '"' && !single_open)

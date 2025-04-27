@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   validate_special_chars.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 12:38:31 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 17:59:59 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/27 22:12:53 by tomsato          ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "mod_lex.h"
 
@@ -46,8 +46,8 @@ static int	check_redirect_symbol_error(const char *line, size_t *pos)
 
 	temp_pos = *pos + 1;
 	skip_spaces(line, &temp_pos);
-	if (line[temp_pos] == '|' || line[temp_pos] == '&' || line[temp_pos] == ';'
-		|| line[temp_pos] == '(' || line[temp_pos] == ')')
+	if (line[temp_pos] == '|' || line[temp_pos] == '&' || line[temp_pos] == '('
+		|| line[temp_pos] == ')')
 		return (ft_putstr_fd(ES_TOKEN, STDERR_FILENO), 1);
 	return (0);
 }

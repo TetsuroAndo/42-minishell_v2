@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:12 by teando            #+#    #+#             */
-/*   Updated: 2025/04/27 19:01:44 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/27 22:11:26 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,7 @@ t_status	mod_lex(t_shell *sh)
 {
 	sh->token_list = NULL;
 	sh->status = E_NONE;
-	if (!sh->source_line || ft_strchr(sh->source_line, '\\')
-		|| ft_strchr(sh->source_line, ';'))
+	if (!sh->source_line)
 		return (sh->status = E_SYNTAX);
 	if (!validate_input(sh))
 		return (sh->status = E_SYNTAX);

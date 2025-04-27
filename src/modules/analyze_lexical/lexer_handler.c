@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_handler.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:09 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 19:16:39 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/27 22:14:32 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,7 @@ t_token_type	get_one_char_op(int c)
 		['>'] = TT_REDIR_OUT,
 		['<'] = TT_REDIR_IN,
 		['('] = TT_LPAREN,
-		[')'] = TT_RPAREN,
-		[';'] = TT_SEMICOLON
+		[')'] = TT_RPAREN
 	};
 	if (c >= 0 && c <= 127 && op_map[(int)c] != 0)
 		return (op_map[(int)c]);

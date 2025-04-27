@@ -1,54 +1,55 @@
 #!/usr/bin/env bash
-# tests.sh
+# extended_compare.sh
+# Bash と minishell の動作を網羅的に比較するテストスクリプト
+# ※セミコロンは使わず、AND/ORノードでコマンドを連結しています
 
-MS=./minishell  # minishell の実行ファイルパス
+MS=./minishell  # minishell 実行ファイルへのパス
 
-run() {
-  echo "---- $1 ----"
-  # minishell にコマンドを１行流して exit。標準出力と終了ステータスを表示
-  OUTPUT=$($MS <<EOF
-$2
-exit
-EOF
+# ANSI カラー設定
+BOLD=$(tput bold)
+RESET=$(tput sgr0)
+BLUE=$(tput setaf 4)
+YELLOW=$(tput setaf 3)
+CYAN=$(tput setaf 6)
+GREEN=$(tput setaf 2)
+
+# テストケース: "説明|コマンド列"
+tests=(
+  "Built-in: echo -n|echo -n Hello && echo \$?"
+  "Built-in: pwd (initial)|pwd"
+  "Built-in: cd /tmp and back|cd /tmp && pwd && cd - >/dev/null && pwd"
+  "Built-in: cd 不在ディレクトリ|cd /no_such || echo \$?"
+  "Env export/unset|export TESTVAR=foo && echo \$TESTVAR && unset TESTVAR && echo \$TESTVAR"
+  "特殊変数 \$\?|false || echo \$?"
+  "変数展開: export A|export A=world && echo Hello \$A"
+  "リダイレクト: 上書き|echo overw > f.txt && cat f.txt && rm f.txt"
+  "リダイレクト: 追記|echo first > g.txt && echo second >> g.txt && cat g.txt && rm g.txt"
+  "パイプライン|printf 'a\nb\n' | wc -l"
+  "クオート: シングル|echo '\$HOME $(date)'"
+  "クオート: ダブル|echo \"HOME=\$HOME literal=\$(date)\""
+  "文字列中の \$\(\ )|echo literal\$\(\) test"
+  "バックスラッシュ非解釈|echo foo\\bar"
 )
-  STATUS=$?
-  echo "Command: $2"
-  echo "Output: $OUTPUT"
-  echo "Status: $STATUS"
+
+run_case(){
+  local desc="$1"
+  local cmds="$2"
   echo
+  echo "${BOLD}${YELLOW}=== ${desc} ===${RESET}"
+  echo "${BLUE}-- Bash --${RESET}"
+  bash -c "${cmds}; exit"
+  echo "${CYAN}Exit status: $?${RESET}"
+  echo
+  echo "${BLUE}-- Minishell --${RESET}"
+  printf '%s\nexit\n' "${cmds}" | "${MS}"
+  ms_status=${PIPESTATUS[1]}
+  echo "${CYAN}Exit status: ${ms_status}${RESET}"
 }
 
-# 1) 括弧なし：&& は || より優先
-run "No paren: false || echo A && echo B" \
-    "false || echo A && echo B"
-# Bash と同様、echo A と echo B の両方が実行されるはず
-# → Output: A\nB, Status: 0
+for entry in "${tests[@]}"; do
+  IFS="|" read -r desc cmds <<< "$entry"
+  run_case "$desc" "$cmds"
+done
 
-# 2) 括弧あり：先に || を評価
-run "With paren: (false || echo A) && echo B" \
-    "(false || echo A) && echo B"
-# (false || echo A) がまず A を出力して成功→B も実行
-# → Output: A\nB, Status: 0
-
-# 3) 括弧あり：先に && を評価（意味は変わらない例）
-run "With paren: false && (echo A || echo B)" \
-    "false && (echo A || echo B)"
-# false なので括弧内は実行されず、何も出力されない
-# → Output: (空行), Status: 1
-
-# 4) ネストした括弧
-run "Nested: ( true || (echo X && false) ) && echo OK" \
-    "( true || (echo X && false) ) && echo OK"
-# 内部 (echo X && false) は X を出力して失敗→外側 true || … は成功→OK
-# → Output: X\nOK, Status: 0
-
-# 5) 複合：括弧で評価順を変えてみる
-run "Change order: true || echo A && echo B" \
-    "true || echo A && echo B"
-# デフォルト：&& が先→ (true || (echo A && echo B)) → true なので何も実行
-# → Output: (空行), Status: 0
-
-run "Forced order: (true || echo A) && echo B" \
-    "(true || echo A) && echo B"
-# (true || echo A) → true → && echo B で B を実行
-# → Output: B, Status: 0
+echo
+echo "${BOLD}${GREEN}=== 比較完了 ===${RESET}"
