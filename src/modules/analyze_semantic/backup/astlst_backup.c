@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   astlst_backup.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 21:10:46 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/26 20:46:54 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/27 13:59:05 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	backup_node_args(t_ast *ast, t_shell *sh, int isinit)
 	}
 	ft_lstclear(&ast_args->argv, free_token);
 	ast_args->argv = ms_lstcopy(ast_args->b_argv, free_token, sh);
-	ft_lstclear(&ast_args->b_redr, free_token);
+	ft_lstclear(&ast_args->redr, free_token);
 	ast_args->redr = ms_lstcopy(ast_args->b_redr, free_token, sh);
 }
 
