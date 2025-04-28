@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   line_init.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:43:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/27 18:23:52 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/28 12:07:09 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,7 @@
 void	line_init(t_shell *sh)
 {
 	if (sh->debug & DEBUG_CORE)
-	{
 		put_line_before(sh);
-		// ft_gc_dump(sh->gcli, 2);
-	}
 	if (!sh)
 		shell_exit(NULL, 1);
 	xfree((void **)&sh->source_line);

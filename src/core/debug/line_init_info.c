@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 15:40:02 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:40:08 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/28 12:42:08 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	put_line_before(t_shell *sh)
 	if (!sh)
 		return ;
 	ft_dprintf(STDERR_FILENO, "\n");
+	// ft_gc_dump(sh->gcli, STDERR_FILENO);
 }
 
 void	put_line_info(t_shell *sh)

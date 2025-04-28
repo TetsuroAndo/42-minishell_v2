@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/27 18:55:29 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/28 12:40:45 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,11 +98,9 @@ int	ast_redir(t_list **tok_lst, t_ast *node, t_shell *shell)
 	tok = curr_token(tok_lst);
 	if (!tok)
 		return (1);
-	if (*tok->value == '\0')
+	if (*tok->value == '\0' && tok->type != TT_HEREDOC)
 	{
-		ft_dprintf(STDERR_FILENO,
-			"minishell: syntax error near unexpected token `%s'\n",
-			redir_token_to_symbol(tok->type));
+		ft_dprintf(STDERR_FILENO, ES_TOKEN_S, redir_token_to_symbol(tok->type));
 		return (1);
 	}
 	if (!node->args->redr)

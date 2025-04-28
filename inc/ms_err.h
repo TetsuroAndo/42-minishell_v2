@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/26 19:02:25 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/28 13:37:52 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 /*  Message literals (LANG=C originals)                                     */
 /*--------------------------------------------------------------------------*/
 # define ES_TOKEN "minishell: syntax error near unexpected token\n"
+# define ES_TOKEN_S "minishell: syntax error near unexpected token `%s'\n"
 # define ES_NEWLINE "minishell: syntax error near unexpected token 'newline'\n"
 # define ES_UNEXPECTED_EOF "minishell: unexpected EOF while looking for matching quote\n"
 # define ES_PERMISSION "minishell: %s: permission denied\n"
@@ -42,16 +43,17 @@
 # define ES_NOT_EXEC_FILE "cannot execute binary file: Exec format error"
 # define ES_TEXT_BUSY "Text file busy"
 # define ES_CMD_NOT_FOUND "minishell: %s: command not found\n"
-# define ES_AMBIGUOUS "ambiguous redirect"
+# define ES_AMBIGUOUS "minishell: %s: ambiguous redirect\n"
 # define ES_NUMERIC "numeric argument required"
-# define ES_TOO_MANY_ARGS "too many arguments"
+# define ES_TOO_MANY_ARGS "minishell: %s: too many arguments\n"
 # define ES_NAVI "not a valid identifier"
 # define ES_SHIFT_RANGE "shift count out of range"
 # define ES_BAD_SUBSTITUTION "bad substitution"
 # define ES_BROKEN_PIPE "Broken pipe"
 # define ES_EVENT_NOT_FOUND "event not found"
 # define ES_WRITE_BROKEN_PIPE "write error: Broken pipe"
-# define ES_HEREDOC "minishell: warning: here-document delimited by end-of-file\n"
+# define ES_HEREDOC "minishell: warning: here-document delimited by end-of-file (wanted `%s')\n"
+# define ES_INVALID_OPTION "minishell: cd: %s: invalid option\n"
 
 /*
 **--------------------------------------------------------------------------
