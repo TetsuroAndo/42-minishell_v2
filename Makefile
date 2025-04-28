@@ -6,13 +6,14 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/28 15:27:28 by teando           ###   ########.fr        #
+#    Updated: 2025/04/28 20:59:28 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		:= minishell
 CC			:= cc
 CFLAGS		:= -Wall -Wextra -Werror
+OPT			:= -O2
 RM			:= rm -rf
 DEFINE		:= -DDEBUG_MODE=DEBUG_NONE
 
@@ -52,28 +53,38 @@ SRC		+= $(shell find $(SRC_DIR)/modules/executer -name '*.c')
 SRC		+= $(shell find $(SRC_DIR)/builtin_cmds -name '*.c')
 OBJ		:= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 
-# dev all
-all: CFLAGS += -g -fsanitize=address -O1 -fno-omit-frame-pointer
-all: DEFINE := -DDEBUG_MODE=DEBUG_ALL
-all: $(NAME)
+# Index
+all:
+	$(MAKE) __build -j $(shell nproc)
+v: f
+	$(MAKE) __v -j $(shell nproc)
+core: f
+	$(MAKE) __core -j $(shell nproc)
+debug: f
+	$(MAKE) __debug -j $(shell nproc)
+
+__build: OPT	:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
+__build: DEFINE	:= -DDEBUG_MODE=DEBUG_ALL
+__build: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(LFLAGS) $(IDFLAGS) $(DEFINE) -o $(NAME)
+	$(CC) $(CFLAGS) $(OPT) $(OBJ) $(LIBFT) $(LFLAGS) $(IDFLAGS) $(DEFINE) -o $(NAME)
 	@echo "====================="
 	@echo "== Build Complete! =="
 	@echo "====================="
 	@echo "[Executable]: $(NAME)"
 	@echo "[UNAME_S]: $(UNAME_S)"
-	@echo "[LIBRARY]: $(LIBFT)"
-	@echo "[INCLUDEDIR]: $(INC_DIR) $(LIBFT_DIR)"
+	@echo "[Library]: $(LIBFT)"
+	@echo "[Includedir]: $(INC_DIR) $(LIBFT_DIR)"
 	@echo "[Compiler flags/CFLAGS]: $(CFLAGS)"
+	@echo "[Optimizer flags/OPT]: $(OPT)"
 	@echo "[Linker flags/LFLAGS]: $(LFLAGS)"
 	@echo "[Debug flags/DEFINE]: $(DEFINE)"
 	@echo "====================="
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(LIBFT_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $(IDFLAGS) $(DEFINE) -fPIC -MMD -MP -c $< -o $@
+	$(CC) $(CFLAGS) $(OPT) $(IDFLAGS) $(DEFINE) -fPIC -MMD -MP -c $< -o $@
 
 $(LIBFT): | $(LIBFT_DIR)/libft.h
 	$(MAKE) -C $(LIBFT_DIR)
@@ -82,7 +93,9 @@ c:
 	$(RM) $(OBJ_DIR)
 f: c
 	$(RM) $(NAME)
-r: f all
+r:
+	$(MAKE) f
+	$(MAKE) __build -j $(shell nproc)
 
 clean:
 	$(RM) $(OBJ_DIR)
@@ -92,37 +105,27 @@ fclean: clean
 	$(RM) $(NAME)
 	$(MAKE) -C $(LIBFT_DIR) fclean
 
-re: fclean all
+re:
+	$(MAKE) fclean
+	$(MAKE) __build -j $(shell nproc)
 
 # =======================
 # == PRODUCTION =========
 # =======================
 
-v: CFLAGS += -O2
-v: f $(NAME)
+__v: $(NAME)
 
 # =======================
 # == DEBUG =============
 # =======================
 
-core: CFLAGS += -g -fsanitize=address -O1 -fno-omit-frame-pointer
-core: DEFINE := -DDEBUG_MODE=DEBUG_CORE
-core: f $(NAME)
+__core: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
+__core: DEFINE	:= -DDEBUG_MODE=DEBUG_CORE
+__core: $(NAME)
 
-debug: CFLAGS += -g -fsanitize=address -O1 -fno-omit-frame-pointer
-debug: DEFINE := -DDEBUG_MODE=DEBUG_ALL
-debug: f $(NAME)
-	@echo "====================="
-	@echo "== Build Complete! =="
-	@echo "====================="
-	@echo "[Executable]: $(NAME)"
-	@echo "[UNAME_S]: $(UNAME_S)"
-	@echo "[LIBRARY]: $(LIBFT)"
-	@echo "[INCLUDEDIR]: $(INC_DIR) $(LIBFT_DIR)"
-	@echo "[Compiler flags/CFLAGS]: $(CFLAGS)"
-	@echo "[Linker flags/LFLAGS]: $(LFLAGS)"
-	@echo "[Debug flags/DEFINE]: $(DEFINE)"
-	@echo "====================="
+__debug: OPT 	:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
+__debug: DEFINE	:= -DDEBUG_MODE=DEBUG_ALL
+__debug: $(NAME)
 
 # =======================
 # == Submodule Targets ==
