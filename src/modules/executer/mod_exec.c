@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mod_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/27 17:31:20 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/28 22:54:57 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static void	fdbackup_enter(t_fdbackup *bk, int tgt, t_shell *sh)
 	bk->saved_fd = xdup(tgt, sh);
 }
 
-static void	fdbackupexit(t_fdbackup *bk)
+static void	fdbackup_exit(t_fdbackup *bk)
 {
 	if (bk->saved_fd != -1)
 	{
@@ -48,27 +48,6 @@ void	sig_ignore_parent(int *enabled)
 	sigaction(SIGINT, &ign, &old_int);
 	sigaction(SIGQUIT, &ign, &old_quit);
 	*enabled = 1;
-}
-
-/* ========================================================= */
-/*                   AST dispatcher : exe_run                */
-/* ========================================================= */
-
-int	exe_run(t_ast *node, t_shell *sh)
-{
-	if (!node)
-		return (0);
-	else if (node->ntype == NT_CMD)
-		return (exe_cmd(node, sh));
-	else if (node->ntype == NT_PIPE)
-		return (exe_pipe(node, sh));
-	else if (node->ntype == NT_AND || node->ntype == NT_OR
-		|| node->ntype == NT_LIST)
-		return (exe_bool(node, sh));
-	else if (node->ntype == NT_SUBSHELL)
-		return (exe_sub(node, sh));
-	else
-		return (1);
 }
 
 /* ========================================================= */
@@ -172,8 +151,8 @@ int	exe_cmd(t_ast *node, t_shell *sh)
 		status = builtin_launch(argv, sh);
 	else
 		status = execute_external_cmd(argv, node, sh);
-	fdbackupexit(&bk_in);
-	fdbackupexit(&bk_out);
+	fdbackup_exit(&bk_in);
+	fdbackup_exit(&bk_out);
 	return (status);
 }
 
@@ -300,7 +279,7 @@ int	exe_sub(t_ast *node, t_shell *sh)
 	if (pid == 0)
 	{
 		sh->interactive = 0;
-		st = exe_run(node->left, sh); /* subshell の AST は left に格納 */
+		st = exe_run(node->left, sh);
 		exit(st);
 	}
 	waitpid(pid, &wst, 0);

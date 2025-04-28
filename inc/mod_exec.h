@@ -11,8 +11,8 @@ typedef struct s_ast			t_ast;
 
 typedef struct s_fdbackup
 {
-	int							saved_fd;
-	int							target_fd;
+	int							saved;
+	int							target;
 }								t_fdbackup;
 
 /* main */
@@ -23,6 +23,7 @@ int								exe_pipe(t_ast *node, t_shell *sh);
 int								exe_bool(t_ast *node, t_shell *sh);
 int								exe_sub(t_ast *node, t_shell *sh);
 int								handle_redr(t_args *args, t_shell *sh);
+int								heredoc_into_fd(char *body, t_args *args, t_shell *sh);
 
 /* argv utils */
 char							**toklist_to_argv(t_list *lst, t_shell *sh);
