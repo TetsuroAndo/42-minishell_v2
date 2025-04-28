@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 23:11:41 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 17:01:16 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/28 18:58:19 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ t_status	__export(int argc, char **argv, t_shell *sh)
 	i = 0;
 	while (++i < argc)
 	{
-		if (ms_setenv(ft_strdup(argv[i]), sh) != E_NONE)
+		if (ms_setenv(ms_strdup(argv[i], sh), sh) != E_NONE)
 			return (1);
 		sh->env_updated = 1;
 	}

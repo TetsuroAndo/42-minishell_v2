@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 22:13:52 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 10:05:06 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/28 19:33:29 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,15 @@ static char	*ms_handle_append_env(const char *key, const char *arg,
 static char	*ms_handle_normal_env(const char *key, const char *arg,
 		size_t eq_pos, t_shell *sh)
 {
+	t_list	*lst;
 	char	*value;
 	char	*new_entry;
 
 	if (eq_pos == 0)
 	{
+		lst = ft_list_find(sh->env_map, (void *)key, ms_envcmp);
+		if (lst && ft_strchr(lst->data, '='))
+			return (ms_strdup(lst->data, sh));
 		return (ms_strdup(key, sh));
 	}
 	else if (arg[eq_pos] == '\0')
