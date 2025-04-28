@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by teando            #+#    #+#             */
-/*   Updated: 2025/04/28 12:40:45 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/28 15:59:31 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,11 +189,7 @@ t_ast	*ast_primary(t_list **tok_lst, t_shell *shell)
 		node = ast_new(NT_SUBSHELL, ast_list(tok_lst, shell), NULL, shell);
 		tok = curr_token(tok_lst);
 		if (tok->type != TT_RPAREN)
-		{
-			ft_dprintf(STDERR_FILENO,
-				"minishell: syntax error near unexpected token`('\n");
-			return (free_ast(&node), NULL);
-		}
+			return (ft_dprintf(STDERR_FILENO, ES_TOKEN), free_ast(&node), NULL);
 		ms_listshift(tok_lst);
 		return (node);
 	}
