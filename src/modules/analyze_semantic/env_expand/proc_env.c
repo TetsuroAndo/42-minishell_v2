@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   proc_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 21:12:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/27 21:26:07 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/28 20:35:46 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,10 @@ t_status	proc_env(t_list **list, int idx, t_shell *sh)
 	token = (t_lexical_token *)(*list)->data;
 	if (!token || !token->value)
 		return (E_SYSTEM);
-	expanded_value = shift_or_true(list, token, idx, sh);
+	if (token->type == TT_HEREDOC)
+		expanded_value = ms_strdup(handle_env(token->value, sh), sh);
+	else
+		expanded_value = shift_or_true(list, token, idx, sh);
 	if (!expanded_value)
 		return (E_SYSTEM);
 	xfree((void **)&token->value);
