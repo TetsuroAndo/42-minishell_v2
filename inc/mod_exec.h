@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mod_exec.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/29 01:44:40 by teando            #+#    #+#             */
+/*   Updated: 2025/04/29 01:45:47 by teando           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MOD_EXEC_H
 # define MOD_EXEC_H
 
@@ -23,17 +35,15 @@ int								exe_pipe(t_ast *node, t_shell *sh);
 int								exe_bool(t_ast *node, t_shell *sh);
 int								exe_sub(t_ast *node, t_shell *sh);
 int								handle_redr(t_args *args, t_shell *sh);
-int								heredoc_into_fd(char *body, t_args *args,
-									t_shell *sh);
-/* argv utils */
-char							**toklist_to_argv(t_list *lst, t_shell *sh);
 
 /* exec utils*/
 void							cleanup_redir_fds(t_args *a);
 void							fdbackup_enter(t_fdbackup *bk, int tgt,
 									t_shell *sh);
 int								wait_and_status(pid_t pid);
+char							**toklist_to_argv(t_list *lst, t_shell *sh);
 void							sig_ignore_parent(int *enabled);
+
 /* dispatcher */
 int								builtin_launch(char **argv, t_shell *sh);
 
