@@ -1,8 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mod_lex.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/29 02:00:01 by teando            #+#    #+#             */
+/*   Updated: 2025/04/29 02:00:34 by teando           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MOD_LEX_H
 # define MOD_LEX_H
 
 # include "core.h"
 
+/* entry point for lexical analysis */
 t_status		mod_lex(t_shell *shell);
 
 // Tokenization functions

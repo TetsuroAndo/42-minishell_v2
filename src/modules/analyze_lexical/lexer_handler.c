@@ -6,18 +6,12 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:09 by teando            #+#    #+#             */
-/*   Updated: 2025/04/28 15:34:05 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 01:57:58 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_lex.h"
 
-/**
- * @brief 2文字演算子を識別する
- *
- * @param s 識別する文字列
- * @return 識別した演算子のトークンタイプ、識別できない場合はTT_ERROR
- */
 t_token_type	get_two_char_op(const char *s)
 {
 	if (!s || !s[0] || !s[1])
@@ -41,33 +35,17 @@ t_token_type	get_two_char_op(const char *s)
 	return (TT_ERROR);
 }
 
-/**
- * @brief 1文字演算子を識別する
- *
- * @param c 識別する文字
- * @return 識別した演算子のトークンタイプ、識別できない場合はTT_ERROR
- */
 t_token_type	get_one_char_op(int c)
 {
-	static const t_token_type	op_map[128] = {
-		['|'] = TT_PIPE,
-		['>'] = TT_REDIR_OUT,
-		['<'] = TT_REDIR_IN,
-		['('] = TT_LPAREN,
-		[')'] = TT_RPAREN
-	};
+	static const t_token_type	op_map[128] = {['|'] = TT_PIPE,
+	['>'] = TT_REDIR_OUT, ['<'] = TT_REDIR_IN, ['('] = TT_LPAREN,
+	[')'] = TT_RPAREN};
+
 	if (c >= 0 && c <= 127 && op_map[(int)c] != 0)
 		return (op_map[(int)c]);
 	return (TT_ERROR);
 }
 
-/**
- * @brief 現在の位置が演算子の開始かどうかをチェックする
- *
- * @param line 処理対象の文字列
- * @param pos 現在の位置
- * @return 演算子の場合は1、そうでない場合は0
- */
 int	is_operator(const char *line, size_t pos)
 {
 	if (get_two_char_op(&line[pos]) != TT_ERROR)
@@ -100,15 +78,15 @@ char	*read_word(const char *line, size_t *pos, t_shell *shell)
 		{
 			if (skip_quoted_word(line, pos, shell))
 				return (NULL);
-			continue;
+			continue ;
 		}
 		if (line[*pos] == '$' && line[*pos + 1] == '(')
 		{
 			skip_dollar_paren(line, &(*pos));
-			continue;
+			continue ;
 		}
 		if (ft_isspace(line[*pos]) || is_operator(line, *pos))
-			break;
+			break ;
 		(*pos)++;
 	}
 	return (ms_substr(line, start, (*pos - start), shell));
