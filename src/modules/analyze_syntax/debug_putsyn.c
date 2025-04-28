@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 05:04:33 by teando            #+#    #+#             */
-/*   Updated: 2025/04/20 07:56:20 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/28 22:22:23 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,25 +16,12 @@
 static const char	*type_str(t_ntype type)
 {
 	static const char	*g_type_name[] = {"SIMPLE_CMD", "CMD", "PIPE", "LIST",
-			"EOF", "AND", "OR", "SUBSHELL", "REDIRECT"};
+		"EOF", "AND", "OR", "SUBSHELL", "REDIRECT"};
 
 	if (type < 0 || type >= (int)(sizeof(g_type_name) / sizeof(char *)))
 		return ("UNKNOWN");
 	return (g_type_name[type]);
 }
-
-static void	put_prefix(const char *prefix, int is_last)
-{
-	ft_putstr_fd((char *)prefix, 2);
-	if (is_last)
-		ft_putstr_fd("└── ", 2);
-	else
-		ft_putstr_fd("├── ", 2);
-}
-
-/* ****************************************************************** */
-/*          コマンド / リダイレクト表示                                      */
-/* ****************************************************************** */
 
 static void	print_tok_list(t_list *lst, int redir)
 {
@@ -65,42 +52,43 @@ static void	print_cmd_detail(t_args *args, const char *pref, int is_last)
 {
 	char	*sub_pref;
 
-	sub_pref = xstrjoin_free(ms_strdup(pref, NULL), is_last ? "    " : "│   ",
-			NULL);
+	if (is_last)
+		sub_pref = xstrjoin_free(ms_strdup(pref, NULL), "    ", NULL);
+	else
+		sub_pref = xstrjoin_free(ms_strdup(pref, NULL), "│   ", NULL);
 	if (args->argv)
 	{
-		put_prefix(sub_pref, 0);
-		ft_putstr_fd("Command: [", 2);
+		ft_putstr_fd((char *)sub_pref, 2);
+		ft_putstr_fd("├── Command: [", 2);
 		print_tok_list(args->argv, 0);
 		ft_putendl_fd("]", 2);
 	}
 	if (args->redr)
 	{
-		put_prefix(sub_pref, 1);
-		ft_putstr_fd("Redirs : [", 2);
+		ft_putstr_fd((char *)sub_pref, 2);
+		ft_putstr_fd("└── Redirs : [", 2);
 		print_tok_list(args->redr, 1);
 		ft_putendl_fd("]", 2);
 	}
 	xfree((void **)&sub_pref);
 }
 
-/* ****************************************************************** */
-/*          木構造の再帰出力                                            */
-/* ****************************************************************** */
-
 static void	print_ast_rec(t_ast *ast, const char *pref, int is_last)
 {
 	char	*next_pref;
 
-	if (!ast)
-		return ;
-	put_prefix(pref, is_last);
+	ft_putstr_fd((char *)pref, 2);
+	if (is_last)
+		ft_putstr_fd("└── ", 2);
+	else
+		ft_putstr_fd("├── ", 2);
 	ft_dprintf(2, "[%s]\n", type_str(ast->ntype));
 	if (ast->ntype == NT_CMD)
 		print_cmd_detail(ast->args, pref, is_last);
-	/* 子ノードの prefix を作成 */
-	next_pref = xstrjoin_free(ms_strdup(pref, NULL), is_last ? "    " : "│   ",
-			NULL);
+	if (is_last)
+		next_pref = xstrjoin_free(ms_strdup(pref, NULL), "    ", NULL);
+	else
+		next_pref = xstrjoin_free(ms_strdup(pref, NULL), "│   ", NULL);
 	if (ast->left && ast->right)
 	{
 		print_ast_rec(ast->left, next_pref, 0);
@@ -112,10 +100,6 @@ static void	print_ast_rec(t_ast *ast, const char *pref, int is_last)
 		print_ast_rec(ast->right, next_pref, 1);
 	xfree((void **)&next_pref);
 }
-
-/* ****************************************************************** */
-/*          エントリポイント                                               */
-/* ****************************************************************** */
 
 void	debug_print_ast(t_ast *ast, t_shell *shell)
 {
