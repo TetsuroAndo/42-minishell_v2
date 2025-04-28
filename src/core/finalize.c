@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:10 by teando            #+#    #+#             */
-/*   Updated: 2025/04/25 13:00:00 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 03:14:27 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ void	shell_exit(t_shell *shell, int status)
 {
 	if (shell->debug & DEBUG_CORE)
 		put_sh_final(shell, status);
-	/*statusによっては終了までする必要ないときがある気がする*/
 	shell_cleanup(shell);
 	xfree((void **)&shell);
 	exit(status);

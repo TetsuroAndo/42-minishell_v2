@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:24:52 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 21:56:36 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 03:17:38 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static char	*put_debug_mode(t_shell *sh)
 
 void	put_sh_init(t_shell *sh)
 {
-	char	pid[36] = "This project does not use getpid().";
+	const char	pid[36] = "This project does not use getpid().";
 
 	ms_put_ascii(sh);
 	ft_dprintf(STDERR_FILENO, "-----> [SHELL NAME]: %s\n", sh->bin_name);

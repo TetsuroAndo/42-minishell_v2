@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path_resolve.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 22:18:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/22 14:33:15 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 03:09:20 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ static int	check_permissions(int *c, char *in)
 static int	check(int *c, char *in, t_shell *sh)
 {
 	struct stat	st;
+
 	(void)sh;
-	
 	if (is_builtin(in))
 	{
 		*c = 0;

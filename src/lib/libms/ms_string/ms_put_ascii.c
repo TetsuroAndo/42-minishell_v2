@@ -6,15 +6,15 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 08:39:43 by teando            #+#    #+#             */
-/*   Updated: 2025/04/19 20:48:48 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 03:11:02 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
 
-static int check_eof(char *s, t_shell *sh)
+static int	check_eof(char *s, t_shell *sh)
 {
-	int chk;
+	int	chk;
 
 	chk = ft_putendl_fd(s, STDOUT_FILENO);
 	if (chk == EOF)

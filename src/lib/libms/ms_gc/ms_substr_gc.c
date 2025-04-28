@@ -6,17 +6,17 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 03:13:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:17:03 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 03:06:29 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
 
-char	*ms_substr_gcli(char const *s, unsigned int start, size_t len, t_shell *sh)
+char	*ms_substr_gcli(char const *s, unsigned int start, size_t len,
+		t_shell *sh)
 {
 	return (ms_strndup_gcli(s + ft_strnlen(s, start), len, sh));
 }
-
 
 char	*ms_substr_r_gcli(char const *s, char delimiter, t_shell *sh)
 {

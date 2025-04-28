@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 20:09:45 by teando            #+#    #+#             */
-/*   Updated: 2025/04/26 20:20:07 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 03:06:08 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ char	*ms_strjoin_gcli(char const *s1, char const *s2, t_shell *sh)
 	return (r);
 }
 
-char	*ms_strjoin3_gcli(char const *s1, char const *s2, char const *s3, t_shell *sh)
+char	*ms_strjoin3_gcli(char const *s1, char const *s2, char const *s3,
+		t_shell *sh)
 {
 	char	*r;
 	size_t	size;
@@ -48,7 +49,6 @@ char	*ms_strjoin3_gcli(char const *s1, char const *s2, char const *s3, t_shell *
 	ft_strlcat(r, s3, size);
 	return (r);
 }
-
 
 char	*ms_strjoin_gcli_f2(char const *s1, char const *s2, t_shell *sh)
 {

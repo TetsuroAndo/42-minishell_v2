@@ -5,14 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/28 13:37:52 by teando           ###   ########.fr       */
+/*   Created: 2025/04/29 03:24:35 by teando            #+#    #+#             */
+/*   Updated: 2025/04/29 03:33:15 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#ifndef MS_ES_H
-# define MS_ES_H
+#ifndef MS_ERR_H
+# define MS_ERR_H
 
 /*
 ** ==========================================================================
@@ -34,7 +33,7 @@
 # define ES_TOKEN "minishell: syntax error near unexpected token\n"
 # define ES_TOKEN_S "minishell: syntax error near unexpected token `%s'\n"
 # define ES_NEWLINE "minishell: syntax error near unexpected token 'newline'\n"
-# define ES_UNEXPECTED_EOF "minishell: unexpected EOF while looking for matching quote\n"
+# define ES_EOF "minishell: unexpected EOF while looking for matching quote\n"
 # define ES_PERMISSION "minishell: %s: permission denied\n"
 # define ES_NO_SUCH_FOD "minishell: %s: No such file or directory\n"
 # define ES_IS_DIR "minishell: %s: Is a directory\n"
@@ -52,7 +51,6 @@
 # define ES_BROKEN_PIPE "Broken pipe"
 # define ES_EVENT_NOT_FOUND "event not found"
 # define ES_WRITE_BROKEN_PIPE "write error: Broken pipe"
-# define ES_HEREDOC "minishell: warning: here-document delimited by end-of-file (wanted `%s')\n"
 # define ES_INVALID_OPTION "minishell: cd: %s: invalid option\n"
 
 /*
@@ -65,7 +63,6 @@ typedef enum e_status
 {
 	/* Success */
 	E_NONE = 0,
-
 	/* Generic errors */
 	E_GENERAL = 1,
 	E_SYSTEM = 1,
@@ -75,12 +72,10 @@ typedef enum e_status
 	E_ARGUMENT = 1,
 	E_INVALID_IDENTIFIER = 1,
 	E_AMBIGUOUS_REDIR = 1,
-
 	/* Misuse of shell built‑ins (Bash returns 2) */
 	E_MISUSE_BUILTIN = 2,
 	E_SYNTAX = 2,
 	E_NUMERIC = 2,
-
 	/* Non‑fatal: command name recognised but not executed */
 	E_IS_DIR = 126,
 	E_IS_FILE = 126,
@@ -89,22 +84,17 @@ typedef enum e_status
 	E_PERMISSION_DENIED = 126,
 	E_NOT_EXECUTABLE = 126,
 	E_EXEC_CANNOT_EXECUTE = 126,
-
 	/* Name lookup failure */
 	E_NO_SUCH_FOD = 127,
 	E_COMMAND_NOT_FOUND = 127,
-
 	/* INVALID EXIT ARGUMENT = n % 128 */
 	E_INVALID_ARGUMENT = 128,
-
 	/* Signals (128 + signo) */
-	E_SIGINT = 130,  /* 128 + 2, SIGINT */
-	E_SIGQUIT = 131, /* 128 + 3, SIGQUIT */
-	E_SIGPIPE = 141, /* 128 + 13, SIGPIPE */
-
+	E_SIGINT = 130,
+	E_SIGQUIT = 131,
+	E_SIGPIPE = 141,
 	/* Fatal / implementation‑specific */
 	E_FATAL = 255,
-
 	/* Project‑specific helpers */
 	E_NOT_BUILTIN_CMD = -2
 }	t_status;

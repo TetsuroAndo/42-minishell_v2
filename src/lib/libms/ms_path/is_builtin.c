@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_builtin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:20:12 by teando            #+#    #+#             */
-/*   Updated: 2025/04/23 16:43:55 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 03:08:36 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	is_builtin(char *cmd)
 {
 	static const char	*tbl[] = {"echo", "cd", "pwd", "export", "unset", "env",
-			"exit", "true", NULL};
+		"exit", "true", NULL};
 	size_t				i;
 
 	i = 0;

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 08:48:51 by teando            #+#    #+#             */
-/*   Updated: 2025/04/28 14:51:20 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 03:10:04 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	skip_dollar_paren(const char *line, size_t *pos)
 {
-	int depth;
+	int	depth;
 
 	if (!(line[*pos] == '$' && line[*pos + 1] == '('))
 		return ;
