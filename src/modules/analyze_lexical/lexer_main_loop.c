@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_main_loop.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:15 by teando            #+#    #+#             */
-/*   Updated: 2025/04/27 22:11:32 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/28 15:31:25 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,11 @@ static int	parse_two_char_operator(const char *line, size_t *pos,
 		t_shell *shell)
 {
 	t_token_type	op;
-	size_t			length;
 
-	op = get_two_char_op(&line[*pos], &length);
+	op = get_two_char_op(&line[*pos]);
 	if (op == TT_ERROR)
 		return (0);
-	(*pos) += length;
+	(*pos) += 2;
 	if (op == TT_APPEND || op == TT_HEREDOC)
 	{
 		if (add_operator_token_with_arg(op, line, pos, shell))
@@ -91,32 +90,24 @@ static int	parse_one_char_operator(const char *line, size_t *pos,
 static int	parse_next_token(const char *line, size_t *pos, t_shell *shell)
 {
 	char	*word;
-	int r;
+	int		r;
 
 	skip_spaces(line, pos);
-	if (!line[*pos]) // 入力終端(=EOF)ならTT_EOFトークンを追加して終了
+	if (!line[*pos] || line[*pos] == '#')
 	{
 		if (add_token(shell, create_token(TT_EOF, NULL, shell)))
 			return (-1);
 		return (0);
 	}
-	if (line[*pos] == '#') // コメント記号(#)が見つかった場合、行の残りをスキップしてEOFトークンを追加
-	{
-		while (line[*pos])
-			(*pos)++;
-		if (add_token(shell, create_token(TT_EOF, NULL, shell)))
-			return (-1);
-		return (0);
-	}
-	r = parse_two_char_operator(line, pos, shell); // 2文字演算子をチェック
+	r = parse_two_char_operator(line, pos, shell);
 	if (r)
 		return (r);
-	r = parse_one_char_operator(line, pos, shell); // 1文字演算子をチェック
+	r = parse_one_char_operator(line, pos, shell);
 	if (r)
 		return (r);
-	word = read_word(line, pos, shell); // いずれの演算子にも該当しない場合は通常単語扱い
-	if ((!word && shell->status == E_SYNTAX))// バックスラッシュの時にエラー
-		return (-1); // クォート不整合など
+	word = read_word(line, pos, shell);
+	if (!word || shell->status == E_SYNTAX)
+		return (-1);
 	if (add_token(shell, create_token(TT_WORD, word, shell)))
 		return (-1);
 	return (1);
