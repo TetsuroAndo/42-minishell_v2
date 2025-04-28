@@ -1,34 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   argv_utils.c                                        :+:      :+:    :+:   */
+/*   set_cloexec.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/18 22:48:51 by teando            #+#    #+#             */
-/*   Updated: 2025/04/18 22:48:51 by teando           ###   ########.fr       */
+/*   Created: 2025/04/29 00:08:35 by teando            #+#    #+#             */
+/*   Updated: 2025/04/29 00:20:24 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mod_exec.h"
+#include "libms.h"
+#include <dirent.h>
 
-/* トークンリストを NULL 終端 argv[] に変換する */
-char	**toklist_to_argv(t_list *lst, t_shell *sh)
+void	set_cloexec_all(void)
 {
-	t_lexical_token	*tok;
-	char			**argv;
-	size_t			n;
-	size_t			i;
+	DIR				*d;
+	struct dirent	*ent;
+	int				fd;
 
-	n = ft_lstsize(lst);
-	argv = xmalloc_gcline(sizeof(char *) * (n + 1), sh);
-	i = 0;
-	while (lst)
+	d = opendir("/proc/self/fd");
+	if (!d)
+		return ;
+	ent = readdir(d);
+	while (ent)
 	{
-		tok = lst->data;
-		argv[i++] = tok->value;
-		lst = lst->next;
+		fd = ft_atoi(ent->d_name);
+		if (fd > 2) /* 0,1,2 は残す */
+			fcntl(fd, F_SETFD, FD_CLOEXEC);
+		ent = readdir(d);
 	}
-	argv[i] = NULL;
-	return (argv);
+	closedir(d);
 }

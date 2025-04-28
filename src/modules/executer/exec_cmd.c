@@ -6,36 +6,32 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 22:43:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/28 22:44:15 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 01:32:12 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_exec.h"
 
-static int	prepare_cmd_args(t_ast *node, char ***argv, int *flag, t_shell *sh)
+static int	prepare_argv(t_ast *node, char ***out, int *flag, t_shell *sh)
 {
 	struct stat	sb;
-	t_status status;
 
-	*flag = 0;
-	status = handle_redr(node->args, sh);
-	if (status)
-		return (status);
-	*argv = toklist_to_argv(node->args->argv, sh);
-	if (!*argv)
+	if (handle_redr(node->args, sh))
+		return (E_SYSTEM);
+	*out = toklist_to_argv(node->args->argv, sh);
+	if (!*out)
 	{
 		*flag = 1;
 		return (E_SYSTEM);
 	}
-	if (!(*argv)[0])
+	if (!(*out)[0])
 	{
 		*flag = 1;
 		return (E_NONE);
 	}
-	return (E_NONE);
-	if (stat((*argv)[0], &sb) == 0 && S_ISDIR(sb.st_mode))
+	if (stat((*out)[0], &sb) == 0 && S_ISDIR(sb.st_mode))
 		return (E_IS_DIR);
-	return (0);
+	return (E_NONE);
 }
 
 static void	setup_redirections(t_ast *node, t_fdbackup *bk_in,
@@ -55,9 +51,8 @@ static void	setup_redirections(t_ast *node, t_fdbackup *bk_in,
 	}
 }
 
-static int	execute_external_cmd(char **argv, t_ast *node, t_shell *sh)
+static int	execv_external(char **argv, t_ast *node, t_shell *sh)
 {
-	int		wstatus;
 	int		sig_held;
 	char	**env;
 
@@ -77,11 +72,8 @@ static int	execute_external_cmd(char **argv, t_ast *node, t_shell *sh)
 		perror(argv[0]);
 		exit(127);
 	}
-	waitpid(node->args->pid, &wstatus, 0);
 	sig_ignore_parent(&sig_held);
-	if (WIFEXITED(wstatus))
-		return (WEXITSTATUS(wstatus));
-	return (128 + WTERMSIG(wstatus));
+	return (wait_and_status(node->args->pid));
 }
 
 int	exe_cmd(t_ast *node, t_shell *sh)
@@ -99,17 +91,16 @@ int	exe_cmd(t_ast *node, t_shell *sh)
 	status = ms_lstiter(node->args->argv, proc_exec_path, sh);
 	if (status)
 		return (status);
-	if (sh->debug & DEBUG_SEM)
-		debug_print_sem(node, sh);
-	status = prepare_cmd_args(node, &argv, &flag, sh);
+	status = prepare_argv(node, &argv, &flag, sh);
 	if (flag)
 		return (status);
 	setup_redirections(node, &bk_in, &bk_out, sh);
 	if (is_builtin(argv[0]))
 		status = builtin_launch(argv, sh);
 	else
-		status = execute_external_cmd(argv, node, sh);
-	fdbackup_exit(&bk_in);
-	fdbackup_exit(&bk_out);
+		status = execv_external(argv, node, sh);
+	xdup2(&bk_in.saved, bk_in.target, sh);
+	xdup2(&bk_out.saved, bk_out.target, sh);
+	cleanup_redir_fds(node->args);
 	return (status);
 }

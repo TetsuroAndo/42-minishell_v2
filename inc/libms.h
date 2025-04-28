@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/28 15:25:02 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 00:20:47 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,14 +111,15 @@ pid_t					xfork(t_shell *shell);
 void					xfree(void **ptr);
 void					*xmalloc(size_t size, t_shell *shell);
 int						xpipe(int pipfds[], t_shell *shell);
-
+void					set_cloexec_all(void);
 /*
 ** ============================================================================
 ** ms_string - 文字列操作関連の関数
 ** ============================================================================
 */
 int						is_quoted(const char *s);
-int						skip_quoted_word(const char *line, size_t *pos, t_shell *shell);
+int						skip_quoted_word(const char *line, size_t *pos,
+							t_shell *shell);
 void					ms_put_ascii(t_shell *sh);
 void					skip_spaces(const char *line, size_t *pos);
 void					skip_dollar_paren(const char *line, size_t *pos);
