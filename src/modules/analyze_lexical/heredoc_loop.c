@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 17:08:24 by teando            #+#    #+#             */
-/*   Updated: 2025/04/28 13:53:56 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/28 15:51:52 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,10 @@ t_list  *handle_heredoc(t_lexical_token *tok, t_shell *sh)
 	char	*q_body;
 
 	quoted = is_quoted(tok->value);
-	ft_dprintf(STDERR_FILENO, "quoted: %d\n", quoted);
 	delim = trim_valid_quotes(tok->value, sh);
-	ft_dprintf(STDERR_FILENO, "delim: %s\n", delim);
     body  = read_heredoc_body(delim, sh);
 	xfree((void **)&delim);
-    if (!body)                               /* ^C 等で NULL が戻った場合 */
+    if (!body)
 		body = ms_strdup("", sh);
 	xfree((void **)&tok->value);
 	if (quoted)
