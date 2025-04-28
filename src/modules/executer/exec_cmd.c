@@ -6,11 +6,17 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 22:43:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 01:32:12 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 01:39:31 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_exec.h"
+
+static void	fdbackup_restore(t_fdbackup *bk, t_shell *sh)
+{
+	if (bk->saved != -1)
+		xdup2(&bk->saved, bk->target, sh);
+}
 
 static int	prepare_argv(t_ast *node, char ***out, int *flag, t_shell *sh)
 {
@@ -99,8 +105,8 @@ int	exe_cmd(t_ast *node, t_shell *sh)
 		status = builtin_launch(argv, sh);
 	else
 		status = execv_external(argv, node, sh);
-	xdup2(&bk_in.saved, bk_in.target, sh);
-	xdup2(&bk_out.saved, bk_out.target, sh);
+	fdbackup_restore(&bk_in, sh);
+	fdbackup_restore(&bk_out, sh);
 	cleanup_redir_fds(node->args);
 	return (status);
 }
