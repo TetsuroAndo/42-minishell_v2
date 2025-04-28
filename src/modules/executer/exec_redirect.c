@@ -6,13 +6,13 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 00:49:03 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 01:29:23 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 01:41:43 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_exec.h"
 
-int	heredoc_into_fd(char *body, t_args *args, t_shell *sh)
+static int	heredoc_into_fd(char *body, t_args *args, t_shell *sh)
 {
 	int	hd[2];
 
