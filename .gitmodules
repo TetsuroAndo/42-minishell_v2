@@ -1,3 +1,0 @@
-[submodule "src/lib/libft"]
-	path = src/lib/libft
-	url = git@github.com:TetsuroAndo/42-libft.git
