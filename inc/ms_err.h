@@ -13,23 +13,10 @@
 #ifndef MS_ERR_H
 # define MS_ERR_H
 
-/*
-** ==========================================================================
-**  Minishell – unified error messages & exit status codes
-**  (extended for Bash‑compatible behaviour)
-** ==========================================================================
-*/
-
-/*--------------------------------------------------------------------------*/
-/*  Generic printf‑style formatter                                          */
-/*--------------------------------------------------------------------------*/
 # define EMSG1 "minishell: %s\n"
 # define EMSG2 "minishell: %s: %s\n"
 # define EMSG3 "minishell: %s: %s: %s\n"
 
-/*--------------------------------------------------------------------------*/
-/*  Message literals (LANG=C originals)                                     */
-/*--------------------------------------------------------------------------*/
 # define ES_TOKEN "minishell: syntax error near unexpected token\n"
 # define ES_TOKEN_S "minishell: syntax error near unexpected token `%s'\n"
 # define ES_NEWLINE "minishell: syntax error near unexpected token 'newline'\n"
@@ -54,17 +41,9 @@
 # define ES_WHD "minishell: warning: here-document delimited by end-of-file\n"
 # define ES_INVALID_OPTION "minishell: cd: %s: invalid option\n"
 
-/*
-**--------------------------------------------------------------------------
-**  Exit‑status map (duplicate numeric values are intentional
-**  they make code more readable while staying Bash‑compatible)
-**--------------------------------------------------------------------------
-*/
 typedef enum e_status
 {
-	/* Success */
 	E_NONE = 0,
-	/* Generic errors */
 	E_GENERAL = 1,
 	E_SYSTEM = 1,
 	E_ENV_KEY = 1,
@@ -73,11 +52,9 @@ typedef enum e_status
 	E_ARGUMENT = 1,
 	E_INVALID_IDENTIFIER = 1,
 	E_AMBIGUOUS_REDIR = 1,
-	/* Misuse of shell built‑ins (Bash returns 2) */
 	E_MISUSE_BUILTIN = 2,
 	E_SYNTAX = 2,
 	E_NUMERIC = 2,
-	/* Non‑fatal: command name recognised but not executed */
 	E_IS_DIR = 126,
 	E_IS_FILE = 126,
 	E_NOT_DIR = 126,
@@ -85,18 +62,13 @@ typedef enum e_status
 	E_PERMISSION_DENIED = 126,
 	E_NOT_EXECUTABLE = 126,
 	E_EXEC_CANNOT_EXECUTE = 126,
-	/* Name lookup failure */
 	E_NO_SUCH_FOD = 127,
 	E_COMMAND_NOT_FOUND = 127,
-	/* INVALID EXIT ARGUMENT = n % 128 */
 	E_INVALID_ARGUMENT = 128,
-	/* Signals (128 + signo) */
 	E_SIGINT = 130,
 	E_SIGQUIT = 131,
 	E_SIGPIPE = 141,
-	/* Fatal / implementation‑specific */
 	E_FATAL = 255,
-	/* Project‑specific helpers */
 	E_NOT_BUILTIN_CMD = -2
 }	t_status;
 

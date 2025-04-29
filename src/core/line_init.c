@@ -12,11 +12,6 @@
 
 #include "core.h"
 
-/**
- * @brief シェルループの各ループ開始時の初期化
- *
- * @param shell シェル構造体へのポインタ
- */
 void	line_init(t_shell *sh)
 {
 	if (sh->debug & DEBUG_CORE)

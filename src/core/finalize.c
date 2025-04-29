@@ -13,11 +13,6 @@
 #include "core.h"
 #include "libms.h"
 
-/**
- * @brief 環境変数特殊文字配列のメモリを解放する
- *
- * @param env_spc 環境変数特殊文字の配列
- */
 static void	free_env_spc(char **env_spc)
 {
 	size_t	i;
@@ -36,11 +31,6 @@ static void	free_env_spc(char **env_spc)
 	}
 }
 
-/**
- * @brief シェルのクリーンアップ処理
- *
- * @param shell シェル構造体へのポインタ
- */
 void	shell_cleanup(t_shell *shell)
 {
 	if (!shell)
@@ -58,12 +48,6 @@ void	shell_cleanup(t_shell *shell)
 	rl_clear_history();
 }
 
-/**
- * @brief シェルの終了処理
- *
- * @param shell シェル構造体へのポインタ
- * @param status 終了ステータス
- */
 void	shell_exit(t_shell *shell, int status)
 {
 	if (shell->debug & DEBUG_CORE)

@@ -12,12 +12,6 @@
 
 #include "mod_lex.h"
 
-/**
- * @brief トークンタイプを文字列表現に変換する
- *
- * @param t 変換するトークンタイプ
- * @return トークンタイプの文字列表現
- */
 static const char	*type_to_str(t_token_type t)
 {
 	static const t_token_type	types[] = {TT_WORD, TT_PIPE, TT_REDIR_IN,
@@ -39,11 +33,6 @@ static const char	*type_to_str(t_token_type t)
 	return ("TT_UNKNOWN");
 }
 
-/**
- * @brief デバッグ用にトークンリストの内容を表示する
- *
- * @param list 表示するトークンリスト
- */
 void	debug_print_token_list(t_list *list)
 {
 	t_lexical_token	*tok;

@@ -12,20 +12,11 @@
 
 #include "mod_syn.h"
 
-/**
- * Parse a top-level list (and_or ; and_or ; ...)
- * Currently semicolons are not supported, so this just calls parse_and_or
- * ========== List (Top Level) ==========
- *  list ::= and_or ( ';' and_or )*
- */
 t_ast	*parse_list(t_pl *pl, t_shell *sh)
 {
 	return (parse_and_or(pl, sh));
 }
 
-/**
- * Entry point for syntax analysis
- */
 t_status	mod_syn(t_shell *sh)
 {
 	t_pl	pl;

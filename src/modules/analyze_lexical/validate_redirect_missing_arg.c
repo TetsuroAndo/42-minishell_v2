@@ -12,13 +12,6 @@
 
 #include "mod_lex.h"
 
-/**
- * @brief リダイレクト記号の後に引数がない場合のエラーチェック
- *
- * @param line 入力行
- * @param pos 現在の位置
- * @return int 0: エラーなし, 1: エラーあり
- */
 int	validate_redirect_missing_arg(const char *line, size_t *pos)
 {
 	t_token_type	op;

@@ -15,35 +15,29 @@
 
 # include "core.h"
 
-/* Parser state structure */
 typedef struct s_pl
 {
 	t_list			*lst;
 }					t_pl;
 
-/* Binary operator mapping structure */
 typedef struct s_binop
 {
 	t_token_type	tt;
 	t_ntype			ntype;
 }					t_binop;
 
-/* Parser entry point */
 t_status			mod_syn(t_shell *shell);
 void				debug_print_ast(t_ast *ast, t_shell *shell);
 
-/* Token utility functions */
 int					tok_is_redir(t_token_type t);
 int					tok_is_eof(t_token_type t);
 t_lexical_token		*tok_peek(t_pl *pl);
 t_lexical_token		*tok_pop_dup(t_pl *pl, t_shell *sh);
 t_status			synerr(t_shell *sh, const char *msg);
 
-/* AST utility functions */
 t_args				*args_new(t_shell *sh);
 t_ast				*ast_make(t_ntype type, t_ast *l, t_ast *r, t_shell *sh);
 
-/* Parser functions */
 t_ast				*parse_primary(t_pl *pl, t_shell *sh);
 t_ast				*parse_pipeline(t_pl *pl, t_shell *sh);
 t_ast				*parse_and_or(t_pl *pl, t_shell *sh);

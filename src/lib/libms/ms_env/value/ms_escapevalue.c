@@ -12,13 +12,6 @@
 
 #include "libms.h"
 
-/*
-** 環境変数の値に含まれる$をエスケープする関数
-** 
-** 返り値:
-** エスケープされた新しい文字列（要解放）
-** NULL: エラー発生時
-*/
 char	*ms_escapevalue(const char *value, t_shell *shell)
 {
 	char	*res;

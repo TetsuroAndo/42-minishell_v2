@@ -55,18 +55,6 @@ int	is_operator(const char *line, size_t pos)
 	return (0);
 }
 
-/**
- * @brief 単語（トークン）を読み取る
- *
- * line[pos]から始まる単語を読み取り、その内容を返す。
- * 単語の終わりは空白文字、演算子、または文字列の終わりで判断される。
- * 引用符で始まる場合や途中に引用符がある場合も、一つの単語として処理される。
- *
- * @param line 処理対象の文字列
- * @param pos 現在の位置を示すポインタ（処理後は単語の次の位置に更新される）
- * @param shell ステータスを保持する構造体
- * @return 読み取った単語。エラー時はNULL
- */
 char	*read_word(const char *line, size_t *pos, t_shell *shell)
 {
 	size_t	start;

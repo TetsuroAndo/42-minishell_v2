@@ -12,18 +12,6 @@
 
 #include "libms.h"
 
-/*
-** 絶対／相対パス src を sh->cwd を基点に正規化して path に書き込み、
-** 最後に access(2) で mode アクセスをテストして返す。
-**
-** - path   : 呼び出し側が用意した PATH_MAX+1 バイトのバッファ
-** - src    : 「./」「../」を含んでも可。絶対パスならそのまま採用
-** - mode   : F_OK | R_OK | W_OK | X_OK のいずれか
-** - sh->cwd: カレントディレクトリ（NUL 終端済み文字列）
-**
-** 返り値 : access(3) の返り値そのまま (0 == success, -1 == error)
-*/
-
 static void	__handle_dot(char **src_ptr)
 {
 	const char	*src;
@@ -82,17 +70,6 @@ static void	__init_path(char path[], const char *src, t_shell *sh,
 	*dst_ptr = dst;
 }
 
-/*
-** 絶対／相対パス src を sh->cwd を基点に正規化して path に書き込み、
-** 最後に access(2) で mode アクセスをテストして返す。
-**
-** - path   : 呼び出し側が用意した PATH_MAX+1 バイトのバッファ
-** - src    : 「./」「../」を含んでも可。絶対パスならそのまま採用
-** - mode   : F_OK | R_OK | W_OK | X_OK のいずれか
-** - sh->cwd: カレントディレクトリ（NUL 終端済み文字列）
-**
-** 返り値 : access(3) の返り値そのまま (0 == success, -1 == error)
-*/
 int	path_relative(char path[], const char *src, int mode, t_shell *sh)
 {
 	char	*dst;

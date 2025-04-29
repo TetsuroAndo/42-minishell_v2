@@ -12,15 +12,6 @@
 
 #include "mod_sem.h"
 
-/**
- * @brief 入力文字列からトークンを抽出し、結果配列に格納する
- *
- * @param result トークンを格納する配列
- * @param str トークン化する入力文字列
- * @param count 期待されるトークン数
- * @param sh シェル情報
- * @return size_t 実際に格納されたトークン数
- */
 static size_t	fill_token_array(char **result, char *str, size_t count,
 		t_shell *sh)
 {
@@ -42,17 +33,6 @@ static size_t	fill_token_array(char **result, char *str, size_t count,
 	return (i);
 }
 
-/**
- * @brief 引用符を考慮して文字列を分割する
- *
- * - 空白文字（スペース、タブ、改行など）で分割
- * - シングルクォート（'）またはダブルクォート（"）で囲まれた部分は
- *   内部の空白も含めて1つのトークンとして扱う
- *
- * @param str 分割する文字列
- * @param sh シェル情報
- * @return char** 分割された文字列の配列（NULL終端）
- */
 char	**split_with_quote(char *str, t_shell *sh)
 {
 	char	**result;
@@ -68,14 +48,6 @@ char	**split_with_quote(char *str, t_shell *sh)
 	return (result);
 }
 
-/**
- * @brief 分割結果から最初のトークンを設定する
- *
- * @param token 値を設定する対象のトークン
- * @param split_tokens 分割されたトークンの配列
- * @param sh シェル情報
- * @return int 成功時0、失敗時1
- */
 static int	set_first_token(t_lexical_token *token, char **split_tokens,
 		t_shell *sh)
 {
@@ -86,15 +58,6 @@ static int	set_first_token(t_lexical_token *token, char **split_tokens,
 	return (0);
 }
 
-/**
- * @brief 現在のノードの後ろに新しいトークンノードを挿入する
- *
- * @param current 現在のリストノード
- * @param value 新しいトークンの値
- * @param type 新しいトークンの種類
- * @param sh シェル情報
- * @return t_list* 新しく挿入されたノードへのポインタ
- */
 static t_list	*insert_new_token(t_list *current, const char *value, int type,
 		t_shell *sh)
 {
@@ -114,14 +77,6 @@ static t_list	*insert_new_token(t_list *current, const char *value, int type,
 	return (new_node);
 }
 
-/**
- * @brief リスト内のトークンの分割処理を実行する
- *
- * @param lst トークンリストへのポインタ
- * @param index リスト内のインデックス（未使用）
- * @param sh シェル情報
- * @return int 成功時0、失敗時1
- */
 int	proc_split(t_list **lst, int index, t_shell *sh)
 {
 	t_list			*current;

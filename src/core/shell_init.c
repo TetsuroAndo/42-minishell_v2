@@ -35,12 +35,6 @@ static void	init_fd_backup(t_shell *sh)
 		shell_exit(sh, E_SYSTEM);
 }
 
-/**
- * @brief シェル構造体の初期化
- *
- * @param env 環境変数配列
- * @return t_shell* 成功時シェル構造体へのポインタ、エラー時NULL
- */
 t_shell	*shell_init(char **env, char *bin_name)
 {
 	t_shell	*sh;

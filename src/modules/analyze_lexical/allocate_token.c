@@ -12,9 +12,6 @@
 
 #include "mod_lex.h"
 
-/*
- * トークン構造体を動的に確保し、type と value を設定して返す。
- */
 t_lexical_token	*create_token(t_token_type type, char *value, t_shell *shell)
 {
 	t_lexical_token	*token;
@@ -27,11 +24,6 @@ t_lexical_token	*create_token(t_token_type type, char *value, t_shell *shell)
 	return (token);
 }
 
-/*
- * 新規トークンをリストに追加する。
- * ヒアドキュメントトークンの場合はhandle_heredocを呼び出して処理する。
- * 成功: 1, 失敗: 0
- */
 int	add_token(t_shell *shell, t_lexical_token *new_token)
 {
 	t_list	*new_node;

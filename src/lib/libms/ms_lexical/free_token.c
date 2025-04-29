@@ -12,11 +12,6 @@
 
 #include "libms.h"
 
-/**
- * @brief トークンの解放
- *
- * @param token 解放するトークンへのポインタ
- */
 void	free_token(void *token)
 {
 	t_lexical_token	*t;

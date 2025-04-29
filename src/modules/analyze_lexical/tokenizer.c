@@ -12,12 +12,6 @@
 
 #include "mod_lex.h"
 
-/**
- * @brief 入力行内の記号とその引数の検証を行う
- *
- * @param sh 現在のシステム情報を保持するt_shell構造体へのポインタ
- * @return 検証に成功した場合は1、エラーが発生した場合は0
- */
 static int	validate_input(t_shell *sh)
 {
 	const char	*line;
@@ -44,53 +38,6 @@ static int	validate_input(t_shell *sh)
 	return (1);
 }
 
-/**
- * @brief 連続した括弧のチェックを行う
- * TT_LPARENの次にTT_LPARENまたはTT_RPARENが来た場合はエラーとする
- *
- * @param sh 現在のシステム情報を保持するt_shell構造体へのポインタ
- * @return エラーがある場合は1、ない場合は0
- */
-// static int check_token(t_shell *sh)
-// {
-//     t_list          *current;
-//     t_lexical_token *token;
-//     t_lexical_token *next_token;
-
-//     if (!sh || !sh->token_list)
-//         return (0);
-//     current = sh->token_list;
-//     while (current && current->next)
-//     {
-//         token = (t_lexical_token *)current->data;
-//         next_token = (t_lexical_token *)current->next->data;
-//         if (token->type == TT_RPAREN && next_token->type == TT_RPAREN)
-//         {
-//             ft_putendl_fd("syntax error near unexpected token `)`",
-//                 STDERR_FILENO);
-//             return (sh->status = E_SYNTAX);
-//         }
-
-//         current = current->next;
-//     }
-//     return (0);
-// }
-
-/**
- * @brief 入力されたソースラインをトークン化し、その構文を検証する
- *
- * @param sh 現在のシステム情報を保持するt_info構造体へのポインタ
- * @return トークン化および構文検証に成功した場合はE_NONEが返され、
- *         エラーが発生した場合は対応するステータスが返される
- *
- * @details
- * 1. sh->source_lineがNULLでないことを確認する
- * 2. リダイレクト記号の検証を行う
- * 3. tokenize_line関数を呼び出してソースラインをトークン化する
- * 4. トークン化に失敗した場合はステータスをE_SYNTAXに設定する
- * 5. 連続した括弧のチェックを行う
- * 6. すべての処理が成功した場合、E_NONEを返す
- */
 t_status	mod_lex(t_shell *sh)
 {
 	sh->token_list = NULL;

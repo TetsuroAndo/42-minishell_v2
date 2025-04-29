@@ -27,7 +27,6 @@ typedef struct s_fdbackup
 	int							target;
 }								t_fdbackup;
 
-/* main */
 t_status						mod_exec(t_shell *sh);
 int								exe_run(t_ast *node, t_shell *sh);
 int								exe_cmd(t_ast *node, t_shell *sh);
@@ -36,7 +35,6 @@ int								exe_bool(t_ast *node, t_shell *sh);
 int								exe_sub(t_ast *node, t_shell *sh);
 int								handle_redr(t_args *args, t_shell *sh);
 
-/* exec utils*/
 void							cleanup_redir_fds(t_args *a);
 void							fdbackup_enter(t_fdbackup *bk, int tgt,
 									t_shell *sh);
@@ -44,7 +42,6 @@ int								wait_and_status(pid_t pid);
 char							**toklist_to_argv(t_list *lst, t_shell *sh);
 void							sig_ignore_parent(int *enabled);
 
-/* dispatcher */
 int								builtin_launch(char **argv, t_shell *sh);
 
 #endif

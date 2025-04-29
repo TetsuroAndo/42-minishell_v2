@@ -12,11 +12,6 @@
 
 #include "mod_syn.h"
 
-/**
- * Parse a pipeline (primary | primary | ...)
- * ========== Pipeline ==========
- *  pipeline ::= primary ( '|' primary )*
- */
 t_ast	*parse_pipeline(t_pl *pl, t_shell *sh)
 {
 	t_ast			*left;

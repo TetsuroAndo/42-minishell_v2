@@ -12,10 +12,6 @@
 
 #include "mod_lex.h"
 
-/*
- * 演算子タイプ (op) が引数を伴う場合のトークン追加処理。
- * (例: >> file, << LIMITER, > file, < file)
- */
 static int	add_operator_token_with_arg(t_token_type op, const char *line,
 		size_t *pos, t_shell *shell)
 {
@@ -26,11 +22,6 @@ static int	add_operator_token_with_arg(t_token_type op, const char *line,
 	return (add_token(shell, create_token(op, word, shell)));
 }
 
-/*
- * 2文字演算子をパースしてトークンを生成する。
- * 成功した場合は *pos を進め、トークンが必要なら追加して 1 を返す。
- * 該当がない場合は 0 を返す。
- */
 static int	parse_two_char_operator(const char *line, size_t *pos,
 		t_shell *shell)
 {
@@ -53,11 +44,6 @@ static int	parse_two_char_operator(const char *line, size_t *pos,
 	return (1);
 }
 
-/*
- * 1文字演算子をパースしてトークンを生成する。
- * 成功した場合は *pos を進め、トークンが必要なら追加して 1 を返す。
- * 該当がない場合は 0 を返す。
- */
 static int	parse_one_char_operator(const char *line, size_t *pos,
 		t_shell *shell)
 {
@@ -80,13 +66,6 @@ static int	parse_one_char_operator(const char *line, size_t *pos,
 	return (1);
 }
 
-/*
- * 次のトークンをパースし、トークンをリストに追加する。
- * return値:
- *   1: トークンを取得した(ループ継続)
- *   0: EOFトークンを追加し終了(ループ終了)
- *  -1: エラー(構文エラーなど) (ループ終了)
- */
 static int	parse_next_token(const char *line, size_t *pos, t_shell *shell)
 {
 	char	*word;
@@ -113,13 +92,6 @@ static int	parse_next_token(const char *line, size_t *pos, t_shell *shell)
 	return (1);
 }
 
-/*
- * 与えられた source_line をトークン列に変換するメイン処理。
- * 成功/失敗をintで返す (1: 成功, 0: エラー)
- * EOFトークン追加(0)済み -> 正常終了
- * 
- * @return 成功した場合は1、失敗した場合は0
- */
 int	tokenize_line(t_shell *shell)
 {
 	size_t		index;

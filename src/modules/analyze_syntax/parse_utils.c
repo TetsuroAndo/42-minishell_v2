@@ -12,25 +12,16 @@
 
 #include "mod_syn.h"
 
-/**
- * Check if token is a redirection token
- */
 int	tok_is_redir(t_token_type t)
 {
 	return ((t & 0xFF00) == TM_REDIR);
 }
 
-/**
- * Check if token is an EOF token
- */
 int	tok_is_eof(t_token_type t)
 {
 	return (t == TT_EOF);
 }
 
-/**
- * Peek at the current token without consuming it
- */
 t_lexical_token	*tok_peek(t_pl *pl)
 {
 	if (!pl || !pl->lst || !pl->lst->data)
@@ -38,9 +29,6 @@ t_lexical_token	*tok_peek(t_pl *pl)
 	return ((t_lexical_token *)pl->lst->data);
 }
 
-/**
- * Common error reporting function
- */
 t_status	synerr(t_shell *sh, const char *msg)
 {
 	ft_dprintf(STDERR_FILENO, "minishell: %s\n", msg);

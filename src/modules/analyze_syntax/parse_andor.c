@@ -12,9 +12,6 @@
 
 #include "mod_syn.h"
 
-/**
- * Parse a binary expression using a table-driven approach
- */
 static t_ast	*parse_binexpr(t_pl *pl, t_shell *sh, t_ast *(*sub)(t_pl *,
 			t_shell *), const t_binop tbl[])
 {
@@ -44,11 +41,6 @@ static t_ast	*parse_binexpr(t_pl *pl, t_shell *sh, t_ast *(*sub)(t_pl *,
 	return (left);
 }
 
-/**
- * Parse an AND/OR expression (pipeline && pipeline || pipeline ...)
- * ========== And/Or ==========
- *  and_or ::= pipeline ( ( '&&' | '||' ) pipeline )*
- */
 t_ast	*parse_and_or(t_pl *pl, t_shell *sh)
 {
 	static const t_binop	tbl[] = {{TT_AND_AND, NT_AND}, {TT_OR_OR, NT_OR},

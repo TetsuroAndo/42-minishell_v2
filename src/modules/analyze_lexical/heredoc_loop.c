@@ -12,13 +12,6 @@
 
 #include "mod_lex.h"
 
-/**
- * @brief ヒアドキュメントの本文を読み込む
- *
- * @param delim デリミタ文字列
- * @param sh シェル情報
- * @return char* 読み込んだヒアドキュメントの本文
- */
 static char	*read_heredoc_body(char *delim, t_shell *sh)
 {
 	char	*body;
@@ -47,16 +40,6 @@ static char	*read_heredoc_body(char *delim, t_shell *sh)
 	return (body);
 }
 
-/**
- * @brief ヒアドキュメントを処理する
- *
- * @param tok 処理するトークン
- * @param sh シェル情報
- * @return char* 読み込んだヒアドキュメントの本文
- *
- *  operator トークン (tok) をリストに残しつつ、
- *  tok->value に “heredoc 本文” を詰め直して返す
- */
 t_list	*handle_heredoc(t_lexical_token *tok, t_shell *sh)
 {
 	int		quoted;

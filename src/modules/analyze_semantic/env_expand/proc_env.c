@@ -12,14 +12,6 @@
 
 #include "mod_sem.h"
 
-/**
- * @brief 変数名を検出し、展開結果をバッファに追加する
- *
- * @param buf 		結果を格納するバッファへのポインタ
- * @param in 		変数名を含む入力文字列
- * @param shell 	シェル情報
- * @return size_t	変数名inを何文字進めたか
- */
 static size_t	extract_varname(char **buf, char *in, t_shell *sh)
 {
 	size_t	klen;
@@ -49,13 +41,6 @@ static size_t	extract_varname(char **buf, char *in, t_shell *sh)
 	return (klen);
 }
 
-/**
- * @brief バックスラッシュと$記号を処理し、環境変数を展開する
- *
- * @param in 処理する入力文字列
- * @param shell シェル情報
- * @return char* 展開後の文字列
- */
 static char	*handle_env(char *in, t_shell *sh)
 {
 	t_expenv	s;

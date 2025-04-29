@@ -12,8 +12,6 @@
 
 #include "ft_btree.h"
 
-// t_btree	*ft_btree_create_node(void *item);
-
 void	ft_btree_insert_data(t_btree **root, void *item, int (*cmpf)(void *,
 			void *))
 {

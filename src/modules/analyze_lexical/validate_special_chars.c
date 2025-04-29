@@ -12,14 +12,6 @@
 
 #include "mod_lex.h"
 
-/**
- * @brief 連続したリダイレクト記号の数をカウントする
- *
- * @param line 入力行
- * @param pos 現在の位置
- * @param symbol カウントする記号
- * @return int 連続した記号の数
- */
 static int	cnt_symbols(const char *line, size_t pos, char symbol)
 {
 	int	count;
@@ -33,13 +25,6 @@ static int	cnt_symbols(const char *line, size_t pos, char symbol)
 	return (count);
 }
 
-/**
- * @brief リダイレクト後の記号のエラーチェック
- *
- * @param line 入力行
- * @param pos 現在の位置
- * @return int 0: エラーなし, 1: エラーあり
- */
 static int	check_redirect_symbol_error(const char *line, size_t *pos)
 {
 	size_t	temp_pos;
@@ -52,14 +37,6 @@ static int	check_redirect_symbol_error(const char *line, size_t *pos)
 	return (0);
 }
 
-/**
- * @brief 過剰なリダイレクト記号のエラーチェック
- *
- * @param symbol リダイレクト記号
- * @param count 連続する記号の数
- * @param pos 現在の位置へのポインタ
- * @return int 0: エラーなし, 1: エラーあり
- */
 static int	check_excessive_redirect(char symbol, int count, size_t *pos)
 {
 	if ((symbol == '<' && count > 2) || (symbol == '>' && count > 2)
@@ -71,13 +48,6 @@ static int	check_excessive_redirect(char symbol, int count, size_t *pos)
 	return (0);
 }
 
-/**
- * @brief 記号の後に特殊文字が続く場合のエラーチェック
- *
- * @param line 入力行
- * @param pos 現在の位置
- * @return int 0: エラーなし, 1: エラーあり
- */
 int	validate_special_chars(const char *line, size_t *pos)
 {
 	t_token_type	op;

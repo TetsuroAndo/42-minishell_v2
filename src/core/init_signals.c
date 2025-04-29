@@ -31,25 +31,6 @@ static void	sigint_handler(int signum)
 	}
 }
 
-/**
- * @brief SIGQUIT (Ctrl+\) シグナルハンドラー
- *
- * @param signum シグナル番号
- */
-// static void sigquit_handler(int signum)
-// {
-//     if (signum == SIGQUIT)
-//     {
-//         g_signal_status = SIGQUIT;
-//         rl_done = 1;
-//     }
-// }
-
-/**
- * @brief シグナルハンドラーの初期化
- *
- * @return int 成功時0、エラー時-1
- */
 int	init_signals(void)
 {
 	struct sigaction	sa_int;

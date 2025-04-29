@@ -12,9 +12,6 @@
 
 #include "mod_syn.h"
 
-/**
- * Duplicate the current token and advance the token list
- */
 t_lexical_token	*tok_pop_dup(t_pl *pl, t_shell *sh)
 {
 	t_lexical_token	*src;
@@ -31,9 +28,6 @@ t_lexical_token	*tok_pop_dup(t_pl *pl, t_shell *sh)
 	return (cp);
 }
 
-/**
- * Create a new args structure
- */
 t_args	*args_new(t_shell *sh)
 {
 	t_args	*a;
@@ -45,9 +39,6 @@ t_args	*args_new(t_shell *sh)
 	return (a);
 }
 
-/**
- * Create a new AST node
- */
 t_ast	*ast_make(t_ntype type, t_ast *l, t_ast *r, t_shell *sh)
 {
 	t_ast	*n;

@@ -40,24 +40,3 @@ void	astlst_backup(t_ast *ast, t_shell *shell, int isinit)
 	if (ast->right)
 		astlst_backup(ast->right, shell, isinit);
 }
-/*
-void	backup_node_args(t_ast *ast, t_shell *shell)
-{
-	t_args	*ast_args;
-
-	if (!ast || !ast->args)
-		return ;
-	ast_args = ast->args;
-	if (ast_args->b_argv == NULL)
-		ast_args->b_argv = ms_lstcopy(ast_args->argv, free_token, shell);
-	if (ast_args->b_redr == NULL)
-	{
-		proc_all_heredocs(ast_args->redr, shell);
-		ast_args->b_redr = ms_lstcopy(ast_args->redr, free_token, shell);
-	}
-	ft_lstclear(&ast_args->argv, free_token);
-	ft_lstclear(&ast_args->redr, free_token);
-	ast_args->argv = ms_lstcopy(ast_args->b_argv, free_token, shell);
-	ast_args->redr = ms_lstcopy(ast_args->b_redr, free_token, shell);
-}
-*/

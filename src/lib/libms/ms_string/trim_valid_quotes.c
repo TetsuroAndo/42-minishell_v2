@@ -12,13 +12,6 @@
 
 #include "libms.h"
 
-/**
- * @brief 文字列からクォートを取り除く
- *
- * @param s 入力文字列
- * @param sh シェル情報
- * @return char* クォートを取り除いた新しい文字列
- */
 char	*trim_valid_quotes(const char *s, t_shell *sh)
 {
 	char	*out;

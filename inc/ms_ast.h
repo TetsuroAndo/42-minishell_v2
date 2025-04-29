@@ -16,7 +16,6 @@
 # include "libft.h"
 # include <limits.h>
 
-/*token type bit mask*/
 # define TM_TYPE 0xFF00
 # define TM_REDIR 0x1200
 # define TM_CMD 0x1100

@@ -12,13 +12,6 @@
 
 #include "mod_sem.h"
 
-/**
- * @brief Get the start position and length of the next token
- *
- * @param p Starting position for search
- * @param start Pointer to store token start position (for result)
- * @return size_t Token length, 0 if no token found
- */
 size_t	get_next_token(char **p, char **start)
 {
 	char	*pos;
@@ -35,12 +28,6 @@ size_t	get_next_token(char **p, char **start)
 	return (pos - *start);
 }
 
-/**
- * @brief Free the string array allocated by split_with_quote
- *
- * @param result String array to be freed
- * @param sh Shell information
- */
 void	free_split_result(char **result, t_shell *sh)
 {
 	size_t	i;
@@ -56,12 +43,6 @@ void	free_split_result(char **result, t_shell *sh)
 	ft_gc_free(sh->gcli, (void **)&result);
 }
 
-/**
- * @brief Count the number of tokens after word count considering quotes
- *
- * @param s Input string to count tokens from
- * @return size_t Number of tokens
- */
 size_t	count_aft_wc_tok(char *s)
 {
 	size_t	count;

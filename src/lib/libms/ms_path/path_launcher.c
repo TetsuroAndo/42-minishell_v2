@@ -12,9 +12,6 @@
 
 #include "libms.h"
 
-/*──────────────────────────
- * 1) 単純連結
- *──────────────────────────*/
 static int	__simple_link(char path[PATH_MAX + 1], const char *src, int mode,
 		t_shell *sh)
 {
@@ -25,24 +22,6 @@ static int	__simple_link(char path[PATH_MAX + 1], const char *src, int mode,
 	return (access(path, mode));
 }
 
-/**
- * @brief パスの種類を判別し、適切な解決方法を選択する
- *
- * この関数は以下の処理を行います：
- * 1. パスの先頭文字を確認し、以下の種類に分類：
- *    - 絶対パス（'/'で始まる）
- *    - ルートディレクトリ（'/'のみ）
- *    - ホームディレクトリ（'~'で始まる）
- *    - 相対パス 単純連結（'.'がない）
- *    - 相対パス（'.'で始まる）
- * 2. 各種類に応じた解決関数を呼び出す
- *
- * @param path 解決されたパスを格納する配列
- * @param src 元のパス文字列
- * @param mode アクセス権限フラグ
- * @param sh シェル情報構造体
- * @return int 0:成功、-1:失敗
- */
 int	path_launcher(char path[], const char *src, int mode, t_shell *sh)
 {
 	if (src[0] == '/' && access(src, mode) == 0)

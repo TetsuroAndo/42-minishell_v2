@@ -12,13 +12,6 @@
 
 #include "libms.h"
 
-/**
- * @brief 要素を個別にコピーして新しいリストノードを作成する
- *
- * @param data 元のデータ
- * @param sh シェル情報
- * @return void* 新しくコピーされたデータ
- */
 void	*copy_token(void *data, t_shell *sh)
 {
 	t_lexical_token	*src;
@@ -37,14 +30,6 @@ void	*copy_token(void *data, t_shell *sh)
 	return (new);
 }
 
-/**
- * @brief リストをコピーする
- *
- * @param lst コピー元のリスト
- * @param del 解放関数ポインタ
- * @param shell シェル情報
- * @return t_list* 新しくコピーされたリスト
- */
 t_list	*ms_lstcopy(t_list *lst, void (*del)(void *), t_shell *shell)
 {
 	t_list	*new_list;

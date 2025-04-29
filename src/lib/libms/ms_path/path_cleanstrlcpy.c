@@ -12,8 +12,6 @@
 
 #include "libms.h"
 
-// パスの重複した'/'を除去しながらstrlcpyするユーティリティ関数
-// dst: 出力バッファ, src: 入力パス, siz: バッファサイズ
 size_t	ms_path_cleancpy(char *dst, const char *s, size_t siz)
 {
 	size_t	sidx;
