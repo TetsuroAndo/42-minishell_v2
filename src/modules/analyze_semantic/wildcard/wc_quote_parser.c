@@ -6,84 +6,11 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:43:38 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/29 19:51:05 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 20:07:06 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_sem.h"
-
-static void	init_map(char *map, size_t len)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < len)
-	{
-		map[i] = EX_OUT;
-		i++;
-	}
-	map[i] = '\0';
-}
-
-static void	set_quote_map(char *str, char *map, int start, int end)
-{
-	int	i;
-
-	(void)str;
-	i = start;
-	while (i <= end)
-	{
-		map[i] = EX_IN;
-		i++;
-	}
-}
-
-static void	handle_unclosed_quote(char *map, int start, int len)
-{
-	int	i;
-
-	i = start;
-	while (i < len)
-	{
-		map[i] = EX_OUT;
-		i++;
-	}
-}
-
-static void	mark_quotes(char *str, char *map)
-{
-	int		i;
-	int		start;
-	char	q;
-
-	i = 0;
-	start = -1;
-	q = 0;
-	while (str[i])
-	{
-		if (!q && (str[i] == '\'' || str[i] == '\"'))
-		{
-			q = str[i];
-			start = i;
-		}
-		else if (q && str[i] == q)
-		{
-			set_quote_map(str, map, start, i);
-			q = 0;
-		}
-		else if (q)
-			map[i] = EX_IN;
-		i++;
-	}
-	if (q)
-		handle_unclosed_quote(map, start, i);
-}
-
-static void	copy_char(t_extract *res, char c, char m, int *r)
-{
-	res->str[*r] = c;
-	res->map[(*r)++] = m;
-}
 
 static void	exi_roop(t_extract *res, char *str, char *map)
 {
