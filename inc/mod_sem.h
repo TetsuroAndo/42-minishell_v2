@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mod_sem.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 03:36:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 03:36:27 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 20:00:11 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,5 +69,8 @@ int								proc_redr_errs(t_lexical_token *data,
 int								valid_redir(t_lexical_token *d, t_shell *sh);
 int								proc_exec_path(t_list **lst, int idx,
 									t_shell *sh);
+size_t							count_aft_wc_tok(char *s);
+void							free_split_result(char **result, t_shell *sh);
+size_t							get_next_token(char **p, char **start);
 
 #endif

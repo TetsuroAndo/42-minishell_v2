@@ -3,117 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   split_with_quote.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 02:27:41 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/29 19:48:47 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 20:05:19 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_sem.h"
 
 /**
- * @brief 次のトークンの開始位置と長さを取得する
+ * @brief 入力文字列からトークンを抽出し、結果配列に格納する
  *
- * @param p 探索開始位置
- * @param start トークン開始位置へのポインタ（結果格納用）
- * @return size_t トークンの長さ、トークンがなければ0
- */
-static size_t	get_next_token(char **p, char **start)
-{
-	char	*pos;
-
-	pos = *p;
-	while (*pos && ft_isspace((unsigned char)*pos))
-		pos++;
-	if (!*pos)
-		return (0);
-	*start = pos;
-	while (*pos && !ft_isspace((unsigned char)*pos))
-		pos++;
-	*p = pos;
-	return (pos - *start);
-}
-
-/**
- * @brief split_with_quoteで確保した文字列配列を解放する
- *
- * @param result 解放する文字列配列
+ * @param result トークンを格納する配列
+ * @param str トークン化する入力文字列
+ * @param count 期待されるトークン数
  * @param sh シェル情報
+ * @return size_t 実際に格納されたトークン数
  */
-void	free_split_result(char **result, t_shell *sh)
+static size_t	fill_token_array(char **result, char *str, size_t count,
+		t_shell *sh)
 {
-	size_t	i;
-
-	if (!result)
-		return ;
-	i = 0;
-	while (result[i])
-	{
-		ft_gc_free(sh->gcli, (void **)&result[i]);
-		i++;
-	}
-	ft_gc_free(sh->gcli, (void **)&result);
-}
-
-size_t	count_aft_wc_tok(char *s)
-{
-	size_t	count;
-	char	*p;
-	char	q;
-
-	count = 0;
-	p = s;
-	while (*p)
-	{
-		while (*p && isspace((unsigned char)*p))
-			p++;
-		if (!*p)
-			break ;
-		if (*p == '"' || *p == '\'')
-		{
-			q = *p++;
-			while (*p && *p != q)
-				p++;
-			if (*p == q)
-				p++;
-			count++;
-		}
-		else
-		{
-			count++;
-			while (*p && !ft_isspace((unsigned char)*p) && *p != '"'
-				&& *p != '\'')
-				p++;
-		}
-	}
-	return (count);
-}
-
-/**
- * @brief 文字列をクォートを考慮して分割する
- *
- * - 空白（スペース・タブ・改行など）で区切る
- * - シングルクォート(')またはダブルクォート(")で囲まれた部分は、
- *   中の空白を含めて１トークンとして扱う
- *
- * @param str 分割する文字列
- * @param sh シェル情報
- * @return char** 分割された文字列の配列（NULLで終端）
- */
-char	**split_with_quote(char *str, t_shell *sh)
-{
-	char	**result;
-	size_t	count;
 	size_t	i;
 	char	*p;
 	char	*token_start;
 	size_t	token_len;
 
-	if (!str)
-		return (NULL);
-	count = count_aft_wc_tok(str);
-	result = xmalloc_gcline(sizeof(char *) * (count + 1), sh);
 	p = str;
 	i = 0;
 	while (i < count)
@@ -124,10 +39,43 @@ char	**split_with_quote(char *str, t_shell *sh)
 		result[i] = ms_substr_gcli(token_start, 0, token_len, sh);
 		i++;
 	}
-	result[i] = NULL;
+	return (i);
+}
+
+/**
+ * @brief 引用符を考慮して文字列を分割する
+ *
+ * - 空白文字（スペース、タブ、改行など）で分割
+ * - シングルクォート（'）またはダブルクォート（"）で囲まれた部分は
+ *   内部の空白も含めて1つのトークンとして扱う
+ *
+ * @param str 分割する文字列
+ * @param sh シェル情報
+ * @return char** 分割された文字列の配列（NULL終端）
+ */
+char	**split_with_quote(char *str, t_shell *sh)
+{
+	char	**result;
+	size_t	count;
+	size_t	stored;
+
+	if (!str)
+		return (NULL);
+	count = count_aft_wc_tok(str);
+	result = xmalloc_gcline(sizeof(char *) * (count + 1), sh);
+	stored = fill_token_array(result, str, count, sh);
+	result[stored] = NULL;
 	return (result);
 }
 
+/**
+ * @brief 分割結果から最初のトークンを設定する
+ *
+ * @param token 値を設定する対象のトークン
+ * @param split_tokens 分割されたトークンの配列
+ * @param sh シェル情報
+ * @return int 成功時0、失敗時1
+ */
 static int	set_first_token(t_lexical_token *token, char **split_tokens,
 		t_shell *sh)
 {
@@ -138,6 +86,15 @@ static int	set_first_token(t_lexical_token *token, char **split_tokens,
 	return (0);
 }
 
+/**
+ * @brief 現在のノードの後ろに新しいトークンノードを挿入する
+ *
+ * @param current 現在のリストノード
+ * @param value 新しいトークンの値
+ * @param type 新しいトークンの種類
+ * @param sh シェル情報
+ * @return t_list* 新しく挿入されたノードへのポインタ
+ */
 static t_list	*insert_new_token(t_list *current, const char *value, int type,
 		t_shell *sh)
 {
@@ -157,6 +114,14 @@ static t_list	*insert_new_token(t_list *current, const char *value, int type,
 	return (new_node);
 }
 
+/**
+ * @brief リスト内のトークンの分割処理を実行する
+ *
+ * @param lst トークンリストへのポインタ
+ * @param index リスト内のインデックス（未使用）
+ * @param sh シェル情報
+ * @return int 成功時0、失敗時1
+ */
 int	proc_split(t_list **lst, int index, t_shell *sh)
 {
 	t_list			*current;
