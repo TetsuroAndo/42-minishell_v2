@@ -5,7 +5,7 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/29 03:26:56 by teando            #+#    #+#             */
+/*   Created: 2025/04/29 02:00:01 by teando            #+#    #+#             */
 /*   Updated: 2025/04/29 03:26:57 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -15,6 +15,7 @@
 
 # include "core.h"
 
+/* entry point for lexical analysis */
 t_status		mod_lex(t_shell *shell);
 
 // Tokenization functions

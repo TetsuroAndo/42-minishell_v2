@@ -111,7 +111,7 @@ pid_t					xfork(t_shell *shell);
 void					xfree(void **ptr);
 void					*xmalloc(size_t size, t_shell *shell);
 int						xpipe(int pipfds[], t_shell *shell);
-
+void					set_cloexec_all(void);
 /*
 ** ============================================================================
 ** ms_string - 文字列操作関連の関数

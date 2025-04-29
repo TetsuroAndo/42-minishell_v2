@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:15 by teando            #+#    #+#             */
-/*   Updated: 2025/04/28 15:31:25 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 01:59:29 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,9 @@ static int	parse_next_token(const char *line, size_t *pos, t_shell *shell)
 /*
  * 与えられた source_line をトークン列に変換するメイン処理。
  * 成功/失敗をintで返す (1: 成功, 0: エラー)
+ * EOFトークン追加(0)済み -> 正常終了
+ * 
+ * @return 成功した場合は1、失敗した場合は0
  */
 int	tokenize_line(t_shell *shell)
 {
@@ -129,8 +132,8 @@ int	tokenize_line(t_shell *shell)
 	{
 		parse_status = parse_next_token(line, &index, shell);
 		if (parse_status == 0)
-			break ; // EOFトークン追加済み -> 正常終了
-		if (parse_status < 0) // 構文エラー等
+			break ;
+		if (parse_status < 0)
 		{
 			if (shell->status == E_NONE)
 				shell->status = E_SYNTAX;

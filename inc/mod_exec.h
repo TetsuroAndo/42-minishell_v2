@@ -5,7 +5,7 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/29 03:26:53 by teando            #+#    #+#             */
+/*   Created: 2025/04/29 01:44:40 by teando            #+#    #+#             */
 /*   Updated: 2025/04/29 03:26:55 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -23,8 +23,8 @@ typedef struct s_ast			t_ast;
 
 typedef struct s_fdbackup
 {
-	int							saved_fd;
-	int							target_fd;
+	int							saved;
+	int							target;
 }								t_fdbackup;
 
 /* main */
@@ -36,8 +36,14 @@ int								exe_bool(t_ast *node, t_shell *sh);
 int								exe_sub(t_ast *node, t_shell *sh);
 int								handle_redr(t_args *args, t_shell *sh);
 
-/* argv utils */
+/* exec utils*/
+void							cleanup_redir_fds(t_args *a);
+void							fdbackup_enter(t_fdbackup *bk, int tgt,
+									t_shell *sh);
+int								wait_and_status(pid_t pid);
 char							**toklist_to_argv(t_list *lst, t_shell *sh);
+void							sig_ignore_parent(int *enabled);
+
 /* dispatcher */
 int								builtin_launch(char **argv, t_shell *sh);
 

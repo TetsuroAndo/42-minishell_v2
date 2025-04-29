@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mod_exec.c                                         :+:      :+:    :+:   */
+/*   mod_exec.c.backup                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:33:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/27 17:31:20 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 01:24:42 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,22 @@
 /* ─────────── fd backup ─────────── */
 static void	fdbackup_enter(t_fdbackup *bk, int tgt, t_shell *sh)
 {
-	bk->target_fd = tgt;
-	bk->saved_fd = xdup(tgt, sh);
+	bk->target = tgt;
+	bk->saved = xdup(tgt, sh);
+	if (fcntl(bk->saved, F_SETFD, FD_CLOEXEC) == -1)
+	{
+		xclose(&bk->saved);
+		perror("fcntl(FD_CLOEXEC)");
+		shell_exit(sh, errno);
+	}
 }
 
-static void	fdbackupexit(t_fdbackup *bk)
+static void	fdbackup_exit(t_fdbackup *bk)
 {
-	if (bk->saved_fd != -1)
+	if (bk->saved != -1)
 	{
-		dup2(bk->saved_fd, bk->target_fd);
-		close(bk->saved_fd);
+		dup2(bk->saved, bk->target);
+		close(bk->saved);
 	}
 }
 
@@ -51,34 +57,13 @@ void	sig_ignore_parent(int *enabled)
 }
 
 /* ========================================================= */
-/*                   AST dispatcher : exe_run                */
-/* ========================================================= */
-
-int	exe_run(t_ast *node, t_shell *sh)
-{
-	if (!node)
-		return (0);
-	else if (node->ntype == NT_CMD)
-		return (exe_cmd(node, sh));
-	else if (node->ntype == NT_PIPE)
-		return (exe_pipe(node, sh));
-	else if (node->ntype == NT_AND || node->ntype == NT_OR
-		|| node->ntype == NT_LIST)
-		return (exe_bool(node, sh));
-	else if (node->ntype == NT_SUBSHELL)
-		return (exe_sub(node, sh));
-	else
-		return (1);
-}
-
-/* ========================================================= */
 /*                        NT_CMD                             */
 /* ========================================================= */
 
 static int	prepare_cmd_args(t_ast *node, char ***argv, int *flag, t_shell *sh)
 {
 	struct stat	sb;
-	t_status status;
+	t_status	status;
 
 	*flag = 0;
 	status = handle_redr(node->args, sh);
@@ -147,6 +132,43 @@ static int	execute_external_cmd(char **argv, t_ast *node, t_shell *sh)
 	return (128 + WTERMSIG(wstatus));
 }
 
+int	exe_cmd(t_ast *n, t_shell *sh)
+{
+	char		**argv;
+	t_fdbackup	bk_in;
+	t_fdbackup	bk_out;
+	int			status;
+
+	if (!n || n->ntype != NT_CMD)
+		return (E_SYSTEM);
+	if ((status = ms_lstiter(n->args->argv, proc_exec_path, sh)))
+		return (status);
+	if ((status = prepare_argv(n, &argv, sh)))
+		return (status);
+	if (n->args->fds[0] != -1)
+	{
+		fdbackup_enter(&bk_in, STDIN_FILENO, sh);
+		xdup2(&n->args->fds[0], STDIN_FILENO, sh);
+		close(n->args->fds[0]);
+		n->args->fds[0] = -1;
+	}
+	if (n->args->fds[1] != -1)
+	{
+		fdbackup_enter(&bk_out, STDOUT_FILENO, sh);
+		xdup2(&n->args->fds[1], STDOUT_FILENO, sh);
+		close(n->args->fds[1]);
+		n->args->fds[1] = -1;
+	}
+	if (is_builtin(argv[0]))
+		status = builtin_launch(argv, sh);
+	else
+		status = exec_external(argv, n, sh);
+	fdbackup_exit(&bk_in);
+	fdbackup_exit(&bk_out);
+	cleanup_redir_fds(n->args);
+	return (status);
+}
+
 int	exe_cmd(t_ast *node, t_shell *sh)
 {
 	char		**argv;
@@ -172,8 +194,8 @@ int	exe_cmd(t_ast *node, t_shell *sh)
 		status = builtin_launch(argv, sh);
 	else
 		status = execute_external_cmd(argv, node, sh);
-	fdbackupexit(&bk_in);
-	fdbackupexit(&bk_out);
+	fdbackup_exit(&bk_in);
+	fdbackup_exit(&bk_out);
 	return (status);
 }
 
@@ -256,7 +278,7 @@ static void	update_shell_status(int status, t_shell *sh)
 	sh->status = status;
 	xfree((void **)&sh->env_spc['?']);
 	sh->env_spc['?'] = xitoa(status, sh);
-	mod_sem(sh,0);
+	mod_sem(sh, 0);
 }
 
 int	exe_bool(t_ast *node, t_shell *sh)
@@ -265,7 +287,7 @@ int	exe_bool(t_ast *node, t_shell *sh)
 	int	run_right;
 
 	if (sh->env_updated)
-		mod_sem(sh,0);
+		mod_sem(sh, 0);
 	sh->env_updated = 0;
 	st_left = exe_run(node->left, sh);
 	update_shell_status(st_left, sh);
@@ -279,7 +301,7 @@ int	exe_bool(t_ast *node, t_shell *sh)
 	if (run_right)
 	{
 		if (sh->env_updated)
-			mod_sem(sh,0);
+			mod_sem(sh, 0);
 		sh->env_updated = 0;
 		return (exe_run(node->right, sh));
 	}
@@ -300,7 +322,7 @@ int	exe_sub(t_ast *node, t_shell *sh)
 	if (pid == 0)
 	{
 		sh->interactive = 0;
-		st = exe_run(node->left, sh); /* subshell の AST は left に格納 */
+		st = exe_run(node->left, sh);
 		exit(st);
 	}
 	waitpid(pid, &wst, 0);

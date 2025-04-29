@@ -1,34 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   xfork.c                                            :+:      :+:    :+:   */
+/*   set_cloexec.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 00:58:56 by teando            #+#    #+#             */
-/*   Updated: 2025/04/28 21:12:05 by teando           ###   ########.fr       */
+/*   Created: 2025/04/29 00:08:35 by teando            #+#    #+#             */
+/*   Updated: 2025/04/29 00:20:24 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
+#include <dirent.h>
 
-pid_t	xfork(t_shell *shell)
+void	set_cloexec_all(void)
 {
-	pid_t	pid;
-	int		retry;
+	DIR				*d;
+	struct dirent	*ent;
+	int				fd;
 
-	pid = fork();
-	if (pid == -1)
+	d = opendir("/proc/self/fd");
+	if (!d)
+		return ;
+	ent = readdir(d);
+	while (ent)
 	{
-		retry = 0;
-		while (retry++ < 5)
-		{
-			pid = fork();
-			if (pid != -1)
-				return (pid);
-		}
-		perror("fork");
-		shell_exit(shell, errno);
+		fd = ft_atoi(ent->d_name);
+		if (fd > 2) /* 0,1,2 は残す */
+			fcntl(fd, F_SETFD, FD_CLOEXEC);
+		ent = readdir(d);
 	}
-	return (pid);
+	closedir(d);
 }
