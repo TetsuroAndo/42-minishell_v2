@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:44:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/21 02:54:41 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 20:03:24 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 t_status	__unset(int argc, char **argv, t_shell *sh)
 {
-    int i;
+	int	i;
 
 	(void)argv;
 	(void)sh;
 	if (argc == 1)
 		return (ft_dprintf(2, "minishell: unset: missing operand\n"), 1);
-    i = 0;
+	i = 0;
 	while (++i < argc)
 	{
 		if (ms_unset(argv[i], sh) != E_NONE)

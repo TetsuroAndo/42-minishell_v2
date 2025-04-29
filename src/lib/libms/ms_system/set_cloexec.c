@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 00:08:35 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 00:20:24 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 20:02:29 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	set_cloexec_all(void)
 	while (ent)
 	{
 		fd = ft_atoi(ent->d_name);
-		if (fd > 2) /* 0,1,2 は残す */
+		if (fd > 2)
 			fcntl(fd, F_SETFD, FD_CLOEXEC);
 		ent = readdir(d);
 	}
