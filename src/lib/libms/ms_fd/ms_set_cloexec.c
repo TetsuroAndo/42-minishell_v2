@@ -1,34 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   set_cloexec.c                                      :+:      :+:    :+:   */
+/*   ms_set_cloexec.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/29 00:08:35 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 20:02:29 by teando           ###   ########.fr       */
+/*   Created: 2025/04/29 22:05:57 by teando            #+#    #+#             */
+/*   Updated: 2025/04/29 22:15:53 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libms.h"
-#include <dirent.h>
 
-void	set_cloexec_all(void)
+void	ms_set_cloexec(int fd, t_shell *sh)
 {
-	DIR				*d;
-	struct dirent	*ent;
-	int				fd;
-
-	d = opendir("/proc/self/fd");
-	if (!d)
+	if (fd < 0)
 		return ;
-	ent = readdir(d);
-	while (ent)
+	if (ioctl(fd, FIOCLEX) == -1)
 	{
-		fd = ft_atoi(ent->d_name);
-		if (fd > 2)
-			fcntl(fd, F_SETFD, FD_CLOEXEC);
-		ent = readdir(d);
+		perror("ioctl(FIOCLEX)");
+		if (!sh)
+			exit(errno);
+		shell_exit(sh, errno);
 	}
-	closedir(d);
 }

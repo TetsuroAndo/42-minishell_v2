@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 20:09:49 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/29 20:25:36 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 21:46:08 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	process_row_cells(char p_char, const char *s, int *prev, int *curr)
 	int	j;
 	int	n;
 
-	n = strlen(s);
+	n = ft_strlen(s);
 	j = 1;
 	while (j <= n)
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 08:23:28 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 15:44:35 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 22:11:03 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+# include <sys/ioctl.h>
 # include <unistd.h>
 
 # ifndef DEBUG_MODE

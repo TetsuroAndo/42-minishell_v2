@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 00:49:03 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 01:41:43 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 22:13:55 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,33 +57,25 @@ static int	handle_input(t_lexical_token *tok, t_args *args, t_shell *sh)
 
 static int	handle_output(t_lexical_token *tok, t_args *args, t_shell *sh)
 {
+	(void)sh;
 	if (args->fds[1] > 2)
 		xclose(&args->fds[1]);
-	args->fds[1] = open(tok->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	args->fds[1] = open(tok->value, O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC,
+			0644);
 	if (args->fds[1] == -1)
 		return (perror(tok->value), 1);
-	if (fcntl(args->fds[1], F_SETFD, FD_CLOEXEC) == -1)
-	{
-		xclose(&args->fds[1]);
-		perror("fcntl(FD_CLOEXEC)");
-		shell_exit(sh, errno);
-	}
 	return (0);
 }
 
 static int	handle_append(t_lexical_token *tok, t_args *args, t_shell *sh)
 {
+	(void)sh;
 	if (args->fds[1] > 2)
 		xclose(&args->fds[1]);
-	args->fds[1] = open(tok->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	args->fds[1] = open(tok->value, O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC,
+			0644);
 	if (args->fds[1] == -1)
 		return (perror(tok->value), 1);
-	if (fcntl(args->fds[1], F_SETFD, FD_CLOEXEC) == -1)
-	{
-		xclose(&args->fds[1]);
-		perror("fcntl(FD_CLOEXEC)");
-		shell_exit(sh, errno);
-	}
 	return (0);
 }
 

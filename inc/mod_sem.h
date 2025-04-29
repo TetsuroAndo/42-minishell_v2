@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mod_sem.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 03:36:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 20:25:56 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 21:59:57 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include "core.h"
 # include "ms_readline.h"
 # include <dirent.h>
-# include <fcntl.h>
 # include <unistd.h>
 
 typedef struct s_lexical_token	t_lexical_token;

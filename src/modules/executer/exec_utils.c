@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 22:42:27 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 01:30:10 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 22:10:50 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,7 @@ void	fdbackup_enter(t_fdbackup *bk, int tgt, t_shell *sh)
 {
 	bk->target = tgt;
 	bk->saved = xdup(tgt, sh);
-	if (fcntl(bk->saved, F_SETFD, FD_CLOEXEC) == -1)
-	{
-		xclose(&bk->saved);
-		perror("fcntl(FD_CLOEXEC)");
-		shell_exit(sh, errno);
-	}
+	ms_set_cloexec(bk->saved, sh);
 }
 
 int	wait_and_status(pid_t pid)

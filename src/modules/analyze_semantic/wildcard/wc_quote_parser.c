@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wc_quote_parser.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:43:38 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/29 20:07:06 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 21:45:59 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static t_extract	*extract_inner(char *str, char *map, t_shell *shell)
 	res = xmalloc_gcline(sizeof(t_extract), shell);
 	if (!res)
 		return (NULL);
-	len = strlen(str);
+	len = ft_strlen(str);
 	res->str = xmalloc_gcline(len + 1, shell);
 	res->map = xmalloc_gcline(len + 1, shell);
 	exi_roop(res, str, map);
