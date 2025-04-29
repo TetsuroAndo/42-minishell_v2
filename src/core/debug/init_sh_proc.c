@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:24:52 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 03:17:38 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 12:03:28 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static char	*put_debug_mode(t_shell *sh)
 		return ("ENV");
 	else if (sh->debug == DEBUG_EXEC)
 		return ("EXEC");
-	else if (sh->debug == DEBUG_REDIRECT)
+	else if (sh->debug == DEBUG_REDR)
 		return ("REDIRECT");
 	else if (sh->debug == DEBUG_SIGNAL)
 		return ("SIGNAL");
