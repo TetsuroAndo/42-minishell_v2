@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 22:44:30 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 01:27:32 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 22:08:00 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,8 @@
 static void	pipe_cloexec(int fds[2], t_shell *sh)
 {
 	xpipe(fds, sh);
-	if (fcntl(fds[0], F_SETFD, FD_CLOEXEC) == -1 || fcntl(fds[1], F_SETFD,
-			FD_CLOEXEC) == -1)
-	{
-		perror("fcntl(FD_CLOEXEC)");
-		shell_exit(sh, errno);
-	}
+	ms_set_cloexec(fds[0], sh);
+	ms_set_cloexec(fds[1], sh);
 }
 
 static pid_t	execute_left_pipe(t_ast *node, int fds[2], t_shell *sh)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libms.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 15:53:31 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 22:06:56 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,8 @@ void					free_ast(t_ast **ast);
 ** ms_fd - File descriptor related functions
 ** ============================================================================
 */
+void					ms_set_cloexec(int fd, t_shell *sh);
+void					set_cloexec_all(void);
 int						xclose(int *fd);
 int						xdup(int oldfd, t_shell *shell);
 int						xdup2(int *oldfd, int newfd, t_shell *shell);
@@ -111,7 +113,7 @@ pid_t					xfork(t_shell *shell);
 void					xfree(void **ptr);
 void					*xmalloc(size_t size, t_shell *shell);
 int						xpipe(int pipfds[], t_shell *shell);
-void					set_cloexec_all(void);
+
 /*
 ** ============================================================================
 ** ms_string - String manipulation related functions
