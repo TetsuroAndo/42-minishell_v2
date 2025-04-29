@@ -12,6 +12,7 @@
 
 #include "libms.h"
 #include <dirent.h>
+#include <sys/ioctl.h>
 
 void	set_cloexec_all(void)
 {
@@ -22,13 +23,11 @@ void	set_cloexec_all(void)
 	d = opendir("/proc/self/fd");
 	if (!d)
 		return ;
-	ent = readdir(d);
-	while (ent)
+	while ((ent = readdir(d)))
 	{
 		fd = ft_atoi(ent->d_name);
-		if (fd > 2)
-			fcntl(fd, F_SETFD, FD_CLOEXEC);
-		ent = readdir(d);
+		if (fd > 2 && fd != dirfd(d))
+			ioctl(fd, FIOCLEX);
 	}
 	closedir(d);
 }
