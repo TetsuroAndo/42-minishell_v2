@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 21:10:46 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/27 13:59:05 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 19:43:28 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	backup_node_args(t_ast *ast, t_shell *sh, int isinit)
 {
-	t_args *ast_args;
+	t_args	*ast_args;
 
 	if (!ast || !ast->args)
 		return ;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   proc_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 21:12:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/28 20:35:46 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 19:41:03 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,22 +77,34 @@ static char	*handle_env(char *in, t_shell *sh)
 	return (s.buf);
 }
 
-static char	*shift_or_true(t_list **list, t_lexical_token *tok, int idx, t_shell *sh)
+static t_status	replace_with_next(t_list **list, t_shell *sh)
 {
-	char			*buf;
-	t_list			*to_del;
+	t_list	*to_del;
+
+	if (!list || !*list || !(*list)->next)
+		return (E_SYSTEM);
+	free_token((*list)->data);
+	to_del = (*list)->next;
+	(*list)->data = copy_token(to_del->data, sh);
+	(*list)->next = to_del->next;
+	ft_lstdelone(to_del, free_token);
+	return (E_NONE);
+}
+
+static char	*shift_or_true(t_list **list, int idx, t_shell *sh)
+{
+	char	*buf;
+	char	*ret;
 
 	while (42)
 	{
-		buf = handle_env(tok->value, sh);
+		buf = handle_env(((t_lexical_token *)((*list)->data))->value, sh);
 		if (!buf || *buf != '\0')
 			break ;
 		if ((*list)->next)
 		{
-			to_del = (*list)->next;
-			(*list)->data = copy_token(to_del->data, sh);
-			(*list)->next = to_del->next;
-			ft_lstdelone(to_del, free_token);
+			if (replace_with_next(list, sh) != E_NONE)
+				return (NULL);
 		}
 		else
 		{
@@ -103,25 +115,28 @@ static char	*shift_or_true(t_list **list, t_lexical_token *tok, int idx, t_shell
 			break ;
 		}
 	}
-	return (ms_strdup(buf, sh));
+	ret = ms_strdup(buf, sh);
+	ft_gc_free(sh->gcli, (void **)&buf);
+	return (ret);
 }
 
 t_status	proc_env(t_list **list, int idx, t_shell *sh)
 {
-	t_lexical_token *token;
-	char 			*expanded_value;
+	t_lexical_token	*token;
+	char			*expanded_value;
 
 	if (!list || !*list)
 		return (E_SYSTEM);
 	token = (t_lexical_token *)(*list)->data;
 	if (!token || !token->value)
 		return (E_SYSTEM);
-	if (token->type == TT_HEREDOC)
+	if ((token->type & TM_TYPE) == TM_REDIR)
 		expanded_value = ms_strdup(handle_env(token->value, sh), sh);
 	else
-		expanded_value = shift_or_true(list, token, idx, sh);
+		expanded_value = shift_or_true(list, idx, sh);
 	if (!expanded_value)
 		return (E_SYSTEM);
+	token = (t_lexical_token *)(*list)->data;
 	xfree((void **)&token->value);
 	token->value = expanded_value;
 	return (E_NONE);

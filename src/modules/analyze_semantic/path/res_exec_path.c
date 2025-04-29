@@ -6,13 +6,13 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 20:53:52 by teando            #+#    #+#             */
-/*   Updated: 2025/04/27 17:32:59 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 19:43:19 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_sem.h"
 
-int proc_exec_path(t_list **lst, int idx, t_shell *sh)
+int	proc_exec_path(t_list **lst, int idx, t_shell *sh)
 {
 	t_lexical_token	*data;
 	char			*val;

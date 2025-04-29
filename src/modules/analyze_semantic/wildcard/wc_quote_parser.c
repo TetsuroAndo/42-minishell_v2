@@ -6,10 +6,9 @@
 /*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:43:38 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/26 21:46:14 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 19:51:05 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "mod_sem.h"
 
@@ -28,15 +27,27 @@ static void	init_map(char *map, size_t len)
 
 static void	set_quote_map(char *str, char *map, int start, int end)
 {
+	int	i;
+
 	(void)str;
-	for (int i = start; i <= end; i++)
+	i = start;
+	while (i <= end)
+	{
 		map[i] = EX_IN;
+		i++;
+	}
 }
 
 static void	handle_unclosed_quote(char *map, int start, int len)
 {
-	for (int i = start; i < len; i++)
+	int	i;
+
+	i = start;
+	while (i < len)
+	{
 		map[i] = EX_OUT;
+		i++;
+	}
 }
 
 static void	mark_quotes(char *str, char *map)
@@ -102,8 +113,6 @@ static void	exi_roop(t_extract *res, char *str, char *map)
 	res->map[r] = '\0';
 }
 
-
-
 static t_extract	*extract_inner(char *str, char *map, t_shell *shell)
 {
 	t_extract	*res;
@@ -119,7 +128,6 @@ static t_extract	*extract_inner(char *str, char *map, t_shell *shell)
 	return (res);
 }
 
-
 t_extract	*convert_ex(char *str, t_shell *shell)
 {
 	t_extract	*ex;
@@ -133,7 +141,7 @@ t_extract	*convert_ex(char *str, t_shell *shell)
 	init_map(map, len);
 	mark_quotes(str, map);
 	ex = extract_inner(str, map, shell);
-	ft_gc_free(shell->gcli,(void **)&map);
+	ft_gc_free(shell->gcli, (void **)&map);
 	return (ex);
 }
 
@@ -148,8 +156,8 @@ char	*replace_with_unquoted(char *str, t_shell *shell)
 	if (!ex)
 		return (ms_strdup("", shell));
 	result = ex->str;
-	ft_gc_free(shell->gcli,(void **)&ex->map);
-	ft_gc_free(shell->gcli,(void **)&ex);
+	ft_gc_free(shell->gcli, (void **)&ex->map);
+	ft_gc_free(shell->gcli, (void **)&ex);
 	return (result);
 }
 

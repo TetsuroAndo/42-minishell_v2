@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 08:23:28 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 03:20:43 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 15:44:35 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,6 @@ typedef struct s_shell
 	int							debug;
 }								t_shell;
 
-/*
-** シェルの初期化と終了処理
-*/
 void							line_init(t_shell *shell);
 t_shell							*shell_init(char **env, char *bin_name);
 void							shell_cleanup(t_shell *shell);
