@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_with_quote.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 02:27:41 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/26 22:19:24 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/29 19:48:47 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,29 +21,16 @@
  */
 static size_t	get_next_token(char **p, char **start)
 {
-	char	q;
 	char	*pos;
 
 	pos = *p;
-	while (*pos && isspace((unsigned char)*pos))
+	while (*pos && ft_isspace((unsigned char)*pos))
 		pos++;
 	if (!*pos)
 		return (0);
 	*start = pos;
-	if (*pos == '"' || *pos == '\'')
-	{
-		q = *pos++;
-		while (*pos && *pos != q)
-			pos++;
-		if (*pos == q)
-			pos++;
-	}
-	else
-	{
-		while (*pos && !isspace((unsigned char)*pos) && *pos != '"'
-			&& *pos != '\'')
-			pos++;
-	}
+	while (*pos && !ft_isspace((unsigned char)*pos))
+		pos++;
 	*p = pos;
 	return (pos - *start);
 }

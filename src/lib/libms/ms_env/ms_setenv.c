@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 22:13:52 by teando            #+#    #+#             */
-/*   Updated: 2025/04/28 19:33:29 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 19:43:20 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,19 @@
 
 static char	*ms_validate_value(const char *arg, t_shell *sh)
 {
-	char	*value;
+	char	*val;
+	char	*esca_val;
 
-	value = ms_substr_r(arg, '=', sh);
-	if (!ms_isactivevalue(value))
-		value = ms_escapevalue(value, sh);
-	if (!value)
+	val = ms_substr_r_gcli(arg, '=', sh);
+	if (!val)
 		return (ms_strdup("", sh));
-	return (value);
+	if (!ms_isactivevalue(val))
+	{
+		esca_val = ms_escapevalue(val, sh);
+		xfree_gc((void **)&val, sh);
+		return (esca_val);
+	}
+	return (val);
 }
 
 static char	*ms_handle_append_env(const char *key, const char *arg,
@@ -35,9 +40,13 @@ static char	*ms_handle_append_env(const char *key, const char *arg,
 	(void)eq_pos;
 	exist_value = ms_getenv(key, sh);
 	new_value = ms_validate_value(arg, sh);
+	if (!new_value)
+	{
+		return (exist_value);
+	}
 	joined = xstrjoin_free2(exist_value, new_value, sh);
 	new_entry = xstrjoin3(key, "=", joined, sh);
-	xfree((void **)&joined);
+	xfree_gc((void **)&joined, sh);
 	return (new_entry);
 }
 
@@ -64,7 +73,7 @@ static char	*ms_handle_normal_env(const char *key, const char *arg,
 		value = ms_validate_value(arg, sh);
 	}
 	new_entry = xstrjoin3(key, "=", value, sh);
-	xfree((void **)&value);
+	xfree_gc((void **)&value, sh);
 	return (new_entry);
 }
 
@@ -79,16 +88,16 @@ t_status	ms_setenv(char *entry, t_shell *sh)
 	is_append = 0;
 	eq_pos = 0;
 	if (ms_partenvarg(key, entry, &is_append, &eq_pos) != E_NONE)
-		return (xfree((void **)&entry), E_ENV_KEY);
+		return (xfree_gc((void **)&entry, sh), E_ENV_KEY);
 	if (is_append)
 		new_entry = ms_handle_append_env(key, entry, eq_pos, sh);
 	else
 		new_entry = ms_handle_normal_env(key, entry, eq_pos, sh);
-	xfree((void **)&entry);
+	xfree_gc((void **)&entry, sh);
 	lst = ft_list_find(sh->env_map, (void *)key, ms_envcmp);
 	if (lst)
 	{
-		xfree((void **)&lst->data);
+		xfree_gc((void **)&lst->data, sh);
 		lst->data = new_entry;
 		return (E_NONE);
 	}

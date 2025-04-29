@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 03:20:13 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 19:30:18 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ typedef struct s_ast	t_ast;
 ** ms_gc - ガベージコレクション関連の関数
 ** ============================================================================
 */
-
+int						ms_gc_track(void *p, t_shell *sh);
 void					xfree_gc(void **p, t_shell *sh);
 void					*xmalloc_gcline(size_t size, t_shell *shell);
 t_list					*xlstnew_gcli(void *data, t_shell *sh);

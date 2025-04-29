@@ -9,7 +9,8 @@ import sys
 # sys.stdout.flush()
 
 print("ls && ", end="")
-for _ in range(1000):
-    print("(ls && ", end="")
-for _ in range(1000):
-    print(")", end="")
+for _ in range(10000):
+    print("ls && ", end="")
+print("ls", end="")
+# for _ in range(1000):
+#     print(")", end="")
