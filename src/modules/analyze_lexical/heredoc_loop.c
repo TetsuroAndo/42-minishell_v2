@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   heredoc_loop.c                                     :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 17:08:24 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 12:02:55 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 12:13:17 by teando           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "mod_lex.h"
 
@@ -31,16 +31,16 @@ static char	*read_heredoc_body(char *delim, t_shell *sh)
 		if (!line || (!delim[0] && !line[0]) || !ft_strcmp(line, delim))
 		{
 			if (!line && g_signal_status != SIGINT)
-				ft_dprintf(2,
-					"minishell: warning: here-document delimited by end-of-file (wanted `%s')\n",
-					delim);
+				ft_dprintf(STDERR_FILENO, ES_WHD);
 			if (line)
 				xfree((void **)&line);
 			break ;
 		}
 		if (g_signal_status == SIGINT)
-			return (sh->status = E_SIGINT, xfree((void **)&body),
-				xfree((void **)&line), NULL);
+		{
+			sh->status = E_SIGINT;
+			return (xfree((void **)&body), xfree((void **)&line), NULL);
+		}
 		body = xstrjoin_free2(body, line, sh);
 		body = xstrjoin_free(body, "\n", sh);
 	}

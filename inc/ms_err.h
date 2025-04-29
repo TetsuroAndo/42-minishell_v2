@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 03:24:35 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 03:33:15 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/29 12:12:18 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@
 # define ES_BROKEN_PIPE "Broken pipe"
 # define ES_EVENT_NOT_FOUND "event not found"
 # define ES_WRITE_BROKEN_PIPE "write error: Broken pipe"
+# define ES_WHD "minishell: warning: here-document delimited by end-of-file\n"
 # define ES_INVALID_OPTION "minishell: cd: %s: invalid option\n"
 
 /*
