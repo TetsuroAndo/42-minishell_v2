@@ -25,7 +25,7 @@ typedef struct s_ast	t_ast;
 // ** ms_gc - Garbage Collection related functions
 ** ============================================================================
 */
-
+int						ms_gc_track(void *p, t_shell *sh);
 void					xfree_gc(void **p, t_shell *sh);
 void					*xmalloc_gcline(size_t size, t_shell *shell);
 t_list					*xlstnew_gcli(void *data, t_shell *sh);

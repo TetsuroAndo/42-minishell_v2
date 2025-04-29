@@ -1,23 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   xfree_gc.c                                         :+:      :+:    :+:   */
+/*   ms_gc_track.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/25 20:51:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 19:39:45 by teando           ###   ########.fr       */
+/*   Created: 2025/04/29 19:27:03 by teando            #+#    #+#             */
+/*   Updated: 2025/04/29 19:29:30 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "core.h"
+#include "libms.h"
 
-void	xfree_gc(void **p, t_shell *sh)
+int	ms_gc_track(void *p, t_shell *sh)
 {
-	if (!p || !*p)
-		return ;
-	if (sh && sh->gcli)
-		ft_gc_untrack(sh->gcli, *p);
-	free(*p);
-	*p = NULL;
+	if (!p || !sh)
+		return (-1);
+	ft_lstadd_front(&sh->gcli->next, xlstnew(p, sh));
+	return (0);
 }
