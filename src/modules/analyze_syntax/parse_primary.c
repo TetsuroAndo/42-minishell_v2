@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 21:25:00 by teando            #+#    #+#             */
-/*   Updated: 2025/04/28 22:15:06 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/30 12:13:28 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,5 @@ t_ast	*parse_primary(t_pl *pl, t_shell *sh)
 		ms_listshift(&pl->lst);
 		return (ast_make(NT_SUBSHELL, sub, NULL, sh));
 	}
-	synerr(sh, "syntax error: unexpected token");
 	return (NULL);
 }

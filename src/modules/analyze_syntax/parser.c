@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/29 16:13:07 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/30 12:13:22 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_status	mod_syn(t_shell *sh)
 
 	pl.lst = sh->token_list;
 	ast = parse_list(&pl, sh);
-	if (!ast || !tok_peek(&pl) || !tok_is_eof(tok_peek(&pl)->type))
+	if (!ast && !tok_peek(&pl) && !tok_is_eof(tok_peek(&pl)->type))
 	{
 		if (ast)
 			free_ast(&ast);

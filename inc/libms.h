@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:49:25 by teando            #+#    #+#             */
-/*   Updated: 2025/04/30 10:22:25 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/30 12:15:41 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,8 @@ void					xfree(void **ptr);
 void					*xmalloc(size_t size, t_shell *shell);
 int						xpipe(int pipfds[], t_shell *shell);
 void					set_cloexec_all(void);
+void					ms_set_cloexec(int fd, t_shell *sh);
+
 int						is_quoted(const char *s);
 int						skip_quoted_word(const char *line, size_t *pos,
 							t_shell *shell);
