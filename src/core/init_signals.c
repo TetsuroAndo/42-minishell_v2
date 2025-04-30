@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:45:12 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 03:13:56 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/30 13:50:08 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,23 +27,9 @@ static void	sigint_handler(int signum)
 		rl_done = 1;
 		rl_replace_line("", 0);
 		rl_on_new_line();
-		rl_redisplay();
+		ft_putchar_fd('\n', STDOUT_FILENO);
 	}
 }
-
-/**
- * @brief SIGQUIT (Ctrl+\) シグナルハンドラー
- *
- * @param signum シグナル番号
- */
-// static void sigquit_handler(int signum)
-// {
-//     if (signum == SIGQUIT)
-//     {
-//         g_signal_status = SIGQUIT;
-//         rl_done = 1;
-//     }
-// }
 
 /**
  * @brief シグナルハンドラーの初期化
