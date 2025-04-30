@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_primary.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 21:25:00 by teando            #+#    #+#             */
-/*   Updated: 2025/04/28 22:15:06 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/30 12:49:33 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,5 @@ t_ast	*parse_primary(t_pl *pl, t_shell *sh)
 		ms_listshift(&pl->lst);
 		return (ast_make(NT_SUBSHELL, sub, NULL, sh));
 	}
-	synerr(sh, "syntax error: unexpected token");
 	return (NULL);
 }
