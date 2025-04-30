@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 19:58:01 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/29 20:01:55 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/04/30 12:48:35 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 size_t	get_next_token(char **p, char **start)
 {
 	char	*pos;
+	char	quote;
 
 	pos = *p;
 	while (*pos && ft_isspace((unsigned char)*pos))
@@ -29,8 +30,15 @@ size_t	get_next_token(char **p, char **start)
 	if (!*pos)
 		return (0);
 	*start = pos;
-	while (*pos && !ft_isspace((unsigned char)*pos))
+	quote = 0;
+	while (*pos && (quote || !ft_isspace((unsigned char)*pos)))
+	{
+		if (quote == 0 && (*pos == '\'' || *pos == '"'))
+			quote = *pos;
+		else if (quote && *pos == quote)
+			quote = 0;
 		pos++;
+	}
 	*p = pos;
 	return (pos - *start);
 }
