@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_signals.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:45:12 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 03:13:56 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 14:17:02 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static void	sigint_handler(int signum)
 		rl_done = 1;
 		rl_replace_line("", 0);
 		rl_on_new_line();
-		rl_redisplay();
+		ft_putchar_fd('\n', STDOUT_FILENO);
 	}
 }
 

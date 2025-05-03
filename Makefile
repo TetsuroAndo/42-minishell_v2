@@ -6,7 +6,7 @@
 #    By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/29 21:13:08 by tomsato          ###   ########.fr        #
+#    Updated: 2025/05/03 14:16:35 by tomsato          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,7 +50,23 @@ SRC		+= $(shell find $(SRC_DIR)/modules/executer -name '*.c')
 SRC		+= $(shell find $(SRC_DIR)/builtin_cmds -name '*.c')
 OBJ		:= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 
-all: $(NAME)
+# Index
+all:
+	$(MAKE) __build -j $(shell nproc)
+v: f
+	$(MAKE) __v -j $(shell nproc)
+core: f
+	$(MAKE) __core -j $(shell nproc)
+lex: f
+	$(MAKE) __lex -j $(shell nproc)
+syn: f
+	$(MAKE) __syn -j $(shell nproc)
+sem: f	
+	$(MAKE) __sem -j $(shell nproc)
+debug: f
+	$(MAKE) __debug -j $(shell nproc)
+
+__build: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ)
 	$(CC) $(CFLAGS) $(OPT) $(OBJ) $(LIBFT) $(LFLAGS) $(IDFLAGS) $(DEFINE) -o $(NAME)
@@ -100,9 +116,21 @@ v: f $(NAME)
 # == DEBUG =============
 # =======================
 
-core: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
-core: DEFINE	:= -DDEBUG_MODE=DEBUG_CORE
-core: f $(NAME)
+__core: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
+__core: DEFINE	:= -DDEBUG_MODE=DEBUG_CORE
+__core: $(NAME)
+
+__lex: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
+__lex: DEFINE	:= -DDEBUG_MODE=DEBUG_LEX
+__lex: $(NAME)
+
+__syn: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
+__syn: DEFINE	:= -DDEBUG_MODE=DEBUG_SYN
+__syn: $(NAME)
+
+__sem: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
+__sem: DEFINE	:= -DDEBUG_MODE=DEBUG_SEM
+__sem: $(NAME)
 
 debug: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
 debug: DEFINE	:= -DDEBUG_MODE=DEBUG_ALL
