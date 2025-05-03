@@ -6,7 +6,7 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/04/29 22:50:24 by teando           ###   ########.fr        #
+#    Updated: 2025/05/03 14:15:58 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,15 +42,111 @@ endif
 # source files
 SRC	:= \
 	$(addprefix $(SRC_DIR)/, \
+		core/shell_init.c \
+		core/finalize.c \
+		core/readline.c \
+		core/line_init.c \
+		core/init_signals.c \
+		core/debug/init_sh_proc.c \
+		core/debug/line_init_info.c \
+		core/debug/fin_sh.c \
+		builtin_cmds/exit.c \
+		builtin_cmds/true.c \
+		builtin_cmds/unset.c \
+		builtin_cmds/env.c \
+		builtin_cmds/pwd.c \
+		builtin_cmds/export.c \
+		builtin_cmds/cd.c \
+		builtin_cmds/builtin_launcher.c \
+		builtin_cmds/echo.c \
+		lib/libms/ms_env/ms_unset.c \
+		lib/libms/ms_env/ms_envcmp.c \
+		lib/libms/ms_env/value/ms_escapevalue.c \
+		lib/libms/ms_env/value/ms_isactivevalue.c \
+		lib/libms/ms_env/key/ms_isactiveky.c \
+		lib/libms/ms_env/key/ms_partenvarg.c \
+		lib/libms/ms_env/ms_getenv.c \
+		lib/libms/ms_env/ms_setenv.c \
+		lib/libms/ms_ast/free_ast.c \
+		lib/libms/ms_lexical/free_token.c \
+		lib/libms/ms_gc/ms_strjoin_gc.c \
+		lib/libms/ms_gc/ms_gc_track.c \
+		lib/libms/ms_gc/ms_substr_gc.c \
+		lib/libms/ms_gc/ms_strdup_gc.c \
+		lib/libms/ms_gc/xfree_gc.c \
+		lib/libms/ms_gc/xmalloc_gc.c \
+		lib/libms/ms_gc/xlstnew_gc.c \
+		lib/libms/ms_lst/ms_lstcopy.c \
+		lib/libms/ms_lst/xlstnew.c \
+		lib/libms/ms_lst/xlst_from_strs.c \
+		lib/libms/ms_lst/ms_listshift.c \
+		lib/libms/ms_lst/ms_lstiter.c \
+		lib/libms/ms_lst/xlst_to_strs.c \
+		lib/libms/ms_fd/xdup.c \
+		lib/libms/ms_fd/set_cloexec.c \
+		lib/libms/ms_fd/ms_set_cloexec.c \
+		lib/libms/ms_fd/xclose.c \
+		lib/libms/ms_path/path_cleancat.c \
+		lib/libms/ms_path/path_relative.c \
+		lib/libms/ms_path/path_cleanstrlcpy.c \
+		lib/libms/ms_path/path_resolve.c \
+		lib/libms/ms_path/is_builtin.c \
+		lib/libms/ms_path/path_launcher.c \
+		lib/libms/ms_path/path_home.c \
+		lib/libms/ms_string/xsplit.c \
+		lib/libms/ms_string/skip_quote.c \
+		lib/libms/ms_string/is_quote.c \
+		lib/libms/ms_string/skip_dollar_paren.c \
+		lib/libms/ms_string/ms_strdup.c \
+		lib/libms/ms_string/xstrjoin.c \
+		lib/libms/ms_string/xitoa.c \
+		lib/libms/ms_string/ms_put_ascii.c \
+		lib/libms/ms_string/ms_substr.c \
+		lib/libms/ms_string/skip_spaces.c \
+		lib/libms/ms_string/trim_valid_quotes.c \
+		lib/libms/ms_system/xfree.c \
+		lib/libms/ms_system/xpipe.c \
+		lib/libms/ms_system/xfork.c \
+		lib/libms/ms_system/xmalloc.c \
+		modules/analyze_lexical/lexer_main_loop.c \
+		modules/analyze_lexical/allocate_token.c \
+		modules/analyze_lexical/debug_putlex.c \
+		modules/analyze_lexical/heredoc_loop.c \
+		modules/analyze_lexical/lexer_handler.c \
+		modules/analyze_lexical/validate_redirect_missing_arg.c \
+		modules/analyze_lexical/validate_special_chars.c \
+		modules/analyze_lexical/tokenizer.c \
+		modules/analyze_syntax/parse_andor.c \
+		modules/analyze_syntax/parse_primary.c \
+		modules/analyze_syntax/parse_pipeline.c \
+		modules/analyze_syntax/parse_alloc.c \
+		modules/analyze_syntax/debug_putsyn.c \
+		modules/analyze_syntax/parse_utils.c \
+		modules/analyze_syntax/parser.c \
+		modules/analyze_semantic/split/del_nul_node.c \
+		modules/analyze_semantic/split/split_utils.c \
+		modules/analyze_semantic/split/split_with_quote.c \
+		modules/analyze_semantic/quote/proc_quote.c \
+		modules/analyze_semantic/path/res_exec_path.c \
+		modules/analyze_semantic/semantic.c \
+		modules/analyze_semantic/env_expand/quote_helper.c \
+		modules/analyze_semantic/env_expand/proc_env.c \
+		modules/analyze_semantic/wildcard/wc_parser_utils.c \
+		modules/analyze_semantic/wildcard/wildcard_utils.c \
+		modules/analyze_semantic/wildcard/wc_quote_parser.c \
+		modules/analyze_semantic/wildcard/wildcard.c \
+		modules/analyze_semantic/proc_redr_errs.c \
+		modules/analyze_semantic/backup/astlst_backup.c \
+		modules/analyze_semantic/debug/debug_putsem.c \
+		modules/executer/executer.c \
+		modules/executer/exec_bool.c \
+		modules/executer/exec_cmd.c \
+		modules/executer/exec_subsh.c \
+		modules/executer/exec_pipe.c \
+		modules/executer/exec_utils.c \
+		modules/executer/exec_redirect.c \
 		minishell.c \
 	)
-SRC		+= $(shell find $(SRC_DIR)/core -name '*.c')
-SRC		+= $(shell find $(SRC_DIR)/lib/libms -name '*.c')
-SRC		+= $(shell find $(SRC_DIR)/modules/analyze_lexical -name '*.c')
-SRC		+= $(shell find $(SRC_DIR)/modules/analyze_syntax -name '*.c')
-SRC		+= $(shell find $(SRC_DIR)/modules/analyze_semantic -name '*.c')
-SRC		+= $(shell find $(SRC_DIR)/modules/executer -name '*.c')
-SRC		+= $(shell find $(SRC_DIR)/builtin_cmds -name '*.c')
 OBJ		:= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 
 # Index
