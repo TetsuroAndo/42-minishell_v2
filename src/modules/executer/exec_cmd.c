@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 22:43:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 01:39:31 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 15:54:37 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,10 @@ static int	prepare_argv(t_ast *node, char ***out, int *flag, t_shell *sh)
 	struct stat	sb;
 
 	if (handle_redr(node->args, sh))
+	{
+		*flag = 1;
 		return (E_SYSTEM);
+	}
 	*out = toklist_to_argv(node->args->argv, sh);
 	if (!*out)
 	{
