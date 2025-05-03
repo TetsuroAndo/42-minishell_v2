@@ -67,7 +67,7 @@ static char	*handle_env(char *in, t_shell *sh)
 	{
 		i = 0;
 		while (check_qs(in[i], &s) && ((in[i] == '$' && in[i + 1] == '(')
-				|| (in[i] != '$') || s.quote_state == QS_SINGLE))
+				|| in[i] != '$' || s.quote_state == QS_SINGLE))
 			++i;
 		s.buf = ms_strjoin_gcli(s.buf, ms_substr_gcli(in, 0, i, sh), sh);
 		in += i;
