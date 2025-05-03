@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   proc_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 21:12:11 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 19:41:03 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/03 18:26:15 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,17 @@ static char	*handle_env(char *in, t_shell *sh)
 	{
 		i = 0;
 		while (check_qs(in[i], &s) && ((in[i] == '$' && in[i + 1] == '(')
-				|| in[i] != '$' || s.quote_state == QS_SINGLE))
+				|| (in[i] != '$') || s.quote_state == QS_SINGLE))
 			++i;
 		s.buf = ms_strjoin_gcli(s.buf, ms_substr_gcli(in, 0, i, sh), sh);
 		in += i;
-		if (*in == '$')
+		if (*in == '$' && in[1])
 			in += extract_varname(&s.buf, in + 1, sh) + 1;
+		else if (*in == '$')
+		{
+			s.buf = ms_strjoin_gcli(s.buf, "$", sh);
+			++in;
+		}
 	}
 	return (s.buf);
 }
