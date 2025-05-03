@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 22:44:30 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 22:08:00 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 15:49:59 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ static pid_t	execute_left_pipe(t_ast *node, int fds[2], t_shell *sh)
 	lpid = xfork(sh);
 	if (lpid == 0)
 	{
+		sh->interactive = 0;
 		xdup2(&fds[1], STDOUT_FILENO, sh);
 		xclose(&fds[0]);
 		xclose(&fds[1]);
@@ -41,6 +42,7 @@ static pid_t	execute_right_pipe(t_ast *node, int fds[2], t_shell *sh)
 	rpid = xfork(sh);
 	if (rpid == 0)
 	{
+		sh->interactive = 0;
 		xdup2(&fds[0], STDIN_FILENO, sh);
 		xclose(&fds[0]);
 		xclose(&fds[1]);
