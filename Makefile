@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+         #
+#    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/05/03 14:45:07 by tomsato          ###   ########.fr        #
+#    Updated: 2025/05/07 12:29:45 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -147,22 +147,7 @@ SRC	:= \
 OBJ		:= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 
 # Index
-all:
-	$(MAKE) __build -j $(shell nproc)
-v: f
-	$(MAKE) __v -j $(shell nproc)
-core: f
-	$(MAKE) __core -j $(shell nproc)
-lex: f
-	$(MAKE) __lex -j $(shell nproc)
-syn: f
-	$(MAKE) __syn -j $(shell nproc)
-sem: f	
-	$(MAKE) __sem -j $(shell nproc)
-debug: f
-	$(MAKE) __debug -j $(shell nproc)
-
-__build: $(NAME)
+all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ)
 	$(CC) $(CFLAGS) $(OPT) $(OBJ) $(LIBFT) $(LFLAGS) $(IDFLAGS) $(DEFINE) -o $(NAME)
@@ -212,21 +197,21 @@ v: f $(NAME)
 # == DEBUG =============
 # =======================
 
-__core: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
-__core: DEFINE	:= -DDEBUG_MODE=DEBUG_CORE
-__core: $(NAME)
+core: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
+core: DEFINE	:= -DDEBUG_MODE=DEBUG_CORE
+core: $(NAME)
 
-__lex: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
-__lex: DEFINE	:= -DDEBUG_MODE=DEBUG_LEX
-__lex: $(NAME)
+lex: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
+lex: DEFINE	:= -DDEBUG_MODE=DEBUG_LEX
+lex: $(NAME)
 
-__syn: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
-__syn: DEFINE	:= -DDEBUG_MODE=DEBUG_SYN
-__syn: $(NAME)
+syn: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
+syn: DEFINE	:= -DDEBUG_MODE=DEBUG_SYN
+syn: $(NAME)
 
-__sem: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
-__sem: DEFINE	:= -DDEBUG_MODE=DEBUG_SEM
-__sem: $(NAME)
+sem: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
+sem: DEFINE	:= -DDEBUG_MODE=DEBUG_SEM
+sem: $(NAME)
 
 debug: OPT		:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
 debug: DEFINE	:= -DDEBUG_MODE=DEBUG_ALL
