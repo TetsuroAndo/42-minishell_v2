@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:12 by teando            #+#    #+#             */
-/*   Updated: 2025/04/27 22:11:26 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/07 17:29:41 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,11 @@ t_status	mod_lex(t_shell *sh)
 		return (sh->status = E_SYNTAX);
 	if (!tokenize_line(sh))
 		return (sh->status = E_SYNTAX);
+	if (!count_paren(sh))
+	{
+		ft_dprintf(2, ES_TOKEN);
+		return (sh->status = E_SYNTAX);
+	}
 	if (sh->debug & DEBUG_LEX)
 		debug_print_token_list(sh->token_list);
 	return (E_NONE);

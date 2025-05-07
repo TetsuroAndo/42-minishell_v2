@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:45:42 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/30 12:49:45 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/07 17:30:16 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ t_status	mod_syn(t_shell *sh)
 
 	pl.lst = sh->token_list;
 	ast = parse_list(&pl, sh);
-	if (!ast && !tok_peek(&pl) && !tok_is_eof(tok_peek(&pl)->type))
+	if ((!ast && !tok_peek(&pl)) || !tok_is_eof(tok_peek(&pl)->type))
 	{
 		if (ast)
 			free_ast(&ast);

@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 21:25:00 by teando            #+#    #+#             */
-/*   Updated: 2025/04/30 12:49:33 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/07 17:29:59 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ t_ast	*parse_primary(t_pl *pl, t_shell *sh)
 		sub = parse_list(pl, sh);
 		if (!sub || !tok_peek(pl) || tok_peek(pl)->type != TT_RPAREN)
 		{
-			synerr(sh, "syntax error: missing ')'");
 			free_ast(&sub);
 			return (NULL);
 		}
