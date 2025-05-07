@@ -45,36 +45,32 @@ static int	validate_input(t_shell *sh)
 }
 
 /**
- * @brief 連続した括弧のチェックを行う
- * TT_LPARENの次にTT_LPARENまたはTT_RPARENが来た場合はエラーとする
+ * @brief 括弧の数のチェックを行う
  *
  * @param sh 現在のシステム情報を保持するt_shell構造体へのポインタ
- * @return エラーがある場合は1、ない場合は0
+ * @return 括弧が閉じられていれば1 そうでなければ0
  */
-// static int check_token(t_shell *sh)
-// {
-//     t_list          *current;
-//     t_lexical_token *token;
-//     t_lexical_token *next_token;
+static int	count_paren(t_shell *sh)
+{
+	t_list			*tokens;
+	t_lexical_token	*token;
+	size_t			l;
+	size_t			r;
 
-//     if (!sh || !sh->token_list)
-//         return (0);
-//     current = sh->token_list;
-//     while (current && current->next)
-//     {
-//         token = (t_lexical_token *)current->data;
-//         next_token = (t_lexical_token *)current->next->data;
-//         if (token->type == TT_RPAREN && next_token->type == TT_RPAREN)
-//         {
-//             ft_putendl_fd("syntax error near unexpected token `)`",
-//                 STDERR_FILENO);
-//             return (sh->status = E_SYNTAX);
-//         }
-
-//         current = current->next;
-//     }
-//     return (0);
-// }
+	l = 0;
+	r = 0;
+	tokens = sh->token_list;
+	while (tokens->next)
+	{
+		token = (t_lexical_token *)tokens->data;
+		if (token->type == TT_LPAREN)
+			l++;
+		if (token->type == TT_RPAREN)
+			r++;
+		tokens = tokens->next;
+	}
+	return (l == r);
+}
 
 /**
  * @brief 入力されたソースラインをトークン化し、その構文を検証する
