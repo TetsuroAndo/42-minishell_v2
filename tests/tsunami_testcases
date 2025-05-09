@@ -1,0 +1,366 @@
+echo
+echo hello
+echo hello world
+echo "hello world"
+echo 'hello world'
+echo hello'world'
+echo hello"world"
+echo 'hello'world
+echo "hello"world
+echo hello""world
+echo "hello""world"
+echo'h''e'"l""l"'o'
+echo "hello'world"
+echo 'hello"world'
+echo '' hello "" world
+echo 'hello > world'
+echo 'hello  |  world'
+echo ""
+echo ''
+echo $USER
+echo '$USER'
+echo "$USER"
+echo '"$USER"'
+echo "'$USER'"
+echo $USER$USER
+echo test$USER
+echo $USERtest
+echo "$USER"test
+echo $USER"test"
+echo $USER test
+echo $HO"M"E
+echo $?HELLO
+echo "$"
+echo '$'
+echo $
+echo $?
+echo $?.
+echo $$$$$
+echo '$$$$$'
+echo "$$$$$"
+echo -n hello world
+echo -n '' hello '' world ''
+echo -n "" hello "" world ""
+echo -n -n -n -n -n hello
+echo -nnnnnnnnn hello
+echo -n --n hello
+echo -n --n -n hellon
+echo -na hello
+echo - n hello
+echo "aspas ->'"
+echo "aspas -> ' "
+echo 'aspas ->"'
+echo 'aspas -> " '
+echo "> >> < * ? [ ] | ; [ ] || && ( ) & # $ \ <<"
+echo '> >> < * ? [ ] | ; [ ] || && ( ) & # $ \ <<'
+echo "exit_code ->$? user ->$USER home -> $HOME"
+echo 'exit_code ->$? user ->$USER home -> $HOME'
+echo hello | cd ..
+echo -n aaa >outfile
+echo aaa > $NON_EXIST
+export FOO="echo hello" &&$FOO
+echo hello world &&env aaa && echo $_
+echo hello world && echo $_
+
+export hello
+export HELLO=123
+export A-
+export HELLO=123 A
+export HELLO="123 A-"
+export hello world
+export HELLO-=123
+export =
+export +
+export ?
+export _
+export 123
+export HELLO=123 A- WORLD=456
+export UNO=1 DOS-2 TRES=3 || env | grep TRES
+export | sort | grep -v SHLVL | grep -v "declare -x _" | grep -v "PS.="
+export HOGE
+export FOO=
+export HELLO=hello
+export HELLOWOLRD="hello world"
+export TEST=hello world
+export AAA BBB
+export SCHOOL=42 && export SCHOOL+=tokyo && echo $SCHOOL
+export 123TEST
+export TEST2
+export TEST3&test4
+export MANY=test=test=test
+export MANY2="a=b=c=d"
+export | grep ?
+export AA='"AA$AA"' && echo $AA
+export | grep _
+export | grep ?
+export TEST="-n hello" && echo $TEST
+export PIPE="|" && ps -a $PIPE grep bash
+export TEST && export TEST=hello && echo $TEST
+export TEST && export TEST=hello && unset TEST && echo $TEST
+export a=" " && echo$a-a
+export a=" " && echo"$a"-a
+export a=" " && echo'$a'-a
+export AA='"AABBCC"' && echo $AA
+export FOO="echo hello" && $FOO
+export FOO="a       b" && echo "hello"$FOO"world"
+export EXPO="expo" && export RTHEL="rt HEL" && export LO="LO=" && $EXPO$RTHEL$LO"hello world" && echo $HELLO
+export c="a  b" && export b="a"$c'b' && echo "$b"
+export c="a  b" && export b="a"$c'b' && export com="echo" && $com b="a"$c'b'
+export com="export" &&  export c="a  b" && export b="a"$c'b' &&  $com b="a"$c'b' && echo "$b"
+export TEST="cho -n " && e$TEST hello
+export TEST="TEST=aaaa" && export $TEST
+export TEST="export TEST='hello wold'" && $TEST && echo $TEST
+
+unset
+unset HELLO
+unset HELLO1 HELLO2
+unset HOME
+unset PATH
+unset SHELL
+unset $USER
+unset USER
+unset SHELL TERM
+unset _
+unset ?
+unset $PWD && pwd
+unset HELLO=
+unset  A-
+unset  HELLO A- WORLD
+unset PWD && cd ..
+
+cd
+cd $PWD
+cd $PWD hi
+cd aaa
+cd a b
+cd .
+cd ..
+cd ...
+cd /
+cd /tmp
+cd / && cd ..
+cd ../../..
+
+exit
+exit 1
+exit 42
+exit -42
+exit 123
+exit 298
+exit +100
+exit -100
+exit "100"
+exit '100'
+exit "+100"
+exit +"100"
+exit "-100"
+exit -"100"
+exit '+100'
+exit +'100'
+exit '-100'
+exit -'100'
+exit 42 4242
+exit hello
+exit 42 hello
+exit hello 42
+exit 2147483647
+exit -2147483648
+exit 2147483648
+exit 9223372036854775807
+exit 9223372036854775808
+exit -9223372036854775807
+exit -9223372036854775808
+exit -9223372036854775809
+exit | exit
+
+pwd
+pwd aaa
+
+env
+env aaa
+env a b
+env USER
+env $USER
+
+cat <minishell.h>./outfiles/outfile
+cat <minishell.h|ls
+$PWD
+$EMPTY
+$AAA$SSSS
+$EMPTY echo hi
+./test_files/invalid_permission
+./missing.out
+missing.out
+"aaa"
+test_files
+./test_files
+/test_files
+minishell.h
+$?
+README.md
+ls >outfile01 && cat outfile01
+cat <minishell.h&ls
+||
+|| echo oi
+&
+&&
+echo oi || echo tchau
+env | grep USER || grep lucas
+#
+.
+;
+$
+''
+""
+
+ls ""
+ls && ls
+export env_test="ls" && $env_test && ls
+export env_test="ls" && "$ env_test" && ls
+mkdir dir && cd dir && chmod 000 ../dir && cd ..
+mkdir dir && cd dir && chmod 000 ../dir && pwd
+mkdir dir && cd dir && rmdir ../dir && pwd
+mkdir dir && cd dir && rmdir ../dir && cd ..
+mkdir -p a/b && cd a/b && rm -rf ../../a && cd ..
+mkdir -p a/b && cd a/b && rm -rf ../../a && pwd
+mkdir dir && ln -s dir symdir && cd symdir && pwd
+/bin/
+$U SER
+|& #-> não precisa
+
+echo *.md
+echo built*
+echo oi*
+echo *.supp
+echo 'bye *' bo*s bye
+echo 'bye *' mini* bye
+echo *ME*
+echo "*"
+ls *
+ls */
+ls */*
+ls .*
+ls ./././*
+ls ./*
+ls ./*/*/*
+ls s*
+ls *s
+ls s*s
+ls s*s/
+ls s*s/*
+ls a*
+*
+"*"
+'*'
+manual*
+echo * | awk -v RS=" " '{print}' | sort
+<*.txt
+echo 'bye *' t*.c bye
+echo *EMPTY hello READ* world
+cat <README*
+echo "pip*"
+echo *bonus *.supp bonjour
+
+> *
+>> *
+< *
+# << *
+> & # valido para < e >>
+> &&
+> ||
+# cat <<""
+<
+>
+<<
+>>
+> $AAA
+< $AAA
+>> $AAA
+# << $AAA
+> lll
+>> mmm
+< aaa
+# << bbb
+# << ls
+# cat <<""
+# cat <<''
+# cat << $USER""
+# cat << $USER''
+
+env | sort | grep -v SHLVL | grep -v ^_
+cat ./test_files/infile_big | grep oi
+cat minishell.h | grep ");"$
+export GHOST=123 | env | grep GHOST
+grep hi <./test_files/infile
+grep hi "<infile" <         ./test_files/infile
+echo hi < ./test_files/infile bye bye
+grep hi <./test_files/infile_big <./test_files/infile
+echo <"./test_files/infile" "bonjour       42"
+cat <"./test_files/file name with spaces"
+cat <./test_files/infile_big ./test_files/infile
+cat <"1""2""3""4""5"
+echo <"./test_files/infile" <missing <"./test_files/infile"
+echo <missing <"./test_files/infile" <missing
+cat <"./test_files/infile"
+echo <"./test_files/infile_big" | cat <"./test_files/infile"
+echo <"./test_files/infile_big" | cat "./test_files/infile"
+echo <"./test_files/infile_big" | echo <"./test_files/infile"
+echo hi | cat <"./test_files/infile"
+echo hi | cat "./test_files/infile"
+cat <"./test_files/infile" | echo hi
+cat <"./test_files/infile" | grep hello
+cat <"./test_files/infile_big" | echo hi
+cat <missing
+cat <missing | cat
+cat <missing | echo oi
+cat <missing | cat <"./test_files/infile"
+echo <123 <456 hi | echo 42
+ls >./outfiles/outfile01
+ls >         ./outfiles/outfile01
+echo hi >         ./outfiles/outfile01 bye
+ls >./outfiles/outfile01 >./outfiles/outfile02
+ls >./outfiles/outfile01 >./test_files/invalid_permission
+ls >"./outfiles/outfile with spaces"
+ls >"./outfiles/outfile""1""2""3""4""5"
+ls >"./outfiles/outfile01" >./test_files/invalid_permission >"./outfiles/outfile02"
+ls >./test_files/invalid_permission >"./outfiles/outfile01" >./test_files/invalid_permission
+cat <"./test_files/infile" >"./outfiles/outfile01"
+echo hi >./outfiles/outfile01 | echo bye
+echo hi >./outfiles/outfile01 >./outfiles/outfile02 | echo bye
+echo hi | echo >./outfiles/outfile01 bye
+echo hi | echo bye >./outfiles/outfile01 >./outfiles/outfile02
+echo hi >./outfiles/outfile01 | echo bye >./outfiles/outfile02
+echo hi >./outfiles/outfile01 >./test_files/invalid_permission | echo bye
+echo hi >./test_files/invalid_permission | echo bye
+echo hi >./test_files/invalid_permission >./outfiles/outfile01 | echo bye
+echo hi | echo bye >./test_files/invalid_permission
+echo hi | >./outfiles/outfile01 echo bye >./test_files/invalid_permission
+echo hi | echo bye >./test_files/invalid_permission >./outfiles/outfile01
+cat <"./test_files/infile" >./test_files/invalid_permission
+cat >./test_files/invalid_permission <"./test_files/infile"
+cat <missing >./outfiles/outfile01
+cat >./outfiles/outfile01 <missing
+cat <missing >./test_files/invalid_permission
+cat >./test_files/invalid_permission <missing
+cat >./outfiles/outfile01 <missing >./test_files/invalid_permission
+ls >>./outfiles/outfile01
+ls >>      ./outfiles/outfile01
+ls >>./outfiles/outfile01 >./outfiles/outfile01
+ls >./outfiles/outfile01 >>./outfiles/outfile01
+ls >./outfiles/outfile01 >>./outfiles/outfile01 >./outfiles/outfile02
+ls >>./outfiles/outfile01 >>./outfiles/outfile02
+ls >>./test_files/invalid_permission
+ls >>./test_files/invalid_permission >>./outfiles/outfile01
+ls >>./outfiles/outfile01 >>./test_files/invalid_permission
+ls >./outfiles/outfile01 >>./test_files/invalid_permission >>./outfiles/outfile02
+ls <missing >>./test_files/invalid_permission >>./outfiles/outfile02
+ls >>./test_files/invalid_permission >>./outfiles/outfile02 <missing
+echo hi >>./outfiles/outfile01 | echo bye
+echo hi >>./outfiles/outfile01 >>./outfiles/outfile02 | echo bye
+echo hi | echo >>./outfiles/outfile01 bye
+echo hi | echo bye >>./outfiles/outfile01 >>./outfiles/outfile02
+echo hi >>./outfiles/outfile01 | echo bye >>./outfiles/outfile02
+echo hi >>./test_files/invalid_permission | echo bye
+echo hi >>./test_files/invalid_permission >./outfiles/outfile01 | echo bye
+echo hi | echo bye >>./test_files/invalid_permission
+echo hi | echo >>./outfiles/outfile01 bye >./test_files/invalid_permission
