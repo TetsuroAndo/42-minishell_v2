@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 14:06:12 by teando            #+#    #+#             */
-/*   Updated: 2025/05/07 17:29:41 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/10 07:27:28 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "mod_lex.h"
 
@@ -18,31 +18,31 @@
  * @param sh 現在のシステム情報を保持するt_shell構造体へのポインタ
  * @return 検証に成功した場合は1、エラーが発生した場合は0
  */
-static int	validate_input(t_shell *sh)
-{
-	const char	*line;
-	size_t		pos;
+// static int	validate_input(t_shell *sh)
+// {
+// 	const char	*line;
+// 	size_t		pos;
 
-	if (!sh || !sh->source_line)
-		return (0);
-	line = sh->source_line;
-	pos = 0;
-	while (line[pos])
-	{
-		if (validate_special_chars(line, &pos))
-		{
-			sh->status = E_SYNTAX;
-			return (0);
-		}
-		if (validate_redirect_missing_arg(line, &pos))
-		{
-			sh->status = E_SYNTAX;
-			return (0);
-		}
-		pos++;
-	}
-	return (1);
-}
+// 	if (!sh || !sh->source_line)
+// 		return (0);
+// 	line = sh->source_line;
+// 	pos = 0;
+// 	while (line[pos])
+// 	{
+// 		if (validate_special_chars(line, &pos))
+// 		{
+// 			sh->status = E_SYNTAX;
+// 			return (0);
+// 		}
+// 		if (validate_redirect_missing_arg(line, &pos))
+// 		{
+// 			sh->status = E_SYNTAX;
+// 			return (0);
+// 		}
+// 		pos++;
+// 	}
+// 	return (1);
+// }
 
 /**
  * @brief 括弧の数のチェックを行う
@@ -93,8 +93,8 @@ t_status	mod_lex(t_shell *sh)
 	sh->status = E_NONE;
 	if (!sh->source_line)
 		return (sh->status = E_SYNTAX);
-	if (!validate_input(sh))
-		return (sh->status = E_SYNTAX);
+	// if (!validate_input(sh))
+	// 	return (sh->status = E_SYNTAX);
 	if (!tokenize_line(sh))
 		return (sh->status = E_SYNTAX);
 	if (!count_paren(sh))

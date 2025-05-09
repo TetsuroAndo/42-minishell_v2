@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   proc_env.c                                         :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 21:12:11 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 18:26:15 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/10 08:05:34 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "mod_sem.h"
 
@@ -26,26 +26,22 @@ static size_t	extract_varname(char **buf, char *in, t_shell *sh)
 	char	*key;
 	char	*val;
 
-	klen = 1;
 	if (sh->debug & DEBUG_SEM)
 		ft_dprintf(STDERR_FILENO, "[EXPAND_VAR]: %s [POINTER]: %p\n", in, in);
-	while (ft_isalnum_under(in[klen]))
-		++klen;
+	klen = 1;
+	if (ft_isalnum(in[0]))
+	{
+		while (ft_isalnum_under(in[klen]))
+			++klen;
+	}
 	key = ms_substr_gcli(in, 0, klen, sh);
-	if (!key)
-		return (0);
-	if (!key[0])
+	if (!key || !key[0])
 		return (0);
 	val = ms_getenv(key, sh);
 	if (!val)
 		val = ms_strdup_gcli("", sh);
 	ft_gc_track(sh->gcli, val);
-	if (key && key[0] && key[1] == '\0')
-		*buf = ms_strjoin_gcli(*buf, val, sh);
-	else
-	{
-		*buf = ms_strjoin_gcli(*buf, val, sh);
-	}
+	*buf = ms_strjoin_gcli(*buf, val, sh);
 	return (klen);
 }
 
@@ -71,7 +67,8 @@ static char	*handle_env(char *in, t_shell *sh)
 			++i;
 		s.buf = ms_strjoin_gcli(s.buf, ms_substr_gcli(in, 0, i, sh), sh);
 		in += i;
-		if (*in == '$' && in[1])
+		if (*in == '$' && in[1] && !(in[1] == '\'' || in[1] == '"'
+				|| ft_isspace(in[1])))
 			in += extract_varname(&s.buf, in + 1, sh) + 1;
 		else if (*in == '$')
 		{
