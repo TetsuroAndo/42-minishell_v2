@@ -3,47 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   proc_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 21:12:11 by teando            #+#    #+#             */
-/*   Updated: 2025/05/10 17:28:25 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/10 23:55:17 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod_sem.h"
-
-/**
- * @brief 変数名を検出し、展開結果をバッファに追加する
- *
- * @param buf 		結果を格納するバッファへのポインタ
- * @param in 		変数名を含む入力文字列
- * @param shell 	シェル情報
- * @return size_t	変数名inを何文字進めたか
- */
-static size_t	extract_varname(char **buf, char *in, t_shell *sh)
-{
-	size_t	klen;
-	char	*key;
-	char	*val;
-
-	if (sh->debug & DEBUG_SEM)
-		ft_dprintf(STDERR_FILENO, "[EXPAND_VAR]: %s [POINTER]: %p\n", in, in);
-	klen = 1;
-	if (ft_isalnum(in[0]))
-	{
-		while (ft_isalnum_under(in[klen]))
-			++klen;
-	}
-	key = ms_substr_gcli(in, 0, klen, sh);
-	if (!key || !key[0])
-		return (0);
-	val = ms_getenv(key, sh);
-	if (!val)
-		val = ms_strdup_gcli("", sh);
-	ft_gc_track(sh->gcli, val);
-	*buf = ms_strjoin_gcli(*buf, val, sh);
-	return (klen);
-}
 
 /**
  * @brief バックスラッシュと$記号を処理し、環境変数を展開する
@@ -132,7 +99,11 @@ t_status	proc_env(t_list **list, int idx, t_shell *sh)
 	token = (t_lexical_token *)(*list)->data;
 	if (!token || !token->value)
 		return (E_SYSTEM);
-	if ((token->type & TM_TYPE) == TM_REDIR)
+	if (token->type == TT_HEREDOC)
+		expanded_value = heredoc_env(token->value, sh);
+	else if (token->type == TT_HEREDOC_NOEXP)
+		expanded_value = ms_strdup(token->value, sh);
+	else if ((token->type & TM_TYPE) == TM_REDIR)
 		expanded_value = ms_strdup(handle_env(token->value, sh), sh);
 	else
 		expanded_value = shift_or_true(list, idx, sh);

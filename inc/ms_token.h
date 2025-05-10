@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 03:26:44 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 03:26:44 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/10 23:42:00 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef enum e_token_type
 	TT_APPEND = 0x1202,
 	TT_REDIR_OUT = 0x1203,
 	TT_HEREDOC = 0x1204,
+	TT_HEREDOC_NOEXP = 0x1205,
 	/* Parentheses */
 	TT_LPAREN = 0x501,
 	TT_RPAREN = 0x502,

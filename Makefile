@@ -6,7 +6,7 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/05/10 22:28:47 by teando           ###   ########.fr        #
+#    Updated: 2025/05/10 23:56:16 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -127,6 +127,8 @@ SRC	:= \
 		modules/analyze_semantic/quote/proc_quote.c \
 		modules/analyze_semantic/path/res_exec_path.c \
 		modules/analyze_semantic/semantic.c \
+		modules/analyze_semantic/env_expand/extract_varname.c \
+		modules/analyze_semantic/env_expand/heredoc_env.c \
 		modules/analyze_semantic/env_expand/quote_helper.c \
 		modules/analyze_semantic/env_expand/proc_env.c \
 		modules/analyze_semantic/wildcard/wc_parser_utils.c \
