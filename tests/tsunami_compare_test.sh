@@ -7,10 +7,12 @@ YELLOW="\033[0;33m"
 BLUE="\033[0;34m"
 RESET="\033[0m"
 
-TEST_FILE="/home/tomsato/space/42-minishell_v2-1/tests/tsunami_testcases"
-MINISHELL="/home/tomsato/space/42-minishell_v2-1/minishell"
-OUTPUT_DIR="/home/tomsato/space/42-minishell_v2-1/tests/out"
-PLAYGROUND_DIR="/home/tomsato/space/42-minishell_v2-1/playground"
+MY_DIR="/Users/atomboy/42Toybox/0-Cursus/33-modularshell"
+
+TEST_FILE="$MY_DIR/tests/tsunami_testcases"
+MINISHELL="$MY_DIR/minishell"
+OUTPUT_DIR="$MY_DIR/tests/out"
+PLAYGROUND_DIR="$MY_DIR/playground"
 TMP_DIR="$PLAYGROUND_DIR/tmp"
 LEAK_CHECK=0
 
@@ -115,7 +117,15 @@ while IFS= read -r line || [ -n "$line" ]; do
     
     # Filter out minishell prompt for comparison
     grep -v '^minishell\$' "$minishell_output_file" > "$minishell_filtered_file"
-    
+    # First check if the file contains minishell$ prompt
+    if grep -q 'minishell\$' "$minishell_filtered_file"; then
+        # First remove lines that start with minishell$
+        grep -v '^minishell\$' "$minishell_filtered_file" > "$minishell_filtered_file.tmp"
+        # Then remove minishell$ and everything after it on each line
+        sed 's/minishell\$.*//g' "$minishell_filtered_file.tmp" | tr -d '\n' > "$minishell_filtered_file"
+        rm "$minishell_filtered_file.tmp"
+    fi
+
     # Compare outputs
     diff_output=$(diff -u "$bash_output_file" "$minishell_filtered_file")
     diff_status=$?

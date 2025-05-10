@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 06:26:03 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 03:37:49 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/10 15:15:31 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ typedef struct s_shell	t_shell;
 # define DEBUG_SEM 0x08
 # define DEBUG_ENV 0x10
 # define DEBUG_EXEC 0x20
-# define DEBUG_REDR 0x40
+# define DEBUG_NO_PROMPT 0x40
 # define DEBUG_SIGNAL 0x80
 # define DEBUG_ALL 0xFF
 

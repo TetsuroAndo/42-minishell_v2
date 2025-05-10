@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 03:24:51 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 03:36:16 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/10 15:08:48 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 # include "ms_readline.h"
 # include "ms_signal.h"
 
-# define PROMPT "minishell$ "
+# ifndef PROMPT
+#  define PROMPT "minishell$ "
+# endif
 
 #endif

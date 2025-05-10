@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+         #
+#    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/05/10 14:21:36 by tomsato          ###   ########.fr        #
+#    Updated: 2025/05/10 15:18:50 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -165,6 +165,8 @@ sem: f
 	$(MAKE) __sem -j $(shell nproc)
 debug: f
 	$(MAKE) __debug -j $(shell nproc)
+none_prompt: f
+	$(MAKE) __none_prompt -j $(shell nproc)
 
 __build: $(NAME)
 
@@ -239,6 +241,9 @@ __sem: $(NAME)
 __debug: OPT 	:= -g -fsanitize=address -O1 -fno-omit-frame-pointer
 __debug: DEFINE	:= -DDEBUG_MODE=DEBUG_ALL
 __debug: $(NAME)
+
+__none_prompt: DEFINE	:= -DDEBUG_MODE=DEBUG_NO_PROMPT
+__none_prompt: $(NAME)
 
 # =======================
 # == Submodule Targets ==

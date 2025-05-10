@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:25:22 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 03:13:59 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/10 15:16:44 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ t_shell	*shell_init(char **env, char *bin_name)
 	sh->exit_flag = 0;
 	sh->interactive = isatty(STDIN_FILENO);
 	sh->debug = DEBUG_MODE;
-	if (sh->debug != DEBUG_NONE)
+	if (sh->debug != DEBUG_NONE && sh->debug != DEBUG_NO_PROMPT)
 		put_sh_init(sh);
 	return (sh);
 }
