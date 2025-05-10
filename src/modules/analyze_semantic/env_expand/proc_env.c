@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   proc_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 21:12:11 by teando            #+#    #+#             */
-/*   Updated: 2025/05/10 14:14:23 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/10 16:35:46 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ static size_t	extract_varname(char **buf, char *in, t_shell *sh)
 		val = ms_strdup_gcli("", sh);
 	ft_gc_track(sh->gcli, val);
 	*buf = ms_strjoin_gcli(*buf, val, sh);
+	if (ft_strchr(" \t\n\r\f", (*buf)[0]))
+		*buf = ms_strjoin3_gcli("\'", *buf, "\'", sh);
 	return (klen);
 }
 

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:12:00 by teando            #+#    #+#             */
-/*   Updated: 2025/05/10 15:15:57 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/10 16:17:21 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	main(int ac, char **av, char **env)
 		return (ft_dprintf(2, "signal setup failure\n"), E_SYSTEM);
 	set_cloexec_all();
 	sh = shell_init(env, av[0]);
-	if (sh->debug & DEBUG_NO_PROMPT)
+	if (sh->debug & DEBUG_NO_PROMPT && !(sh->debug & DEBUG_CORE))
 		shell_loop(sh, "");
 	else
 		shell_loop(sh, PROMPT);

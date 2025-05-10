@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 22:18:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 03:09:20 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/10 16:21:01 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,15 +33,15 @@ static int	check(int *c, char *in, t_shell *sh)
 	struct stat	st;
 
 	(void)sh;
-	if (is_builtin(in))
-	{
-		*c = 0;
-		return (1);
-	}
-	else if (ft_strcmp(in, "\0") == 0)
+	if (ft_strcmp(in, "\0") == 0)
 	{
 		*c = E_COMMAND_NOT_FOUND;
 		return (ft_dprintf(2, ES_CMD_NOT_FOUND, "''"), 1);
+	}
+	if (ft_strcmp(in, ".") == 0)
+	{
+		*c = E_NUMERIC;
+		return (ft_dprintf(2, ES_DOT), 1);
 	}
 	if (stat(in, &st) == 0)
 	{
@@ -63,7 +63,8 @@ int	path_resolve(char **in, t_shell *sh)
 	size_t	i;
 	int		c;
 
-	if (check(&c, *in, sh))
+	c = 0;
+	if (is_builtin(*in) || check(&c, *in, sh))
 		return (c);
 	paths = xsplit(ms_getenv("PATH", sh), ':', sh);
 	if (!paths || !paths[0])
