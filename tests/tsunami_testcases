@@ -271,7 +271,7 @@ echo *bonus *.supp bonjour
 # cat <<""
 <
 >
-<<
+# <<
 >>
 > $AAA
 < $AAA
