@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 03:24:35 by teando            #+#    #+#             */
-/*   Updated: 2025/05/10 16:07:36 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/10 22:34:24 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@
 # define ES_AMBIGUOUS "minishell: %s: ambiguous redirect\n"
 # define ES_NUMERIC "numeric argument required"
 # define ES_TOO_MANY_ARGS "minishell: %s: too many arguments\n"
-# define ES_DOT "minishell: .: filename argument required\n.: usage: . filename [arguments]\n"
+# define ES_DOT "minishell: .: filename argument required\n"
+# define ES_DOT_USAGE ": usage: . filename [arguments]\n"
 # define ES_NAVI "not a valid identifier"
 # define ES_SHIFT_RANGE "shift count out of range"
 # define ES_BAD_SUBSTITUTION "bad substitution"

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_primary.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 21:25:00 by teando            #+#    #+#             */
-/*   Updated: 2025/05/10 16:46:18 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/10 22:31:00 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static t_ast	*parse_cmd(t_pl *pl, t_shell *sh)
 	{
 		tok = tok_peek(pl);
 		if ((tok->type != TT_WORD) && (!tok_is_redir(tok->type)))
-			break;
+			break ;
 		while (tok && tok->type == TT_WORD)
 		{
 			ft_lstadd_back(&n->args->argv, xlstnew(tok_pop_dup(pl, sh), sh));

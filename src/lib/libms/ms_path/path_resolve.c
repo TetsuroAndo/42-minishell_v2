@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 22:18:40 by teando            #+#    #+#             */
-/*   Updated: 2025/05/10 16:21:01 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/10 22:34:46 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static int	check(int *c, char *in, t_shell *sh)
 	if (ft_strcmp(in, ".") == 0)
 	{
 		*c = E_NUMERIC;
-		return (ft_dprintf(2, ES_DOT), 1);
+		return (ft_dprintf(2, ES_DOT), ft_dprintf(2, ES_DOT_USAGE), 1);
 	}
 	if (stat(in, &st) == 0)
 	{

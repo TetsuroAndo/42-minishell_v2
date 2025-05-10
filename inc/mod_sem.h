@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mod_sem.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 03:36:20 by teando            #+#    #+#             */
-/*   Updated: 2025/05/10 14:16:55 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/10 22:34:57 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,4 +90,5 @@ void							process_row_cells(char p_char, const char *s,
 									int *prev, int *curr);
 void							update_dp_row(const char *s, int *prev,
 									int *curr, t_extract *ex);
+
 #endif

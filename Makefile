@@ -6,7 +6,7 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/05/10 15:18:50 by teando           ###   ########.fr        #
+#    Updated: 2025/05/10 22:28:47 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -113,8 +113,6 @@ SRC	:= \
 		modules/analyze_lexical/debug_putlex.c \
 		modules/analyze_lexical/heredoc_loop.c \
 		modules/analyze_lexical/lexer_handler.c \
-		modules/analyze_lexical/validate_redirect_missing_arg.c \
-		modules/analyze_lexical/validate_special_chars.c \
 		modules/analyze_lexical/tokenizer.c \
 		modules/analyze_syntax/parse_andor.c \
 		modules/analyze_syntax/parse_primary.c \
