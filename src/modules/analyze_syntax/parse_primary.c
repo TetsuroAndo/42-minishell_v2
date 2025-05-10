@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 21:25:00 by teando            #+#    #+#             */
-/*   Updated: 2025/05/07 17:29:59 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/10 16:06:34 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,16 +48,19 @@ static t_ast	*parse_cmd(t_pl *pl, t_shell *sh)
 
 	n = ast_make(NT_CMD, NULL, NULL, sh);
 	n->args = args_new(sh);
-	while (append_redir(pl, n, sh))
-		;
-	tok = tok_peek(pl);
-	while (tok && tok->type == TT_WORD)
+	while (42)
 	{
-		ft_lstadd_back(&n->args->argv, xlstnew(tok_pop_dup(pl, sh), sh));
 		tok = tok_peek(pl);
-	}
-	while (append_redir(pl, n, sh))
+		if (tok->type != TT_WORD && !tok_is_redir(tok->type))
+			break;
+		while (tok && tok->type == TT_WORD)
+		{
+			ft_lstadd_back(&n->args->argv, xlstnew(tok_pop_dup(pl, sh), sh));
+			tok = tok_peek(pl);
+		}
+		while (append_redir(pl, n, sh))
 		;
+	}
 	return (n);
 }
 
