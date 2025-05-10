@@ -10,6 +10,8 @@ RESET="\033[0m"
 TEST_FILE="/Users/atomboy/42Toybox/0-Cursus/33-modularshell/tests/tsunami_testcases"
 MINISHELL="/Users/atomboy/42Toybox/0-Cursus/33-modularshell/minishell"
 OUTPUT_DIR="/Users/atomboy/42Toybox/0-Cursus/33-modularshell/tests/out"
+PLAYGROUND_DIR="/Users/atomboy/42Toybox/0-Cursus/33-modularshell/playground"
+TMP_DIR="$PLAYGROUND_DIR/tmp"
 LEAK_CHECK=0
 
 # Create output directory if it doesn't exist
@@ -18,6 +20,9 @@ mkdir -p "$OUTPUT_DIR/minishell"
 mkdir -p "$OUTPUT_DIR/minishell_filtered"
 mkdir -p "$OUTPUT_DIR/bash"
 mkdir -p "$OUTPUT_DIR/diff"
+
+# Create playground directory for tests
+mkdir -p "$TMP_DIR"
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -52,6 +57,10 @@ rm -f "$OUTPUT_DIR/minishell_filtered/"*
 rm -f "$OUTPUT_DIR/bash/"*
 rm -f "$OUTPUT_DIR/diff/"*
 
+# Clean and prepare playground directory
+rm -rf "$TMP_DIR"/*
+echo -e "${BLUE}=== Prepared playground directory for tests ===${RESET}"
+
 # テストケース読み込み
 while IFS= read -r line || [ -n "$line" ]; do
     # Skip empty lines
@@ -64,10 +73,14 @@ while IFS= read -r line || [ -n "$line" ]; do
     # Save test command to file for reference
     echo "$line" > "$OUTPUT_DIR/diff/$total_tests.cmd"
     
+    # Clean the tmp directory before running bash
+    rm -rf "$TMP_DIR"/*
+    
     # Run command in bash and save output and exit status
     bash_output_file="$OUTPUT_DIR/bash/$total_tests.out"
     bash_error_file="$OUTPUT_DIR/bash/$total_tests.err"
-    echo -e "$line\nexit" | bash > "$bash_output_file" 2> "$bash_error_file"
+    # Use tmp_dir as working directory
+    (cd "$TMP_DIR" && echo -e "$line\nexit" | bash > "$bash_output_file" 2> "$bash_error_file")
     bash_status=$?
     echo "$bash_status" > "$OUTPUT_DIR/bash/$total_tests.status"
     
@@ -76,9 +89,13 @@ while IFS= read -r line || [ -n "$line" ]; do
     minishell_filtered_file="$OUTPUT_DIR/minishell_filtered/$total_tests.out"
     minishell_error_file="$OUTPUT_DIR/minishell/$total_tests.err"
     
+    # Clean the tmp directory before running minishell
+    rm -rf "$TMP_DIR"/*
+    
     if [ $LEAK_CHECK -eq 1 ]; then
         # Run with valgrind if leak check is enabled
-        valgrind_output=$(echo -e "$line\nexit" | valgrind --leak-check=full --show-leak-kinds=definite --error-exitcode=44 "$MINISHELL" > "$minishell_output_file" 2> "$minishell_error_file")
+        # Use tmp_dir as working directory
+        (cd "$TMP_DIR" && echo -e "$line\nexit" | valgrind --leak-check=full --show-leak-kinds=definite --error-exitcode=44 "$MINISHELL" > "$minishell_output_file" 2> "$minishell_error_file")
         minishell_status=$?
         
         # Check for memory leaks
@@ -89,7 +106,8 @@ while IFS= read -r line || [ -n "$line" ]; do
         fi
     else
         # Run without valgrind
-        echo -e "$line\nexit" | "$MINISHELL" > "$minishell_output_file" 2> "$minishell_error_file"
+        # Use tmp_dir as working directory
+        (cd "$TMP_DIR" && echo -e "$line\nexit" | "$MINISHELL" > "$minishell_output_file" 2> "$minishell_error_file")
         minishell_status=$?
     fi
     
@@ -166,6 +184,8 @@ fi
 echo
 echo -e "${YELLOW}Test completed at: $(date)${RESET}"
 
+# Clean up playground tmp directory
+rm -rf "$TMP_DIR"
 # Exit with failure if any tests failed
 if [ $failed_tests -gt 0 ] || [ $leaked_tests -gt 0 ]; then
     exit 1
