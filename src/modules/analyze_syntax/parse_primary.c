@@ -6,7 +6,7 @@
 /*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 21:25:00 by teando            #+#    #+#             */
-/*   Updated: 2025/05/10 16:06:34 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/10 16:46:18 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,13 @@ static int	append_redir(t_pl *pl, t_ast *n, t_shell *sh)
 	if (!tok || !tok_is_redir(tok->type))
 		return (0);
 	if (*tok->value == '\0' && tok->type != TT_HEREDOC)
-	{
-		synerr(sh, "syntax error near unexpected token");
-		return (0);
-	}
+		return (1);
 	dup = xlstnew(tok_pop_dup(pl, sh), sh);
 	if (!n->args->redr)
 		n->args->redr = dup;
 	else
 		ft_lstadd_back(&n->args->redr, dup);
-	return (1);
+	return (0);
 }
 
 /**
@@ -51,15 +48,18 @@ static t_ast	*parse_cmd(t_pl *pl, t_shell *sh)
 	while (42)
 	{
 		tok = tok_peek(pl);
-		if (tok->type != TT_WORD && !tok_is_redir(tok->type))
+		if ((tok->type != TT_WORD) && (!tok_is_redir(tok->type)))
 			break;
 		while (tok && tok->type == TT_WORD)
 		{
 			ft_lstadd_back(&n->args->argv, xlstnew(tok_pop_dup(pl, sh), sh));
 			tok = tok_peek(pl);
 		}
-		while (append_redir(pl, n, sh))
-		;
+		if (append_redir(pl, n, sh))
+		{
+			free_ast(&n);
+			return (NULL);
+		}
 	}
 	return (n);
 }
