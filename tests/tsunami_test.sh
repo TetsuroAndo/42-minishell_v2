@@ -1,7 +1,7 @@
 #!/bin/bash
 
-TEST_FILE="/Users/atomboy/42Toybox/0-Cursus/33-modularshell/tests/tsunami_testcases"
-MINISHELL="/Users/atomboy/42Toybox/0-Cursus/33-modularshell/minishell"
+TEST_FILE="/Users/atomboy/42Toybox/0-Cursus/33-minishell_v2/tests/tsunami_testcases"
+MINISHELL="/Users/atomboy/42Toybox/0-Cursus/33-minishell_v2/minishell"
 
 echo "=== Minishell Leak Tester ==="
 

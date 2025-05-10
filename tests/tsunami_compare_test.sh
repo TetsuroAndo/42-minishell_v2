@@ -7,7 +7,7 @@ YELLOW="\033[0;33m"
 BLUE="\033[0;34m"
 RESET="\033[0m"
 
-MY_DIR="/Users/atomboy/42Toybox/0-Cursus/33-modularshell"
+MY_DIR="/Users/atomboy/42Toybox/0-Cursus/33-minishell_v2"
 
 TEST_FILE="$MY_DIR/tests/tsunami_testcases"
 MINISHELL="$MY_DIR/minishell"

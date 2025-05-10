@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   debug_putlex.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 22:56:54 by teando            #+#    #+#             */
-/*   Updated: 2025/05/11 00:26:52 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/11 01:03:13 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@
 static const char	*type_to_str(t_token_type t)
 {
 	static const t_token_type	types[] = {TT_WORD, TT_PIPE, TT_REDIR_IN,
-		TT_APPEND, TT_REDIR_OUT, TT_HEREDOC, TT_HEREDOC_NOEXP,TT_LPAREN, TT_RPAREN,
-		TT_AND_AND, TT_OR_OR, TT_SEMICOLON, TT_EOF, TT_ERROR};
+		TT_APPEND, TT_REDIR_OUT, TT_HEREDOC, TT_HEREDOC_NOEXP, TT_LPAREN,
+		TT_RPAREN, TT_AND_AND, TT_OR_OR, TT_SEMICOLON, TT_EOF, TT_ERROR};
 	static const char			*type_strs[] = {"TT_WORD", "TT_PIPE",
-		"TT_REDIR_IN", "TT_APPEND", "TT_REDIR_OUT", "TT_HEREDOC", "TT_HEREDOC_NOEXP",
-		"TT_LPAREN", "TT_RPAREN", "TT_AND_AND", "TT_OR_OR",
-		"TT_SEMICOLON", "TT_EOF", "TT_ERROR"};
+		"TT_REDIR_IN", "TT_APPEND", "TT_REDIR_OUT", "TT_HEREDOC",
+		"TT_HEREDOC_NOEXP", "TT_LPAREN", "TT_RPAREN", "TT_AND_AND",
+		"TT_OR_OR", "TT_SEMICOLON", "TT_EOF", "TT_ERROR"};
 	size_t						i;
 
 	i = 0;
