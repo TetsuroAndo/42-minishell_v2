@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 21:12:11 by teando            #+#    #+#             */
-/*   Updated: 2025/05/10 23:55:17 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/11 00:06:48 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ t_status	proc_env(t_list **list, int idx, t_shell *sh)
 	if (!token || !token->value)
 		return (E_SYSTEM);
 	if (token->type == TT_HEREDOC)
-		expanded_value = heredoc_env(token->value, sh);
+		expanded_value = ms_strdup(heredoc_env(token->value, sh), sh);
 	else if (token->type == TT_HEREDOC_NOEXP)
 		expanded_value = ms_strdup(token->value, sh);
 	else if ((token->type & TM_TYPE) == TM_REDIR)
