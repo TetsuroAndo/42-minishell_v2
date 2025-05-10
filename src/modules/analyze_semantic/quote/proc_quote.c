@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   proc_quote.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 20:03:19 by tomsato           #+#    #+#             */
-/*   Updated: 2025/05/10 23:51:25 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/11 00:16:52 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	proc_quote(t_list **lst, int index, t_shell *sh)
 
 	(void)index;
 	tok = (*lst)->data;
-	if (tok->type == TT_HEREDOC_NOEXP)
+	if (tok->type == TT_HEREDOC_NOEXP || tok->type == TT_HEREDOC)
 	{
 		tok->type = TT_HEREDOC;
 		tok->value = xstrjoin_free(tok->value, "", sh);
