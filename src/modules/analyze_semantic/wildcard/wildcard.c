@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 13:08:37 by tomsato           #+#    #+#             */
-/*   Updated: 2025/04/29 21:39:50 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/10 10:38:44 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,8 @@ static char	*collect_matches(DIR *dir, const char *pattern, t_shell *sh)
 			if (wildcard_match(pattern, entry->d_name, sh))
 				buf = append_match(buf, entry->d_name, sh);
 		}
-		else if ((ft_strcmp(entry->d_name, ".") == 0 || ft_strcmp(entry->d_name,
-					"..") == 0) && pattern[0] == '.' && wildcard_match(pattern,
+		else if ((((ft_strncmp(entry->d_name, ".", 1) == 0 || ft_strncmp(entry->d_name,
+					"..", 2) == 0)) && pattern[0] == '.') && wildcard_match(pattern,
 				entry->d_name, sh))
 		{
 			buf = append_match(buf, entry->d_name, sh);
