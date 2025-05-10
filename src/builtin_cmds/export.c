@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomsato <tomsato@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 23:11:41 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 17:26:31 by tomsato          ###   ########.fr       */
+/*   Updated: 2025/05/10 14:12:27 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,15 +55,17 @@ static t_status	__put_export(t_shell *sh)
 t_status	__export(int argc, char **argv, t_shell *sh)
 {
 	int	i;
+	int	status;
 
+	status = 0;
 	if (argc == 1)
 		return (__put_export(sh));
 	i = 0;
 	while (++i < argc)
 	{
 		if (ms_setenv(ms_strdup(argv[i], sh), sh) != E_NONE)
-			return (1);
+			status = 1;
 		sh->env_updated = 1;
 	}
-	return (0);
+	return (status);
 }

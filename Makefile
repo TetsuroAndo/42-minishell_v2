@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
+#    By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/22 01:37:23 by teando            #+#    #+#              #
-#    Updated: 2025/05/03 14:15:58 by teando           ###   ########.fr        #
+#    Updated: 2025/05/10 14:21:36 by tomsato          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -133,6 +133,7 @@ SRC	:= \
 		modules/analyze_semantic/env_expand/proc_env.c \
 		modules/analyze_semantic/wildcard/wc_parser_utils.c \
 		modules/analyze_semantic/wildcard/wildcard_utils.c \
+		modules/analyze_semantic/wildcard/wildcard_utils_2.c \
 		modules/analyze_semantic/wildcard/wc_quote_parser.c \
 		modules/analyze_semantic/wildcard/wildcard.c \
 		modules/analyze_semantic/proc_redr_errs.c \

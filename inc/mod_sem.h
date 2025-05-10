@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mod_sem.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 03:36:20 by teando            #+#    #+#             */
-/*   Updated: 2025/04/29 21:59:57 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/10 14:16:55 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ void							astlst_backup(t_ast *ast, t_shell *shell,
 									int isinit);
 int								proc_wildcard(t_list **lst, int index,
 									t_shell *sh);
+int								wildcard_match(const char *p, const char *str,
+									t_shell *shell);
 t_status						proc_env(t_list **list, int idx, t_shell *sh);
 t_extract						*convert_ex(char *str, t_shell *shell);
 void							free_exstract(t_extract *ex, t_shell *shell);
