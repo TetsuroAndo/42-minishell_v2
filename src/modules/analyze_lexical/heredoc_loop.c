@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 17:08:24 by teando            #+#    #+#             */
-/*   Updated: 2025/05/10 23:53:25 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/11 00:38:33 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,12 @@ t_list	*handle_heredoc(t_lexical_token *tok, t_shell *sh)
 	char	*delim;
 	char	*body;
 
+	if (!tok || !tok->value || !tok->value[0])
+	{
+		ft_dprintf(STDERR_FILENO, ES_TOKEN);
+		free_token(tok);
+		return (NULL);
+	}
 	quoted = is_quoted(tok->value);
 	delim = trim_valid_quotes(tok->value, sh);
 	body = read_heredoc_body(delim, sh);
