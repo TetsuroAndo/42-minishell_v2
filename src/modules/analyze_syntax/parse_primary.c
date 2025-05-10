@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_primary.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: tomsato <tomsato@student.42.jp>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 21:25:00 by teando            #+#    #+#             */
-/*   Updated: 2025/05/10 22:31:00 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/11 00:28:51 by tomsato          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ static int	append_redir(t_pl *pl, t_ast *n, t_shell *sh)
 	tok = tok_peek(pl);
 	if (!tok || !tok_is_redir(tok->type))
 		return (0);
-	if (*tok->value == '\0' && tok->type != TT_HEREDOC)
+	if (*tok->value == '\0' && (tok->type != TT_HEREDOC
+			&& tok->type != TT_HEREDOC_NOEXP))
 		return (1);
 	dup = xlstnew(tok_pop_dup(pl, sh), sh);
 	if (!n->args->redr)
